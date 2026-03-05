@@ -1,4 +1,4 @@
-import { google } from '@ai-sdk/google'
+import { defaultModel } from '@/lib/ai'
 import { streamText } from 'ai'
 
 export const maxDuration = 30 // Allow up to 30 seconds for responses
@@ -36,7 +36,7 @@ export async function POST(req: Request) {
         const { messages } = await req.json()
 
         const result = await streamText({
-            model: google('gemini-1.5-flash'),
+            model: defaultModel,
             messages,
             system: SYSTEM_PROMPT,
             temperature: 0.6,

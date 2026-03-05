@@ -1,4 +1,4 @@
-import { google } from '@ai-sdk/google'
+import { defaultModel } from '@/lib/ai'
 import { generateObject } from 'ai'
 import { z } from 'zod'
 
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
         `
 
         const { object } = await generateObject({
-            model: google('gemini-1.5-flash'),
+            model: defaultModel,
             schema: TriviaSchema,
             prompt: prompt,
             temperature: 0.9,

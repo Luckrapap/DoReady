@@ -1,9 +1,9 @@
-import { google } from '@ai-sdk/google'
+import { defaultModel } from '@/lib/ai'
 import { streamText } from 'ai'
 
 export const maxDuration = 45 // 45 seconds to allow deeper thinking
 
-export const runtime = 'nodejs'
+export const runtime = 'edge'
 
 const SYSTEM_PROMPT = `
 Eres el "Motor de Correlaciones" (Do-IA Analytics) de DoReady 🧠📊.
@@ -47,18 +47,13 @@ export async function POST(req: Request) {
         const prompt = `Aquí están los datos del usuario de los últimos días:\n\n${dataString}\n\nAnaliza esta matriz y entrega el reporte.`
 
         const result = await streamText({
-            model: google('gemini-1.5-flash'),
+            model: defaultModel,
             messages: [{ role: 'user', content: prompt }],
             system: SYSTEM_PROMPT,
             temperature: 0.7,
         })
 
-        return result.toDataStreamResponse({
-            getErrorMessage: (err) => {
-                console.error("STREAM ERROR:", err)
-                return String(err)
-            }
-        })
+        return result.toDataStreamResponse()
     } catch (error: any) {
         console.error("SERVER ERROR:", error)
         return new Response(error.message || "Internal Server Error", { status: 500 })
