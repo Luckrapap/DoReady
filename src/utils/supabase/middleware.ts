@@ -39,6 +39,7 @@ export async function updateSession(request: NextRequest) {
         !user &&
         !request.nextUrl.pathname.startsWith('/login') &&
         !request.nextUrl.pathname.startsWith('/auth') &&
+        !request.nextUrl.pathname.startsWith('/api') &&
         request.nextUrl.pathname !== '/'
     ) {
         // no user, potentially respond by redirecting the user to the login page
@@ -47,7 +48,14 @@ export async function updateSession(request: NextRequest) {
         return NextResponse.redirect(url)
     }
 
-    if (user && (request.nextUrl.pathname === '/' || request.nextUrl.pathname.startsWith('/login'))) {
+    if (user && (request.nextUrl.pathname === '/' || (request.nextUrl.pathname.startsWith('/login') && request.nextUrl.pathname !== '/login/confirmed'))) {
+        // Differentiation: Guest users (anonymous) stay at landing page when entering site root, 
+        // but regular users get redirected to dashboard.
+        const isAnonymous = user.is_anonymous
+        if (isAnonymous && request.nextUrl.pathname === '/') {
+            return supabaseResponse
+        }
+
         const url = request.nextUrl.clone()
         url.pathname = '/today'
         return NextResponse.redirect(url)

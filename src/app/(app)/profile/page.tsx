@@ -26,7 +26,11 @@ export default async function ProfilePage() {
 
             <div className="space-y-8">
                 {/* Interactive Profile Header */}
-                <ProfileHeader profile={profile} email={user.email!} />
+                <ProfileHeader
+                    profile={profile}
+                    email={user.email!}
+                    isGuest={user.is_anonymous}
+                />
 
 
                 {/* Additional Settings Card */}

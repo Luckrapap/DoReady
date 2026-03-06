@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Trash2, AlertTriangle, CheckCircle2, AlertCircle } from 'lucide-react'
+import { deleteAccount } from '@/app/login/actions'
 
 interface DeleteAccountModalProps {
     isOpen: boolean
@@ -17,14 +18,22 @@ export default function DeleteAccountModal({ isOpen, onClose }: DeleteAccountMod
         setIsLoading(true)
         setStatus(null)
 
-        // Simulación de eliminación de cuenta
-        setTimeout(() => {
-            // Aquí iría la lógica real de Supabase
-            setStatus({ type: 'success', message: 'Cuenta eliminada correctamente.' })
-            setTimeout(() => {
-                window.location.href = '/login'
-            }, 2000)
-        }, 1500)
+        try {
+            const result = await deleteAccount()
+
+            if (result && result.error) {
+                setStatus({ type: 'error', message: result.error })
+                setIsLoading(false)
+            } else {
+                // If it redirects, the browser will handle it. 
+                // In case it doesn't redirect immediately:
+                setStatus({ type: 'success', message: 'Cuenta eliminada. Redirigiendo...' })
+            }
+        } catch (err) {
+            console.error(err)
+            setStatus({ type: 'error', message: 'Ocurrió un error inesperado al eliminar la cuenta.' })
+            setIsLoading(false)
+        }
     }
 
     return (

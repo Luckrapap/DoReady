@@ -29,6 +29,11 @@ export async function updateProfile(data: { full_name?: string, gender?: string,
 
     if (!user) throw new Error('No authenticated user')
 
+    // Guest protection
+    if (user.is_anonymous) {
+        return { success: false, error: 'Los invitados no pueden modificar su perfil. Crea una cuenta para personalizar tu experiencia.' }
+    }
+
     const { error } = await supabase
         .from('profiles')
         .upsert({
@@ -55,6 +60,11 @@ export async function updateAvatarUrl(avatarUrl: string) {
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) throw new Error('No authenticated user')
+
+    // Guest protection
+    if (user.is_anonymous) {
+        return { success: false, error: 'Los invitados no pueden modificar su foto. Crea una cuenta para personalizar tu experiencia.' }
+    }
 
     const { error } = await supabase
         .from('profiles')

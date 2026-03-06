@@ -16,9 +16,10 @@ interface ProfileHeaderProps {
         birth_date?: string | null
     } | null
     email: string
+    isGuest?: boolean
 }
 
-export default function ProfileHeader({ profile, email }: ProfileHeaderProps) {
+export default function ProfileHeader({ profile, email, isGuest = false }: ProfileHeaderProps) {
     const [isEditingName, setIsEditingName] = useState(false)
     const [newName, setNewName] = useState(profile?.full_name || email.split('@')[0])
     const [isUploading, setIsUploading] = useState(false)
@@ -76,8 +77,14 @@ export default function ProfileHeader({ profile, email }: ProfileHeaderProps) {
                 {/* Avatar Section */}
                 <div className="relative group">
                     <div
-                        onClick={() => fileInputRef.current?.click()}
-                        className="h-40 w-40 rounded-3xl flex items-center justify-center text-zinc-400 dark:text-zinc-500 overflow-hidden cursor-pointer border-4 border-transparent transition-all shadow-lg"
+                        onClick={() => {
+                            if (isGuest) {
+                                alert('Los perfiles de invitado son temporales. Regístrate para personalizar tu avatar.')
+                            } else {
+                                fileInputRef.current?.click()
+                            }
+                        }}
+                        className={`h-40 w-40 rounded-3xl flex items-center justify-center text-zinc-400 dark:text-zinc-500 overflow-hidden border-4 border-transparent transition-all shadow-lg ${!isGuest ? 'cursor-pointer' : 'cursor-default'}`}
                         style={{ backgroundColor: 'var(--border)' }}
                     >
                         {profile?.avatar_url ? (
@@ -92,9 +99,11 @@ export default function ProfileHeader({ profile, email }: ProfileHeaderProps) {
                             <User size={64} />
                         )}
 
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                            <Camera className="text-white" size={32} />
-                        </div>
+                        {!isGuest && (
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                <Camera className="text-white" size={32} />
+                            </div>
+                        )}
 
                         {isUploading && (
                             <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
@@ -156,12 +165,14 @@ export default function ProfileHeader({ profile, email }: ProfileHeaderProps) {
                                         <h2 className="text-4xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight">
                                             {profile?.full_name || email.split('@')[0]}
                                         </h2>
-                                        <button
-                                            onClick={() => setIsEditingName(true)}
-                                            className="p-2 text-zinc-300 dark:text-zinc-700 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
-                                        >
-                                            <Pencil size={24} />
-                                        </button>
+                                        {!isGuest && (
+                                            <button
+                                                onClick={() => setIsEditingName(true)}
+                                                className="p-2 text-zinc-300 dark:text-zinc-700 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+                                            >
+                                                <Pencil size={24} />
+                                            </button>
+                                        )}
                                     </motion.div>
                                 )}
                             </AnimatePresence>
@@ -227,7 +238,7 @@ export default function ProfileHeader({ profile, email }: ProfileHeaderProps) {
                                         ) : (
                                             'Añadir Género'
                                         )}
-                                        <Pencil size={10} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        {!isGuest && <Pencil size={10} className="opacity-0 group-hover:opacity-100 transition-opacity" />}
                                     </button>
                                 )}
                             </AnimatePresence>
@@ -278,7 +289,7 @@ export default function ProfileHeader({ profile, email }: ProfileHeaderProps) {
                                         ) : (
                                             'Añadir Nacimiento'
                                         )}
-                                        <Pencil size={10} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        {!isGuest && <Pencil size={10} className="opacity-0 group-hover:opacity-100 transition-opacity" />}
                                     </button>
                                 )}
                             </AnimatePresence>
