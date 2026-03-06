@@ -819,7 +819,14 @@ body {
     background: color-mix(in srgb, var(--surface) 70%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    @apply border-t border-l border-white/40 dark:border-white/10 shadow-[0_25px_50px_-12px_rgba(0, 0, 0, 0.15)];
+    border-top: 1px solid rgba(255, 255, 255, 0.4);
+    border-left: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+  }
+
+  html.dark .glass-elite {
+    border-top-color: rgba(255, 255, 255, 0.1);
+    border-left-color: rgba(255, 255, 255, 0.1);
   }
 }
 
