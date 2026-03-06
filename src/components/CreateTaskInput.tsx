@@ -23,14 +23,20 @@ export default function CreateTaskInput({ dateStr }: { dateStr: string }) {
     return (
         <form
             onSubmit={handleSubmit}
-            className="flex items-center gap-3 p-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm focus-within:ring-2 focus-within:ring-black dark:focus-within:ring-white focus-within:border-transparent transition-all"
+            className="flex items-center gap-3 p-2 border rounded-xl shadow-sm transition-all focus-within:ring-2"
+            style={{
+                backgroundColor: 'var(--surface)',
+                borderColor: 'var(--border)',
+                outlineColor: 'var(--accent)'
+            }}
         >
             <button
                 type="submit"
                 disabled={!title.trim() || isSubmitting}
-                className="p-2 ml-1 text-zinc-400 hover:text-black dark:hover:text-white disabled:opacity-50 transition-colors rounded-lg"
+                className="p-2 ml-1 text-zinc-400 transition-colors rounded-lg group"
+                style={{ color: title.trim() ? 'var(--accent)' : 'var(--border)' }}
             >
-                <Plus size={20} />
+                <Plus size={20} className="transition-transform group-hover:scale-110" />
             </button>
             <input
                 type="text"

@@ -190,22 +190,32 @@ export default function CheckDayCalendar() {
     }
 
     return (
-        <div className="w-full bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border border-zinc-200/50 dark:border-zinc-800/50 rounded-[2rem] p-6 shadow-sm">
+        <div className="w-full backdrop-blur-md border rounded-[2rem] p-6 shadow-sm transition-colors duration-500"
+            style={{
+                backgroundColor: 'color-mix(in srgb, var(--surface) 80%, transparent)',
+                borderColor: 'var(--border)'
+            }}
+        >
             {/* Layer Toggler & Month Header */}
             <div className="flex flex-col items-center mb-6 gap-4">
-                <div className="flex items-center gap-4 bg-zinc-100 dark:bg-zinc-800 p-1.5 rounded-2xl border border-zinc-200 dark:border-zinc-700">
+                <div className="flex items-center gap-4 p-1.5 rounded-2xl border transition-colors duration-500"
+                    style={{ backgroundColor: 'var(--border)', borderColor: 'color-mix(in srgb, var(--border) 50%, transparent)' }}
+                >
                     <button
                         onClick={toggleLayer}
-                        className="p-2 rounded-xl hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all text-zinc-500 hover:text-black dark:hover:text-white"
+                        className="p-2 rounded-xl transition-all text-zinc-500 hover:text-black dark:hover:text-white"
+                        style={{ backgroundColor: 'transparent' }}
                     >
                         <ChevronLeft size={20} />
                     </button>
-                    <span className="text-xs font-black uppercase tracking-widest px-4 min-w-[140px] text-center">
+                    <span className="text-xs font-black uppercase tracking-widest px-4 min-w-[140px] text-center"
+                        style={{ color: 'var(--accent)' }}
+                    >
                         {activeLayer === 'performance' ? 'Productividad' : 'Estado de Ánimo'}
                     </span>
                     <button
                         onClick={toggleLayer}
-                        className="p-2 rounded-xl hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all text-zinc-500 hover:text-black dark:hover:text-white"
+                        className="p-2 rounded-xl transition-all text-zinc-500 hover:text-black dark:hover:text-white"
                     >
                         <ChevronRight size={20} />
                     </button>
@@ -214,19 +224,23 @@ export default function CheckDayCalendar() {
                 <div className="flex items-center gap-6">
                     <button
                         onClick={prevMonth}
-                        className="p-1.5 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-400 transition-colors"
+                        className="p-1.5 rounded-full text-zinc-400 transition-colors"
+                        style={{ backgroundColor: 'var(--border)' }}
                     >
                         <ChevronLeft size={20} />
                     </button>
                     <h2 className="text-3xl md:text-4xl font-dancing text-zinc-900 dark:text-zinc-50 lowercase transition-all capitalize italic">
                         {format(currentDate, 'MMMM')}
-                        <span className="text-xl ml-4 font-sans not-italic text-zinc-300 dark:text-zinc-700 font-bold">
+                        <span className="text-xl ml-4 font-sans not-italic font-bold"
+                            style={{ color: 'var(--border)' }}
+                        >
                             {format(currentDate, 'yyyy')}
                         </span>
                     </h2>
                     <button
                         onClick={nextMonth}
-                        className="p-1.5 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-400 transition-colors"
+                        className="p-1.5 rounded-full text-zinc-400 transition-colors"
+                        style={{ backgroundColor: 'var(--border)' }}
                     >
                         <ChevronRight size={20} />
                     </button>
@@ -255,12 +269,17 @@ export default function CheckDayCalendar() {
                             onContextMenu={(e) => handleDayInteraction(day, false, e)}
                             onClick={(e) => handleDayInteraction(day, true, e)}
                             className={cn(
-                                "group relative h-14 md:h-20 border border-zinc-100/50 dark:border-zinc-800/30 rounded-xl flex items-center justify-center cursor-pointer transition-all hover:border-zinc-300 dark:hover:border-zinc-600 hover:shadow-sm",
+                                "group relative h-14 md:h-20 border rounded-xl flex items-center justify-center cursor-pointer transition-all hover:shadow-sm duration-500",
                                 !inCurrentMonth && "opacity-20 pointer-events-none",
-                                isToday(day) && "ring-2 ring-zinc-900 dark:ring-zinc-100 ring-offset-2 ring-offset-white/80 dark:ring-offset-zinc-900/80 shadow-sm"
+                                isToday(day) && "ring-2 ring-[var(--accent)] ring-offset-2 ring-offset-[var(--background)] shadow-sm"
                             )}
+                            style={{
+                                borderColor: 'color-mix(in srgb, var(--border) 30%, transparent)'
+                            }}
                         >
-                            <span className="absolute top-1.5 left-2 text-[10px] font-bold text-zinc-300 dark:text-zinc-700">
+                            <span className="absolute top-1.5 left-2 text-[10px] font-bold"
+                                style={{ color: 'color-mix(in srgb, var(--accent) 30%, transparent)' }}
+                            >
                                 {format(day, 'd')}
                             </span>
 

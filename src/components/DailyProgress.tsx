@@ -20,19 +20,21 @@ export default function DailyProgress({ completed, total }: DailyProgressProps) 
     if (!mounted) return null // Prevent hydration mismatch on animated SVG
 
     return (
-        <div className="flex items-center gap-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-4 rounded-2xl shadow-sm mb-6">
+        <div className="flex items-center gap-4 border p-4 rounded-2xl shadow-sm mb-6 transition-colors duration-500"
+            style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
+        >
             <div className="relative w-12 h-12 flex items-center justify-center flex-shrink-0">
                 <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
                     <circle
                         cx="18" cy="18" r="16"
                         fill="none"
-                        className="stroke-zinc-100 dark:stroke-zinc-800"
+                        style={{ stroke: 'var(--border)' }}
                         strokeWidth="3.5"
                     />
                     <motion.circle
                         cx="18" cy="18" r="16"
                         fill="none"
-                        className="stroke-black dark:stroke-white"
+                        style={{ stroke: 'var(--accent)' }}
                         strokeWidth="3.5"
                         strokeDasharray="100"
                         initial={{ strokeDashoffset: 100 }}

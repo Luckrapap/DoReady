@@ -36,15 +36,33 @@ Tu objetivo es analizar los datos brindados, encontrar patrones ocultos entre el
 Nota: Si los datos provistos tienen muy pocos registros o todo está en null, escríbele un discurso desafiante sobre por qué el "Motor no puede leer una mente vacía" y pidiéndole que registre su CheckDay y Tareas con consistencia.
 `
 
+// Basic anonymization to remove potential emails or names pattern
+function anonymize(text: string) {
+    // Mask emails
+    let clean = text.replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, "[EMAIL]");
+    // Mask potential numbers (like phone numbers)
+    clean = clean.replace(/\b\d{7,}\b/g, "[NUMBER]");
+    return clean;
+}
+
 export async function POST(req: Request) {
     try {
         const { analyticsData } = await req.json()
 
-        const dataString = Object.keys(analyticsData).length === 0
-            ? "NO DATA"
-            : JSON.stringify(analyticsData, null, 2)
+        // Anonymize each task title before processing
+        const safeData = JSON.parse(JSON.stringify(analyticsData));
+        if (safeData.tasks && Array.isArray(safeData.tasks)) {
+            safeData.tasks = safeData.tasks.map((t: any) => ({
+                ...t,
+                title: anonymize(t.title || "")
+            }))
+        }
 
-        const prompt = `Aquí están los datos del usuario de los últimos días:\n\n${dataString}\n\nAnaliza esta matriz y entrega el reporte.`
+        const dataString = Object.keys(safeData).length === 0
+            ? "NO DATA"
+            : JSON.stringify(safeData, null, 2)
+
+        const prompt = `Aquí están los datos (anonimizados) del usuario de los últimos días:\n\n${dataString}\n\nAnaliza esta matriz y entrega el reporte. No menciones nombres personales ni correos.`
 
         const result = await streamText({
             model: defaultModel,

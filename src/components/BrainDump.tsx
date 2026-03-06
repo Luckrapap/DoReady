@@ -68,8 +68,10 @@ export default function BrainDump({ initialIdeas }: Props) {
         <div className="w-full max-w-2xl mx-auto px-4 py-8">
             {/* Header */}
             <div className="flex flex-col items-center mb-12 text-center">
-                <div className="w-16 h-16 rounded-[1.5rem] bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center mb-6 shadow-sm">
-                    <Brain size={32} className="text-zinc-400 dark:text-zinc-600" />
+                <div className="w-16 h-16 rounded-[1.5rem] flex items-center justify-center mb-6 shadow-sm transition-colors duration-500"
+                    style={{ backgroundColor: 'var(--border)' }}
+                >
+                    <Brain size={32} style={{ color: 'var(--accent)' }} className="opacity-60" />
                 </div>
                 <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
                     El Cementerio de Ideas
@@ -82,7 +84,12 @@ export default function BrainDump({ initialIdeas }: Props) {
             {/* Main Input Area */}
             <div className="relative mb-12 group">
                 <div className="absolute inset-0 bg-zinc-900/5 dark:bg-white/5 blur-xl group-hover:blur-2xl transition-all duration-500 rounded-[2rem]" />
-                <div className="relative bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border border-zinc-200 dark:border-zinc-800 rounded-[2rem] p-6 shadow-xl">
+                <div className="relative backdrop-blur-xl border rounded-[2rem] p-6 shadow-xl transition-colors duration-500"
+                    style={{
+                        backgroundColor: 'color-mix(in srgb, var(--surface) 80%, transparent)',
+                        borderColor: 'var(--border)'
+                    }}
+                >
                     <textarea
                         ref={inputRef}
                         value={input}
@@ -98,7 +105,8 @@ export default function BrainDump({ initialIdeas }: Props) {
                         <button
                             onClick={handleAddIdea}
                             disabled={!input.trim() || isAdding}
-                            className="flex items-center gap-2 px-6 py-2 bg-black text-white dark:bg-white dark:text-black rounded-full text-xs font-bold hover:scale-105 active:scale-95 transition-all disabled:opacity-30 shadow-lg"
+                            className="flex items-center gap-2 px-6 py-2 text-white rounded-full text-xs font-bold hover:scale-105 active:scale-95 transition-all disabled:opacity-30 shadow-lg"
+                            style={{ backgroundColor: 'var(--accent)' }}
                         >
                             <Plus size={14} />
                             Capturar
@@ -117,7 +125,11 @@ export default function BrainDump({ initialIdeas }: Props) {
                             initial={{ opacity: 0, y: 10, scale: 0.95 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
-                            className="group relative bg-white/40 dark:bg-zinc-900/40 hover:bg-white dark:hover:bg-zinc-900 border border-zinc-100 dark:border-zinc-800/50 rounded-2xl p-5 transition-all hover:shadow-md"
+                            className="group relative border rounded-2xl p-5 transition-all hover:shadow-md duration-500"
+                            style={{
+                                backgroundColor: 'color-mix(in srgb, var(--surface) 40%, transparent)',
+                                borderColor: 'var(--border)'
+                            }}
                         >
                             <div className="flex justify-between gap-4">
                                 <p className="text-zinc-700 dark:text-zinc-300 whitespace-pre-wrap leading-relaxed text-[15px]">

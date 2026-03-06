@@ -85,13 +85,19 @@ export default function TasksContainer({ initialTasks, dateStr }: TasksContainer
                     <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="flex flex-col items-center justify-center py-16 text-zinc-500 bg-zinc-50/50 dark:bg-zinc-900/20 border border-dashed border-zinc-200 dark:border-zinc-800 rounded-2xl gap-3"
+                        className="flex flex-col items-center justify-center py-16 transition-colors duration-500 border border-dashed rounded-2xl gap-3"
+                        style={{
+                            backgroundColor: 'color-mix(in srgb, var(--surface) 20%, transparent)',
+                            borderColor: 'var(--border)'
+                        }}
                     >
-                        <div className="w-16 h-16 bg-white dark:bg-zinc-900 shadow-sm rounded-full flex items-center justify-center mb-2">
+                        <div className="w-16 h-16 shadow-sm rounded-full flex items-center justify-center mb-2"
+                            style={{ backgroundColor: 'var(--surface)' }}
+                        >
                             <span className="text-2xl">🌱</span>
                         </div>
                         <p className="font-medium text-zinc-900 dark:text-zinc-100">A fresh start</p>
-                        <p className="text-sm text-center max-w-[200px]">What is the one thing you want to accomplish today?</p>
+                        <p className="text-sm text-center max-w-[200px] text-zinc-500">What is the one thing you want to accomplish today?</p>
                     </motion.div>
                 ) : (
                     <AnimatePresence mode="popLayout">

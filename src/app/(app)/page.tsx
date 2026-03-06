@@ -49,7 +49,10 @@ export default async function Home({
   })
 
   return (
-    <main className="min-h-screen flex justify-center py-12 px-4 selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black">
+    <main
+      className="min-h-screen flex justify-center py-12 px-4 selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black transition-colors duration-500"
+      style={{ backgroundColor: 'var(--background)' }}
+    >
       <div className="w-full max-w-xl">
         {/* Header (Simplified compared to Sprint 2 since Sidebar exists) */}
         <header className="mb-12 flex items-start justify-between">

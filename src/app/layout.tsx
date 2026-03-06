@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Outfit, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -9,6 +9,16 @@ const geistSans = Geist({
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+const outfit = Outfit({
+  variable: "--font-outfit",
+  subsets: ["latin"],
+});
+
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
   subsets: ["latin"],
 });
 
@@ -29,9 +39,39 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+                (function() {
+                  try {
+                    var t = localStorage.getItem('theme') || 'system';
+                    var p = localStorage.getItem('theme-preset') || 'slate';
+                    var h = localStorage.getItem('theme-custom-hue') || '220';
+                    var d = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    var isDark = t === 'dark' || (t === 'system' && d);
+                    
+                    var doc = document.documentElement;
+                    doc.classList.toggle('dark', isDark);
+                    doc.classList.toggle('light', !isDark);
+                    doc.style.setProperty('color-scheme', isDark ? 'dark' : 'light');
+                    
+                    if (p === 'custom') {
+                      doc.style.setProperty('--custom-hue', h);
+                    }
+
+                    // Clean and apply preset
+                    doc.classList.remove('theme-blue', 'theme-slate', 'theme-purple', 'theme-green', 'theme-red', 'theme-orange', 'theme-yellow', 'theme-pink', 'theme-custom');
+                    if (p !== 'slate') doc.classList.add('theme-' + p);
+                  } catch (e) {}
+                })();
+            `,
+          }}
+        />
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${outfit.variable} ${playfair.variable} antialiased`}
       >
         {children}
       </body>

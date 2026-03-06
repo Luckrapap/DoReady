@@ -25,24 +25,30 @@ export default function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95 }}
             whileHover={{ scale: 1.01 }}
-            className="group flex items-center justify-between p-4 mb-3 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm hover:shadow-md transition-all"
+            className="group flex items-center gap-4 p-4 rounded-2xl border shadow-sm transition-all duration-300"
+            style={{
+                backgroundColor: 'var(--surface)',
+                borderColor: 'var(--border)'
+            }}
         >
             <div className="flex items-center gap-4 flex-1">
                 <button
                     onClick={onToggle}
                     className={`flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full border transition-colors ${isCompleted
-                        ? 'bg-black border-black text-white dark:bg-white dark:border-white dark:text-black'
-                        : 'border-zinc-300 dark:border-zinc-700 hover:border-black dark:hover:border-white'
+                        ? 'text-white dark:text-black'
+                        : 'border-zinc-300 dark:border-zinc-700 hover:border-zinc-500 dark:hover:border-zinc-400'
                         }`}
+                    style={isCompleted ? { backgroundColor: 'var(--accent)', borderColor: 'var(--accent)' } : {}}
                 >
                     {isCompleted && <Check size={14} strokeWidth={3} />}
                 </button>
 
                 <span
                     className={`text-base flex-1 transition-all ${isCompleted
-                        ? 'text-zinc-400 dark:text-zinc-600 line-through decoration-zinc-300 dark:decoration-zinc-700'
+                        ? 'text-zinc-400 dark:text-zinc-600 line-through'
                         : 'text-zinc-800 dark:text-zinc-200'
                         }`}
+                    style={isCompleted ? { textDecorationColor: 'var(--border)' } : {}}
                 >
                     {task.title}
                 </span>

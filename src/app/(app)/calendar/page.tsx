@@ -18,7 +18,7 @@ export default async function CalendarPage() {
 
     return (
         <main className="min-h-screen py-4 px-4 flex items-center justify-center selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black">
-            <div className="w-full max-w-xl">
+            <div className="w-full max-w-4xl mx-auto">
                 <header className="mb-6 text-center">
                     <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 mb-1">
                         Calendar

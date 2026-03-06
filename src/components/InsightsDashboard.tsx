@@ -23,7 +23,9 @@ export default function InsightsDashboard({ analyticsData }: Props) {
     return (
         <div className="w-full">
             <div className="flex flex-col items-center justify-center text-center mb-8">
-                <div className="w-16 h-16 rounded-[1.25rem] bg-black dark:bg-white text-white dark:text-black flex items-center justify-center mb-6 shadow-xl relative overflow-hidden">
+                <div className="w-16 h-16 rounded-[1.25rem] text-white flex items-center justify-center mb-6 shadow-xl relative overflow-hidden transition-colors duration-500"
+                    style={{ backgroundColor: 'var(--accent)' }}
+                >
                     <div className="absolute inset-0 bg-white/20 dark:bg-black/20 animate-pulse" />
                     <BrainCircuit size={32} />
                 </div>
@@ -36,7 +38,8 @@ export default function InsightsDashboard({ analyticsData }: Props) {
                 <button
                     onClick={handleGenerate}
                     disabled={isLoading}
-                    className="mt-8 flex items-center gap-2 px-8 py-4 bg-black text-white dark:bg-white dark:text-black text-sm rounded-full font-semibold hover:scale-105 active:scale-95 transition-all shadow-md disabled:opacity-50 disabled:hover:scale-100"
+                    className="mt-8 flex items-center gap-2 px-8 py-4 text-white text-sm rounded-full font-semibold hover:scale-105 active:scale-95 transition-all shadow-md disabled:opacity-50 disabled:hover:scale-100"
+                    style={{ backgroundColor: 'var(--accent)' }}
                 >
                     {isLoading ? <Loader2 size={18} className="animate-spin" /> : <Sparkles size={18} />}
                     {completion ? "Regenerar Análisis" : "Ejecutar Análisis Profundo"}
@@ -53,7 +56,11 @@ export default function InsightsDashboard({ analyticsData }: Props) {
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="w-full bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border border-zinc-200/50 dark:border-zinc-800/50 rounded-[2rem] p-6 md:p-10 shadow-sm"
+                    className="w-full backdrop-blur-md border rounded-[2rem] p-6 md:p-10 shadow-sm transition-colors duration-500"
+                    style={{
+                        backgroundColor: 'color-mix(in srgb, var(--surface) 80%, transparent)',
+                        borderColor: 'var(--border)'
+                    }}
                 >
                     {isLoading && !completion ? (
                         <div className="flex flex-col items-center justify-center py-10 gap-4">

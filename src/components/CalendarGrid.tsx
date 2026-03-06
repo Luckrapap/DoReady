@@ -32,7 +32,7 @@ export default function CalendarGrid({ taskCounts }: CalendarGridProps) {
 
     const days = eachDayOfInterval({ start: startDate, end: endDate })
 
-    const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    const weekDays = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom']
 
     const nextMonth = () => setCurrentDate(addMonths(currentDate, 1))
     const prevMonth = () => setCurrentDate(subMonths(currentDate, 1))
@@ -43,24 +43,33 @@ export default function CalendarGrid({ taskCounts }: CalendarGridProps) {
     }
 
     return (
-        <div className="w-full bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border border-zinc-200/50 dark:border-zinc-800/50 rounded-[2rem] p-6 shadow-sm">
+        <div className="w-full backdrop-blur-md border rounded-[2rem] p-6 shadow-sm transition-colors duration-500"
+            style={{
+                backgroundColor: 'color-mix(in srgb, var(--surface) 80%, transparent)',
+                borderColor: 'var(--border)'
+            }}
+        >
             {/* Header */}
             <div className="flex justify-center items-center mb-6 gap-4">
                 <button
                     onClick={prevMonth}
-                    className="p-1.5 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-400 transition-colors"
+                    className="p-1.5 rounded-full text-zinc-400 transition-colors"
+                    style={{ backgroundColor: 'var(--border)' }}
                 >
                     <ChevronLeft size={20} />
                 </button>
                 <h2 className="text-3xl md:text-4xl font-dancing text-zinc-900 dark:text-zinc-50 lowercase transition-all capitalize italic">
                     {format(currentDate, 'MMMM')}
-                    <span className="text-xl ml-4 font-sans not-italic text-zinc-300 dark:text-zinc-700 font-bold">
+                    <span className="text-xl ml-4 font-sans not-italic font-bold"
+                        style={{ color: 'var(--border)' }}
+                    >
                         {format(currentDate, 'yyyy')}
                     </span>
                 </h2>
                 <button
                     onClick={nextMonth}
-                    className="p-1.5 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-400 transition-colors"
+                    className="p-1.5 rounded-full text-zinc-400 transition-colors"
+                    style={{ backgroundColor: 'var(--border)' }}
                 >
                     <ChevronRight size={20} />
                 </button>
@@ -69,7 +78,7 @@ export default function CalendarGrid({ taskCounts }: CalendarGridProps) {
             {/* Days of week */}
             <div className="grid grid-cols-7 mb-2 border-b border-zinc-100/50 dark:border-zinc-800/50 pb-2">
                 {weekDays.map((day) => (
-                    <div key={day} className="text-center text-xs font-bold text-zinc-400 uppercase tracking-widest py-1">
+                    <div key={day} className="text-center text-xs font-bold text-zinc-400 uppercase tracking-widest">
                         {day}
                     </div>
                 ))}
@@ -87,19 +96,30 @@ export default function CalendarGrid({ taskCounts }: CalendarGridProps) {
                             key={idx}
                             onClick={() => onDateClick(day)}
                             className={cn(
-                                "group relative flex flex-col items-center justify-center p-2 h-14 md:h-20 border border-zinc-100/50 dark:border-zinc-800/30 rounded-xl transition-all hover:border-zinc-300 dark:hover:border-zinc-600 hover:shadow-sm cursor-pointer",
+                                "group relative h-14 md:h-20 border rounded-xl flex items-center justify-center cursor-pointer transition-all hover:shadow-sm duration-500",
                                 !isCurrentMonth && "opacity-20 pointer-events-none",
-                                isToday(day) && "ring-2 ring-zinc-900 dark:ring-zinc-100 ring-offset-2 ring-offset-white/80 dark:ring-offset-zinc-900/80 shadow-sm"
+                                isToday(day) && "ring-2 ring-[var(--accent)] ring-offset-2 ring-offset-[var(--background)] shadow-sm"
                             )}
+                            style={{
+                                borderColor: 'color-mix(in srgb, var(--border) 30%, transparent)'
+                            }}
                         >
-                            <span className="absolute top-1.5 left-2 text-[10px] font-bold text-zinc-300 dark:text-zinc-700 group-hover:text-zinc-500 dark:group-hover:text-zinc-400 transition-colors">
+                            <span className="absolute top-1.5 left-2 text-[10px] font-bold transition-colors"
+                                style={{ color: 'color-mix(in srgb, var(--accent) 30%, transparent)' }}
+                            >
                                 {format(day, 'd')}
                             </span>
                             {hasTasks && (
                                 <div className={cn(
-                                    "absolute w-1.5 h-1.5 md:w-2 md:h-2 rounded-full mt-2",
-                                    isToday(day) ? "bg-black dark:bg-zinc-100" : "bg-black dark:bg-white"
-                                )} />
+                                    "absolute w-8 h-8 md:w-10 md:h-10 rounded-full shadow-lg border-4 transition-all z-10",
+                                    "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                                )}
+                                    style={{
+                                        backgroundColor: 'var(--surface)',
+                                        borderColor: 'color-mix(in srgb, var(--accent) 20%, transparent)',
+                                        boxShadow: '0 0 15px var(--border)'
+                                    }}
+                                />
                             )}
                         </button>
                     )

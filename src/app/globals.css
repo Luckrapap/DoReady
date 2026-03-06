@@ -1,37 +1,791 @@
-@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap');
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
+
+/* Independence Strategy: Override 'dark' variant to ONLY use the .dark class on html */
+@variant dark (html.dark &);
 
 .font-dancing {
   font-family: 'Dancing Script', cursive;
 }
 
+/* PREMIUM UI UTILITIES */
+.bg-grain {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+.mesh-gradient {
+  background-color: var(--background);
+  background-image:
+    radial-gradient(at 0% 0%, color-mix(in srgb, var(--accent) 15%, transparent) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, color-mix(in srgb, var(--accent-secondary) 10%, transparent) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, color-mix(in srgb, var(--accent) 15%, transparent) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, color-mix(in srgb, var(--accent-secondary) 10%, transparent) 0px, transparent 50%);
+}
+
+.glass {
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
+}
+
+.text-gradient {
+  background: linear-gradient(to bottom right, var(--foreground), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* DEFAULT: Slate Theme (Neutral & Elegant) */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fafafa;
+  /* Very light grey */
+  --foreground: #0f172a;
+  --surface: #ffffff;
+  --border: #f1f5f9;
+
+  --accent: #475569;
+  /* Slate 600 */
+  --accent-secondary: #64748b;
+  --accent-muted: #f1f5f9;
+
+  color-scheme: light;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* BLUE: Oceanic Theme (Symmetrically Aligned) */
+:root.theme-blue {
+  --background: #f4f9ff;
+  /* Lightest Blue Mist */
+  --surface: #ebf5ff;
+  /* Tinted Blue Surface */
+  --border: #dbeafe;
+
+  --accent: #2563eb;
+  /* Professional Blue */
+  --accent-secondary: #3b82f6;
+  --accent-muted: #dbeafe;
+
+  color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* PURPLE: Royal Lavender (Dreamy & Premium) */
+:root.theme-purple {
+  --background: #fdfaff;
+  /* Soft Lavender tint */
+  --surface: #f5f0ff;
+  /* Light Lavender surface */
+  --border: #e9e2ff;
+
+  --accent: #8b5cf6;
+  /* Vivid Violet */
+  --accent-secondary: #7c3aed;
+  --accent-muted: #ede9fe;
+
+  color-scheme: light;
+}
+
+/* GREEN: Emerald Mist (Fresh & Vibrant) */
+:root.theme-green {
+  --background: #f2fff5;
+  /* Soft Emerald tint */
+  --surface: #e1fae9;
+  /* Light Emerald surface */
+  --border: #c7f0d5;
+
+  --accent: #10b981;
+  /* Vivid Emerald */
+  --accent-secondary: #059669;
+  --accent-muted: #d1fae5;
+
+  color-scheme: light;
+}
+
+/* RED: Rose Mist (Passionate & Premium) */
+:root.theme-red {
+  --background: #fff5f7;
+  /* Soft Rose Mist */
+  --surface: #ffebee;
+  /* Light Rose surface */
+  --border: #ffdde1;
+
+  --accent: #ef4444;
+  /* Vivid Red */
+  --accent-secondary: #dc2626;
+  --accent-muted: #fee2e2;
+
+  color-scheme: light;
+}
+
+/* ORANGE: Amber Sunset (Warm & Energetic) */
+:root.theme-orange {
+  --background: #fffaf5;
+  /* Soft Amber Mist */
+  --surface: #fff1e6;
+  /* Light Amber surface */
+  --border: #ffedd5;
+
+  --accent: #f97316;
+  /* Vivid Orange */
+  --accent-secondary: #ea580c;
+  --accent-muted: #ffedd5;
+
+  color-scheme: light;
+}
+
+/* YELLOW: Lemon Gold (Radiant & Premium) */
+:root.theme-yellow {
+  --background: #fffdf0;
+  /* Ultimate Lemon Mist */
+  --surface: #fefce8;
+  /* Light Lemon Surface (Yellow 50) */
+  --border: #fef9c3;
+
+  --accent: #eab308;
+  /* Vivid Yellow Gold */
+  --accent-secondary: #ca8a04;
+  --accent-muted: #fefce8;
+
+  color-scheme: light;
+}
+
+/* PINK: Petal Whisper (Soft & Premium) */
+:root.theme-pink {
+  --background: #fff0f6;
+  /* Pink 50 Mist */
+  --surface: #fce7f3;
+  /* Pink 100 Surface */
+  --border: #fbcfe8;
+  /* Pink 200 Border */
+
+  --accent: #ec4899;
+  /* Vivid Pink 600 */
+  --accent-secondary: #db2777;
+  /* Pink 700 */
+  --accent-muted: #fce7f3;
+
+  color-scheme: light;
+}
+
+/* CUSTOM: Dynamic HSL (Master Protocol) */
+:root.theme-custom {
+  --custom-hue: 220;
+  /* Mist Protocol: High-fidelity Hue Shifting & Saturation */
+  --background: hsl(calc(var(--custom-hue) + 6), 100%, 97%);
+  --surface: hsl(calc(var(--custom-hue) + 12), 70%, 96%);
+  --border: hsl(calc(var(--custom-hue) + 15), 80%, 91%);
+
+  --accent: hsl(var(--custom-hue), 85%, 60%);
+  --accent-secondary: hsl(var(--custom-hue), 90%, 50%);
+  --accent-muted: hsl(calc(var(--custom-hue) + 6), 70%, 95%);
+
+  color-scheme: light;
+}
+
+/* DEFAULT: Slate Dark */
+:root.dark {
+  --background: #020617;
+  /* Darkest Slate */
+  --foreground: #f8fafc;
+  --surface: #0f172a;
+  --border: #1e293b;
+
+  --accent: #94a3b8;
+  --accent-secondary: #475569;
+  --accent-muted: #020617;
+
+  color-scheme: dark;
+}
+
+/* BLUE: Oceanic Dark (Deepest Midnight) */
+:root.dark.theme-blue {
+  --background: #060914;
+  /* Ultimate Deep Blue */
+  --surface: #0e1428;
+  /* Darkest Navy Surface */
+  --border: #1a233d;
+
+  --accent: #60a5fa;
+  /* Bright Azure */
+  --accent-secondary: #3b82f6;
+  --accent-muted: #060914;
+
+  color-scheme: dark;
+}
+
+/* PURPLE: Deep Plum (Deeper Mysticism) */
+:root.dark.theme-purple {
+  --background: #0a0914;
+  /* Ultimate Deep Plum */
+  --surface: #141224;
+  /* Dark Plum Surface */
+  --border: #221d3a;
+
+  --accent: #c084fc;
+  /* Electric Lavender */
+  --accent-secondary: #a855f7;
+  --accent-muted: #0a0914;
+
+  color-scheme: dark;
+}
+
+/* GREEN: Deep Forest (Emerald Mystery) */
+:root.dark.theme-green {
+  --background: #050a08;
+  /* Deep Emerald Midnight */
+  --surface: #0d1713;
+  /* Forest Surface */
+  --border: #1b3129;
+
+  --accent: #34d399;
+  /* Electric Emerald */
+  --accent-secondary: #10b981;
+  --accent-muted: #050a08;
+
+  color-scheme: dark;
+}
+
+/* RED: Deep Crimson (Passionate Mystery) */
+:root.dark.theme-red {
+  --background: #0f0505;
+  /* Deep Crimson Midnight */
+  --surface: #1a0d0d;
+  /* Crimson Surface */
+  --border: #331a1a;
+
+  --accent: #f87171;
+  /* Electric Crimson/Coral */
+  --accent-secondary: #ef4444;
+  --accent-muted: #0f0505;
+
+  color-scheme: dark;
+}
+
+/* ORANGE: Deep Amber (Sunset Mystery) */
+:root.dark.theme-orange {
+  --background: #0f0a05;
+  /* Deep Amber Midnight */
+  --surface: #1a120b;
+  /* Amber Surface */
+  --border: #362417;
+
+  --accent: #fb923c;
+  /* Electric Orange */
+  --accent-secondary: #f97316;
+  --accent-muted: #0f0a05;
+
+  color-scheme: dark;
+}
+
+/* YELLOW: Deep Gold (Lemon Mystery) */
+:root.dark.theme-yellow {
+  --background: #0c0b05;
+  /* Deep Gold Midnight */
+  --surface: #1a1608;
+  /* Gold Surface */
+  --border: #3d3214;
+
+  --accent: #facc15;
+  /* Electric Gold */
+  --accent-secondary: #eab308;
+  --accent-muted: #0c0b05;
+
+  color-scheme: dark;
+}
+
+/* PINK: Deep Rose (Petal Mystery) */
+:root.dark.theme-pink {
+  --background: #0f0508;
+  /* Deep Rose Midnight */
+  --surface: #1f0a12;
+  /* Saturated Rose Surface */
+  --border: #3d1424;
+
+  --accent: #f472b6;
+  /* Electric Rose */
+  --accent-secondary: #ec4899;
+  --accent-muted: #0f0508;
+
+  color-scheme: dark;
+}
+
+/* CUSTOM: Dynamic HSL (Midnight Protocol) */
+:root.dark.theme-custom {
+  --custom-hue: 220;
+  /* Deep Midnight: Accurate Hue-Shifting */
+  --background: hsl(calc(var(--custom-hue) + 6), 40%, 4%);
+  --surface: hsl(calc(var(--custom-hue) + 12), 35%, 8%);
+  --border: hsl(calc(var(--custom-hue) + 15), 30%, 15%);
+
+  --accent: hsl(var(--custom-hue), 80%, 70%);
+  --accent-secondary: hsl(var(--custom-hue), 85%, 60%);
+  --accent-muted: hsl(calc(var(--custom-hue) + 6), 40%, 4%);
+
+  color-scheme: dark;
+}
+
+/*
+   FORCE OVERRIDES: This ensures 'Total' theme impact by forcing
+   common backgrounds and borders to follow the theme variables.
+*/
+
+/* --- BLUE THEME (LIGHT) --- */
+.theme-blue {
+
+  .bg-white,
+  .bg-zinc-50,
+  .bg-zinc-100 {
+    background-color: var(--surface) !important;
+  }
+
+  &.bg-white,
+  &.bg-zinc-50 {
+    background-color: var(--background) !important;
+  }
+
+  .border-zinc-200,
+  .border-zinc-100 {
+    border-color: var(--border) !important;
+  }
+
+  [class*="bg-zinc-50/"],
+  [class*="bg-zinc-100/"],
+  [class*="bg-white/"] {
+    background-color: color-mix(in srgb, var(--surface) 50%, transparent) !important;
+  }
+
+  [class*="bg-zinc-200/"] {
+    background-color: color-mix(in srgb, var(--accent) 15%, transparent) !important;
   }
 }
 
+/* --- PURPLE THEME (LIGHT) --- */
+.theme-purple {
+
+  .bg-white,
+  .bg-zinc-50,
+  .bg-zinc-100 {
+    background-color: var(--surface) !important;
+  }
+
+  &.bg-white,
+  &.bg-zinc-50 {
+    background-color: var(--background) !important;
+  }
+
+  .border-zinc-200,
+  .border-zinc-100 {
+    border-color: var(--border) !important;
+  }
+
+  [class*="bg-zinc-50/"],
+  [class*="bg-zinc-100/"],
+  [class*="bg-white/"] {
+    background-color: color-mix(in srgb, var(--surface) 50%, transparent) !important;
+  }
+
+  [class*="bg-zinc-200/"] {
+    background-color: color-mix(in srgb, var(--accent) 15%, transparent) !important;
+  }
+}
+
+/* --- GREEN THEME (LIGHT) --- */
+.theme-green {
+
+  .bg-white,
+  .bg-zinc-50,
+  .bg-zinc-100 {
+    background-color: var(--surface) !important;
+  }
+
+  &.bg-white,
+  &.bg-zinc-50 {
+    background-color: var(--background) !important;
+  }
+
+  .border-zinc-200,
+  .border-zinc-100 {
+    border-color: var(--border) !important;
+  }
+
+  [class*="bg-zinc-50/"],
+  [class*="bg-zinc-100/"],
+  [class*="bg-white/"] {
+    background-color: color-mix(in srgb, var(--surface) 50%, transparent) !important;
+  }
+
+  [class*="bg-zinc-200/"] {
+    background-color: color-mix(in srgb, var(--accent) 15%, transparent) !important;
+  }
+}
+
+/* --- RED THEME (LIGHT) --- */
+.theme-red {
+
+  .bg-white,
+  .bg-zinc-50,
+  .bg-zinc-100 {
+    background-color: var(--surface) !important;
+  }
+
+  &.bg-white,
+  &.bg-zinc-50 {
+    background-color: var(--background) !important;
+  }
+
+  .border-zinc-200,
+  .border-zinc-100 {
+    border-color: var(--border) !important;
+  }
+
+  [class*="bg-zinc-50/"],
+  [class*="bg-zinc-100/"],
+  [class*="bg-white/"] {
+    background-color: color-mix(in srgb, var(--surface) 50%, transparent) !important;
+  }
+
+  [class*="bg-zinc-200/"] {
+    background-color: color-mix(in srgb, var(--accent) 15%, transparent) !important;
+  }
+}
+
+/* --- ORANGE THEME (LIGHT) --- */
+.theme-orange {
+
+  .bg-white,
+  .bg-zinc-50,
+  .bg-zinc-100 {
+    background-color: var(--surface) !important;
+  }
+
+  &.bg-white,
+  &.bg-zinc-50 {
+    background-color: var(--background) !important;
+  }
+
+  .border-zinc-200,
+  .border-zinc-100 {
+    border-color: var(--border) !important;
+  }
+
+  [class*="bg-zinc-50/"],
+  [class*="bg-zinc-100/"],
+  [class*="bg-white/"] {
+    background-color: color-mix(in srgb, var(--surface) 50%, transparent) !important;
+  }
+
+  [class*="bg-zinc-200/"] {
+    background-color: color-mix(in srgb, var(--accent) 15%, transparent) !important;
+  }
+}
+
+/* --- YELLOW THEME (LIGHT) --- */
+.theme-yellow {
+
+  .bg-white,
+  .bg-zinc-50,
+  .bg-zinc-100 {
+    background-color: var(--surface) !important;
+  }
+
+  &.bg-white,
+  &.bg-zinc-50 {
+    background-color: var(--background) !important;
+  }
+
+  .border-zinc-200,
+  .border-zinc-100 {
+    border-color: var(--border) !important;
+  }
+
+  [class*="bg-zinc-50/"],
+  [class*="bg-zinc-100/"],
+  [class*="bg-white/"] {
+    background-color: color-mix(in srgb, var(--surface) 50%, transparent) !important;
+  }
+
+  [class*="bg-zinc-200/"] {
+    background-color: color-mix(in srgb, var(--accent) 15%, transparent) !important;
+  }
+}
+
+/* --- PINK THEME (LIGHT) --- */
+.theme-pink {
+
+  .bg-white,
+  .bg-zinc-50,
+  .bg-zinc-100 {
+    background-color: var(--surface) !important;
+  }
+
+  &.bg-white,
+  &.bg-zinc-50 {
+    background-color: var(--background) !important;
+  }
+
+  .border-zinc-200,
+  .border-zinc-100 {
+    border-color: var(--border) !important;
+  }
+
+  [class*="bg-zinc-50/"],
+  [class*="bg-zinc-100/"],
+  [class*="bg-white/"] {
+    background-color: color-mix(in srgb, var(--surface) 50%, transparent) !important;
+  }
+
+  [class*="bg-zinc-200/"] {
+    background-color: color-mix(in srgb, var(--accent) 15%, transparent) !important;
+  }
+}
+
+/* --- CUSTOM THEME (LIGHT) --- */
+.theme-custom {
+
+  .bg-white,
+  .bg-zinc-50,
+  .bg-zinc-100 {
+    background-color: var(--surface) !important;
+  }
+
+  &.bg-white,
+  &.bg-zinc-50 {
+    background-color: var(--background) !important;
+  }
+
+  .border-zinc-200,
+  .border-zinc-100 {
+    border-color: var(--border) !important;
+  }
+
+  [class*="bg-zinc-50/"],
+  [class*="bg-zinc-100/"],
+  [class*="bg-white/"] {
+    background-color: color-mix(in srgb, var(--surface) 50%, transparent) !important;
+  }
+
+  [class*="bg-zinc-200/"] {
+    background-color: color-mix(in srgb, var(--accent) 15%, transparent) !important;
+  }
+}
+
+/* --- BLUE THEME (DARK) --- */
+.dark.theme-blue {
+
+  .bg-zinc-950,
+  .bg-zinc-900,
+  .bg-zinc-800 {
+    background-color: var(--surface) !important;
+  }
+
+  &.bg-zinc-950,
+  .min-h-screen.bg-zinc-950 {
+    background-color: var(--background) !important;
+  }
+
+  .border-zinc-800,
+  .border-zinc-700 {
+    border-color: var(--border) !important;
+  }
+
+  [class*="bg-zinc-900/"],
+  [class*="bg-zinc-950/"],
+  [class*="bg-zinc-800/"] {
+    background-color: color-mix(in srgb, var(--surface) 50%, transparent) !important;
+  }
+}
+
+/* --- PURPLE THEME (DARK) --- */
+.dark.theme-purple {
+
+  .bg-zinc-950,
+  .bg-zinc-900,
+  .bg-zinc-800 {
+    background-color: var(--surface) !important;
+  }
+
+  &.bg-zinc-950,
+  .min-h-screen.bg-zinc-950 {
+    background-color: var(--background) !important;
+  }
+
+  .border-zinc-800,
+  .border-zinc-700 {
+    border-color: var(--border) !important;
+  }
+
+  [class*="bg-zinc-900/"],
+  [class*="bg-zinc-950/"],
+  [class*="bg-zinc-800/"] {
+    background-color: color-mix(in srgb, var(--surface) 50%, transparent) !important;
+  }
+}
+
+/* --- GREEN THEME (DARK) --- */
+.dark.theme-green {
+
+  .bg-zinc-950,
+  .bg-zinc-900,
+  .bg-zinc-800 {
+    background-color: var(--surface) !important;
+  }
+
+  &.bg-zinc-950,
+  .min-h-screen.bg-zinc-950 {
+    background-color: var(--background) !important;
+  }
+
+  .border-zinc-800,
+  .border-zinc-700 {
+    border-color: var(--border) !important;
+  }
+
+  [class*="bg-zinc-900/"],
+  [class*="bg-zinc-950/"],
+  [class*="bg-zinc-800/"] {
+    background-color: color-mix(in srgb, var(--surface) 50%, transparent) !important;
+  }
+}
+
+/* --- RED THEME (DARK) --- */
+.dark.theme-red {
+
+  .bg-zinc-950,
+  .bg-zinc-900,
+  .bg-zinc-800 {
+    background-color: var(--surface) !important;
+  }
+
+  &.bg-zinc-950,
+  .min-h-screen.bg-zinc-950 {
+    background-color: var(--background) !important;
+  }
+
+  .border-zinc-800,
+  .border-zinc-700 {
+    border-color: var(--border) !important;
+  }
+
+  [class*="bg-zinc-900/"],
+  [class*="bg-zinc-950/"],
+  [class*="bg-zinc-800/"] {
+    background-color: color-mix(in srgb, var(--surface) 50%, transparent) !important;
+  }
+}
+
+/* --- ORANGE THEME (DARK) --- */
+.dark.theme-orange {
+
+  .bg-zinc-950,
+  .bg-zinc-900,
+  .bg-zinc-800 {
+    background-color: var(--surface) !important;
+  }
+
+  &.bg-zinc-950,
+  .min-h-screen.bg-zinc-950 {
+    background-color: var(--background) !important;
+  }
+
+  .border-zinc-800,
+  .border-zinc-700 {
+    border-color: var(--border) !important;
+  }
+
+  [class*="bg-zinc-900/"],
+  [class*="bg-zinc-950/"],
+  [class*="bg-zinc-800/"] {
+    background-color: color-mix(in srgb, var(--surface) 50%, transparent) !important;
+  }
+}
+
+/* --- YELLOW THEME (DARK) --- */
+.dark.theme-yellow {
+
+  .bg-zinc-950,
+  .bg-zinc-900,
+  .bg-zinc-800 {
+    background-color: var(--surface) !important;
+  }
+
+  &.bg-zinc-950,
+  .min-h-screen.bg-zinc-950 {
+    background-color: var(--background) !important;
+  }
+
+  .border-zinc-800,
+  .border-zinc-700 {
+    border-color: var(--border) !important;
+  }
+
+  [class*="bg-zinc-900/"],
+  [class*="bg-zinc-950/"],
+  [class*="bg-zinc-800/"] {
+    background-color: color-mix(in srgb, var(--surface) 50%, transparent) !important;
+  }
+}
+
+/* --- PINK THEME (DARK) --- */
+.dark.theme-pink {
+
+  .bg-zinc-950,
+  .bg-zinc-900,
+  .bg-zinc-800 {
+    background-color: var(--surface) !important;
+  }
+
+  &.bg-zinc-950,
+  .min-h-screen.bg-zinc-950 {
+    background-color: var(--background) !important;
+  }
+
+  .border-zinc-800,
+  .border-zinc-700 {
+    border-color: var(--border) !important;
+  }
+
+  [class*="bg-zinc-900/"],
+  [class*="bg-zinc-950/"],
+  [class*="bg-zinc-800/"] {
+    background-color: color-mix(in srgb, var(--surface) 50%, transparent) !important;
+  }
+}
+
+/* --- CUSTOM THEME (DARK) --- */
+.dark.theme-custom {
+
+  .bg-zinc-950,
+  .bg-zinc-900,
+  .bg-zinc-800 {
+    background-color: var(--surface) !important;
+  }
+
+  &.bg-zinc-950,
+  .min-h-screen.bg-zinc-950 {
+    background-color: var(--background) !important;
+  }
+
+  .border-zinc-800,
+  .border-zinc-700 {
+    border-color: var(--border) !important;
+  }
+
+  [class*="bg-zinc-900/"],
+  [class*="bg-zinc-950/"],
+  [class*="bg-zinc-800/"] {
+    background-color: color-mix(in srgb, var(--surface) 50%, transparent) !important;
+  }
+}
+
+/* Structural resets */
+:root.light {
+  color-scheme: light;
+}
+
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Prevent pull-to-refresh on mobile for an app-like feel */
   overscroll-behavior-y: none;
 }
 
@@ -43,7 +797,32 @@ body {
 /* Hide scrollbar for IE, Edge and Firefox */
 .no-scrollbar {
   -ms-overflow-style: none;
-  /* IE and Edge */
   scrollbar-width: none;
-  /* Firefox */
+}
+
+@layer utilities {
+  .font-outfit {
+    font-family: var(--font-outfit), sans-serif;
+  }
+
+  .font-playfair {
+    font-family: var(--font-playfair), serif;
+  }
+
+  .mask-reveal {
+    mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+    mask-size: 100% 200%;
+    mask-position: 0 0;
+  }
+
+  .glass-elite {
+    @apply glass border-t border-l border-white/40 dark:border-white/10 shadow-[0_25px_50px_-12px_rgba(0, 0, 0, 0.15)];
+  }
+}
+
+:root {
+  --mouse-x: 50%;
+  --mouse-y: 50%;
+  --accent-rgb: 59, 130, 246;
+  /* Default blue, will be overridden by theme if needed */
 }

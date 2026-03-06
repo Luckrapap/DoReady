@@ -69,13 +69,16 @@ export default function ProfileHeader({ profile, email }: ProfileHeaderProps) {
     }
 
     return (
-        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-10 shadow-sm mb-8 transition-all">
+        <div className="border rounded-3xl p-10 shadow-sm mb-8 transition-colors duration-500"
+            style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
+        >
             <div className="flex flex-col md:flex-row items-center gap-10">
                 {/* Avatar Section */}
                 <div className="relative group">
                     <div
                         onClick={() => fileInputRef.current?.click()}
-                        className="h-40 w-40 bg-zinc-100 dark:bg-zinc-800 rounded-3xl flex items-center justify-center text-zinc-400 dark:text-zinc-500 overflow-hidden cursor-pointer border-4 border-transparent group-hover:border-zinc-200 dark:group-hover:border-zinc-700 transition-all shadow-lg"
+                        className="h-40 w-40 rounded-3xl flex items-center justify-center text-zinc-400 dark:text-zinc-500 overflow-hidden cursor-pointer border-4 border-transparent transition-all shadow-lg"
+                        style={{ backgroundColor: 'var(--border)' }}
                     >
                         {profile?.avatar_url ? (
                             <Image
@@ -123,14 +126,16 @@ export default function ProfileHeader({ profile, email }: ProfileHeaderProps) {
                                         <input
                                             value={newName}
                                             onChange={(e) => setNewName(e.target.value)}
-                                            className="text-3xl font-bold bg-transparent border-b-2 border-zinc-900 dark:border-zinc-50 outline-none text-zinc-900 dark:text-zinc-50 min-w-[200px]"
+                                            className="text-3xl font-bold bg-transparent border-b-2 outline-none text-zinc-900 dark:text-zinc-50 min-w-[200px]"
+                                            style={{ borderColor: 'var(--accent)' }}
                                             autoFocus
                                             onKeyDown={(e) => e.key === 'Enter' && handleNameSave()}
                                         />
                                         <button
                                             onClick={handleNameSave}
                                             disabled={isSavingName}
-                                            className="p-2 bg-zinc-900 dark:bg-zinc-50 text-white dark:text-black rounded-full hover:scale-105 transition-transform disabled:opacity-50"
+                                            className="p-2 text-white rounded-full hover:scale-105 transition-transform disabled:opacity-50"
+                                            style={{ backgroundColor: 'var(--accent)' }}
                                         >
                                             {isSavingName ? <Loader2 size={20} className="animate-spin" /> : <Check size={20} />}
                                         </button>
@@ -165,103 +170,119 @@ export default function ProfileHeader({ profile, email }: ProfileHeaderProps) {
                     </div>
 
                     <div className="mt-8 flex flex-wrap justify-center md:justify-start gap-4">
-                        <div className="px-5 py-2.5 bg-zinc-100 dark:bg-zinc-800 rounded-2xl text-xs font-bold uppercase tracking-wider text-zinc-500 shadow-sm border border-zinc-200/50 dark:border-zinc-700/50">
-                            Foco Core Nivel 7
+                        <div className="mt-8 flex flex-wrap justify-center md:justify-start gap-4">
+                            <div className="px-5 py-2.5 rounded-2xl text-xs font-bold uppercase tracking-wider text-zinc-500 shadow-sm border transition-colors duration-500"
+                                style={{ backgroundColor: 'var(--border)', borderColor: 'color-mix(in srgb, var(--border) 50%, transparent)' }}
+                            >
+                                Foco Core Nivel 7
+                            </div>
+
+                            {/* Gender Segment */}
+                            <AnimatePresence mode="wait">
+                                {isEditingGender ? (
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        exit={{ opacity: 0, scale: 0.9 }}
+                                        className="flex items-center gap-3 p-2 pl-4 rounded-2xl border transition-colors duration-500"
+                                        style={{
+                                            backgroundColor: 'color-mix(in srgb, var(--surface) 90%, var(--accent))',
+                                            borderColor: 'var(--border)'
+                                        }}
+                                    >
+                                        <select
+                                            value={tempGender}
+                                            onChange={(e) => setTempGender(e.target.value)}
+                                            className="bg-transparent text-xs font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 outline-none"
+                                            autoFocus
+                                        >
+                                            <option value="">Género</option>
+                                            <option value="male">Hombre</option>
+                                            <option value="female">Mujer</option>
+                                            <option value="other">Otro</option>
+                                        </select>
+                                        <button
+                                            onClick={handleGenderSave}
+                                            disabled={isSavingName}
+                                            className="p-1.5 text-white rounded-lg hover:scale-105 transition-all disabled:opacity-50"
+                                            style={{ backgroundColor: 'var(--accent)' }}
+                                        >
+                                            {isSavingName ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
+                                        </button>
+                                        <button
+                                            onClick={() => setIsEditingGender(false)}
+                                            className="p-1.5 text-zinc-400 hover:text-red-500"
+                                        >
+                                            <X size={14} />
+                                        </button>
+                                    </motion.div>
+                                ) : (
+                                    <button
+                                        onClick={() => setIsEditingGender(true)}
+                                        className="px-5 py-2.5 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded-2xl text-xs font-bold uppercase tracking-wider text-zinc-500 shadow-sm border transition-all duration-500 flex items-center gap-2 group"
+                                        style={{ backgroundColor: 'var(--border)', borderColor: 'color-mix(in srgb, var(--border) 50%, transparent)' }}
+                                    >
+                                        {profile?.gender ? (
+                                            profile.gender === 'male' ? 'Hombre' : profile.gender === 'female' ? 'Mujer' : 'Otro'
+                                        ) : (
+                                            'Añadir Género'
+                                        )}
+                                        <Pencil size={10} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    </button>
+                                )}
+                            </AnimatePresence>
+
+                            {/* Birth Date Segment */}
+                            <AnimatePresence mode="wait">
+                                {isEditingBirthDate ? (
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        exit={{ opacity: 0, scale: 0.9 }}
+                                        className="flex items-center gap-3 p-2 pl-4 rounded-2xl border transition-colors duration-500"
+                                        style={{
+                                            backgroundColor: 'color-mix(in srgb, var(--surface) 90%, var(--accent))',
+                                            borderColor: 'var(--border)'
+                                        }}
+                                    >
+                                        <input
+                                            type="date"
+                                            value={tempBirthDate}
+                                            onChange={(e) => setTempBirthDate(e.target.value)}
+                                            className="bg-transparent text-xs font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 outline-none"
+                                            autoFocus
+                                        />
+                                        <button
+                                            onClick={handleBirthDateSave}
+                                            disabled={isSavingName}
+                                            className="p-1.5 text-white rounded-lg hover:scale-105 transition-all disabled:opacity-50"
+                                            style={{ backgroundColor: 'var(--accent)' }}
+                                        >
+                                            {isSavingName ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
+                                        </button>
+                                        <button
+                                            onClick={() => setIsEditingBirthDate(false)}
+                                            className="p-1.5 text-zinc-400 hover:text-red-500"
+                                        >
+                                            <X size={14} />
+                                        </button>
+                                    </motion.div>
+                                ) : (
+                                    <button
+                                        onClick={() => setIsEditingBirthDate(true)}
+                                        className="px-5 py-2.5 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded-2xl text-xs font-bold uppercase tracking-wider text-zinc-500 shadow-sm border transition-all duration-500 flex items-center gap-2 group"
+                                        style={{ backgroundColor: 'var(--border)', borderColor: 'color-mix(in srgb, var(--border) 50%, transparent)' }}
+                                    >
+                                        {profile?.birth_date ? (
+                                            new Date(profile.birth_date).toLocaleDateString()
+                                        ) : (
+                                            'Añadir Nacimiento'
+                                        )}
+                                        <Pencil size={10} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    </button>
+                                )}
+                            </AnimatePresence>
                         </div>
-
-                        {/* Gender Segment */}
-                        <AnimatePresence mode="wait">
-                            {isEditingGender ? (
-                                <motion.div
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.9 }}
-                                    className="flex items-center gap-3 bg-zinc-50 dark:bg-zinc-950 p-2 pl-4 rounded-2xl border border-zinc-200 dark:border-zinc-800"
-                                >
-                                    <select
-                                        value={tempGender}
-                                        onChange={(e) => setTempGender(e.target.value)}
-                                        className="bg-transparent text-xs font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 outline-none"
-                                        autoFocus
-                                    >
-                                        <option value="">Género</option>
-                                        <option value="male">Hombre</option>
-                                        <option value="female">Mujer</option>
-                                        <option value="other">Otro</option>
-                                    </select>
-                                    <button
-                                        onClick={handleGenderSave}
-                                        disabled={isSavingName}
-                                        className="p-1.5 bg-zinc-900 dark:bg-zinc-50 text-white dark:text-black rounded-lg hover:scale-105 transition-all disabled:opacity-50"
-                                    >
-                                        {isSavingName ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
-                                    </button>
-                                    <button
-                                        onClick={() => setIsEditingGender(false)}
-                                        className="p-1.5 text-zinc-400 hover:text-red-500"
-                                    >
-                                        <X size={14} />
-                                    </button>
-                                </motion.div>
-                            ) : (
-                                <button
-                                    onClick={() => setIsEditingGender(true)}
-                                    className="px-5 py-2.5 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded-2xl text-xs font-bold uppercase tracking-wider text-zinc-500 shadow-sm border border-zinc-200/50 dark:border-zinc-700/50 transition-all flex items-center gap-2 group"
-                                >
-                                    {profile?.gender ? (
-                                        profile.gender === 'male' ? 'Hombre' : profile.gender === 'female' ? 'Mujer' : 'Otro'
-                                    ) : (
-                                        'Añadir Género'
-                                    )}
-                                    <Pencil size={10} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-                                </button>
-                            )}
-                        </AnimatePresence>
-
-                        {/* Birth Date Segment */}
-                        <AnimatePresence mode="wait">
-                            {isEditingBirthDate ? (
-                                <motion.div
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.9 }}
-                                    className="flex items-center gap-3 bg-zinc-50 dark:bg-zinc-950 p-2 pl-4 rounded-2xl border border-zinc-200 dark:border-zinc-800"
-                                >
-                                    <input
-                                        type="date"
-                                        value={tempBirthDate}
-                                        onChange={(e) => setTempBirthDate(e.target.value)}
-                                        className="bg-transparent text-xs font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 outline-none"
-                                        autoFocus
-                                    />
-                                    <button
-                                        onClick={handleBirthDateSave}
-                                        disabled={isSavingName}
-                                        className="p-1.5 bg-zinc-900 dark:bg-zinc-50 text-white dark:text-black rounded-lg hover:scale-105 transition-all disabled:opacity-50"
-                                    >
-                                        {isSavingName ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
-                                    </button>
-                                    <button
-                                        onClick={() => setIsEditingBirthDate(false)}
-                                        className="p-1.5 text-zinc-400 hover:text-red-500"
-                                    >
-                                        <X size={14} />
-                                    </button>
-                                </motion.div>
-                            ) : (
-                                <button
-                                    onClick={() => setIsEditingBirthDate(true)}
-                                    className="px-5 py-2.5 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded-2xl text-xs font-bold uppercase tracking-wider text-zinc-500 shadow-sm border border-zinc-200/50 dark:border-zinc-700/50 transition-all flex items-center gap-2 group"
-                                >
-                                    {profile?.birth_date ? (
-                                        new Date(profile.birth_date).toLocaleDateString()
-                                    ) : (
-                                        'Añadir Nacimiento'
-                                    )}
-                                    <Pencil size={10} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-                                </button>
-                            )}
-                        </AnimatePresence>
                     </div>
                 </div>
             </div>
