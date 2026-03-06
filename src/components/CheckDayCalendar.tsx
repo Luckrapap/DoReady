@@ -24,6 +24,9 @@ export default function CheckDayCalendar() {
     const [checkMap, setCheckMap] = useState<Record<string, CheckDayStatus>>({})
     const [isLoading, setIsLoading] = useState(true)
 
+    // Long press logic
+    const [longPressTimer, setLongPressTimer] = useState<NodeJS.Timeout | null>(null)
+
     const monthStart = startOfMonth(currentDate)
     const monthEnd = endOfMonth(monthStart)
     const startDate = startOfWeek(monthStart, { weekStartsOn: 1 })
@@ -91,6 +94,22 @@ export default function CheckDayCalendar() {
             alert(`Error al guardar: ${result.error}`)
             // Revert on failure
             setCheckMap(prev => ({ ...prev, [dateStr]: currentStatus }))
+        }
+    }
+
+    const handleTouchStart = (day: Date, e: React.TouchEvent) => {
+        const timer = setTimeout(() => {
+            // Trigger right-click behavior (delete) after 500ms
+            handleDayInteraction(day, false, e as unknown as React.MouseEvent);
+            if (navigator.vibrate) navigator.vibrate(50); // Haptic feedback if supported
+        }, 500);
+        setLongPressTimer(timer);
+    }
+
+    const handleTouchEndOrMove = () => {
+        if (longPressTimer) {
+            clearTimeout(longPressTimer);
+            setLongPressTimer(null);
         }
     }
 
@@ -268,6 +287,10 @@ export default function CheckDayCalendar() {
                             key={idx}
                             onContextMenu={(e) => handleDayInteraction(day, false, e)}
                             onClick={(e) => handleDayInteraction(day, true, e)}
+                            onTouchStart={(e) => handleTouchStart(day, e)}
+                            onTouchEnd={handleTouchEndOrMove}
+                            onTouchMove={handleTouchEndOrMove}
+                            onTouchCancel={handleTouchEndOrMove}
                             className={cn(
                                 "group relative h-14 md:h-20 border rounded-xl flex items-center justify-center cursor-pointer transition-all hover:shadow-sm duration-500",
                                 !inCurrentMonth && "opacity-20 pointer-events-none",
@@ -334,7 +357,7 @@ export default function CheckDayCalendar() {
                     )}
                 </div>
                 <div className="flex items-center gap-2">
-                    <span className="px-1 border border-zinc-300 dark:border-zinc-700 rounded">Derecho</span>
+                    <span className="px-1 border border-zinc-300 dark:border-zinc-700 rounded whitespace-nowrap">Der. / Mantener</span>
                     <span>Eliminar</span>
                 </div>
             </div>

@@ -65,7 +65,7 @@ export default function BrainDump({ initialIdeas }: Props) {
     }
 
     return (
-        <div className="w-full max-w-2xl mx-auto px-4 py-8">
+        <div className="w-full max-w-2xl mx-auto px-4 py-8 pb-28">
             {/* Header */}
             <div className="flex flex-col items-center mb-12 text-center">
                 <div className="w-16 h-16 rounded-[1.5rem] flex items-center justify-center mb-6 shadow-sm transition-colors duration-500"

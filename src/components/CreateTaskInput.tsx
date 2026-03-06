@@ -23,7 +23,7 @@ export default function CreateTaskInput({ dateStr }: { dateStr: string }) {
     return (
         <form
             onSubmit={handleSubmit}
-            className="flex items-center gap-3 p-2 border rounded-xl shadow-sm transition-all focus-within:ring-2"
+            className="flex items-center gap-3 p-3 md:p-2 border rounded-xl shadow-sm transition-all focus-within:ring-2"
             style={{
                 backgroundColor: 'var(--surface)',
                 borderColor: 'var(--border)',

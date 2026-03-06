@@ -19,7 +19,7 @@ export default function AppNavigation() {
     ]
 
     const profileLink = { name: 'Profile', href: '/profile', icon: User }
-    const settingsLink = { name: 'Configuración', href: '/settings', icon: Settings }
+    const settingsLink = { name: 'Configuration', href: '/settings', icon: Settings }
 
     return (
         <>
@@ -100,7 +100,7 @@ export default function AppNavigation() {
                 className="md:hidden fixed bottom-0 left-0 right-0 border-t backdrop-blur-md pb-safe z-50 transition-colors duration-500"
                 style={{ backgroundColor: 'color-mix(in srgb, var(--surface) 80%, transparent)', borderColor: 'var(--border)' }}
             >
-                <div className="flex justify-around items-center h-20 px-2 overflow-x-auto no-scrollbar">
+                <div className="flex justify-start md:justify-center items-center h-20 px-4 gap-2 overflow-x-auto no-scrollbar touch-pan-x">
                     {[...mainLinks, settingsLink, profileLink].map((link) => {
                         const isActive = pathname === link.href
                         return (
@@ -108,7 +108,7 @@ export default function AppNavigation() {
                                 key={link.name}
                                 href={link.href}
                                 className={cn(
-                                    "flex flex-col items-center justify-center min-w-[64px] h-full gap-1.5 transition-all relative",
+                                    "flex flex-col items-center justify-center min-w-[72px] h-full gap-1.5 transition-all relative shrink-0",
                                     isActive ? "text-zinc-900 dark:text-zinc-100" : "text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
                                 )}
                             >
