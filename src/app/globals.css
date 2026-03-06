@@ -816,7 +816,10 @@ body {
   }
 
   .glass-elite {
-    @apply glass border-t border-l border-white/40 dark:border-white/10 shadow-[0_25px_50px_-12px_rgba(0, 0, 0, 0.15)];
+    background: color-mix(in srgb, var(--surface) 70%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    @apply border-t border-l border-white/40 dark:border-white/10 shadow-[0_25px_50px_-12px_rgba(0, 0, 0, 0.15)];
   }
 }
 
