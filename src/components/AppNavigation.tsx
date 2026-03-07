@@ -55,8 +55,9 @@ export default function AppNavigation() {
                                 {isActive && (
                                     <motion.div
                                         layoutId="nav-active-desktop"
-                                        className="absolute left-0 w-1 h-6 rounded-r-full"
+                                        className="absolute left-0 w-1.5 h-8 rounded-r-full shadow-[0_0_10px_var(--accent)]"
                                         style={{ backgroundColor: 'var(--accent)' }}
+                                        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                                     />
                                 )}
                             </Link>
@@ -84,8 +85,9 @@ export default function AppNavigation() {
                                     {isActive && (
                                         <motion.div
                                             layoutId="nav-active-desktop-bottom"
-                                            className="absolute left-0 w-1 h-6 rounded-r-full"
+                                            className="absolute left-0 w-1.5 h-8 rounded-r-full shadow-[0_0_10px_var(--accent)]"
                                             style={{ backgroundColor: 'var(--accent)' }}
+                                            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                                         />
                                     )}
                                 </Link>

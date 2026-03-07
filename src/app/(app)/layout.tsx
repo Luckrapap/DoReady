@@ -1,5 +1,6 @@
 import AppNavigation from "@/components/AppNavigation";
 import AICoach from "@/components/AICoach";
+import PageTransition from "@/components/PageTransition";
 
 export default function AppLayout({
     children,
@@ -13,7 +14,9 @@ export default function AppLayout({
 
             {/* Main content area */}
             <div className="flex-1 overflow-y-auto pb-20 md:pb-0">
-                {children}
+                <PageTransition>
+                    {children}
+                </PageTransition>
             </div>
 
             {/* AI Assistant FAB and Chat */}

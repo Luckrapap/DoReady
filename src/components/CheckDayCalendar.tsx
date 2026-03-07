@@ -276,15 +276,32 @@ export default function CheckDayCalendar() {
             </div>
 
             {/* Calendar Grid */}
-            <div className={`grid grid-cols-7 gap-2 transition-opacity duration-300 ${isLoading ? 'opacity-50' : 'opacity-100'}`}>
+            <motion.div
+                variants={{
+                    hidden: { opacity: 0 },
+                    show: {
+                        opacity: 1,
+                        transition: {
+                            staggerChildren: 0.015
+                        }
+                    }
+                }}
+                initial="hidden"
+                animate="show"
+                className={`grid grid-cols-7 gap-2 transition-opacity duration-300 ${isLoading ? 'opacity-50' : 'opacity-100'}`}
+            >
                 {days.map((day, idx) => {
                     const dateStr = format(day, 'yyyy-MM-dd')
                     const status = checkMap[dateStr]
                     const inCurrentMonth = isSameMonth(day, monthStart)
 
                     return (
-                        <div
+                        <motion.div
                             key={idx}
+                            variants={{
+                                hidden: { opacity: 0, scale: 0.9 },
+                                show: { opacity: 1, scale: 1 }
+                            }}
                             onContextMenu={(e) => handleDayInteraction(day, false, e)}
                             onClick={(e) => handleDayInteraction(day, true, e)}
                             onTouchStart={(e) => handleTouchStart(day, e)}
@@ -331,10 +348,10 @@ export default function CheckDayCalendar() {
                             ) : (
                                 status && <MoodIcon level={status as string} />
                             )}
-                        </div>
+                        </motion.div>
                     )
                 })}
-            </div>
+            </motion.div>
 
             {/* Helper text */}
             <div className="mt-6 flex flex-col md:flex-row items-center justify-center gap-6 text-[10px] font-bold text-zinc-400 uppercase tracking-widest text-center">
@@ -361,6 +378,6 @@ export default function CheckDayCalendar() {
                     <span>Eliminar</span>
                 </div>
             </div>
-        </div >
+        </div>
     )
 }

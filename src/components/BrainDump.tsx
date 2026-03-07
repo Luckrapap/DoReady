@@ -1,60 +1,68 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useOptimistic, useTransition } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Trash2, Plus, CornerDownLeft, Brain } from 'lucide-react'
-import { addIdea, deleteIdea, BrainDumpIdea } from '@/app/actions/braindump'
+import { addIdea, deleteIdea, type BrainDumpIdea } from '@/app/actions/braindump'
 import { cn } from '@/utils/utils'
+import { toast } from 'sonner'
 
 interface Props {
     initialIdeas: BrainDumpIdea[]
 }
 
 export default function BrainDump({ initialIdeas }: Props) {
-    const [ideas, setIdeas] = useState<BrainDumpIdea[]>(initialIdeas)
+    const [optimisticIdeas, updateOptimisticIdeas] = useOptimistic(
+        initialIdeas,
+        (state, action: { type: 'add' | 'delete', payload: any }) => {
+            if (action.type === 'add') {
+                return [action.payload, ...state]
+            }
+            if (action.type === 'delete') {
+                return state.filter(i => i.id !== action.payload)
+            }
+            return state
+        }
+    )
+
+    const [isPending, startTransition] = useTransition()
     const [input, setInput] = useState('')
-    const [isAdding, setIsAdding] = useState(false)
     const inputRef = useRef<HTMLTextAreaElement>(null)
 
     const handleAddIdea = async () => {
-        if (!input.trim() || isAdding) return
+        if (!input.trim() || isPending) return
 
-        setIsAdding(true)
-        const originalIdeas = [...ideas]
-
-        // Optimistic Update
-        const tempId = Math.random().toString()
-        const tempIdea: BrainDumpIdea = {
-            id: tempId,
-            content: input,
-            created_at: new Date().toISOString()
-        }
-        setIdeas([tempIdea, ...ideas])
+        const content = input.trim()
         setInput('')
 
-        try {
-            const newIdea = await addIdea(input)
-            setIdeas(current =>
-                current.map(idea => idea.id === tempId ? newIdea : idea)
-            )
-        } catch (error) {
-            setIdeas(originalIdeas)
-            alert('Error al guardar la idea. Inténtalo de nuevo.')
-        } finally {
-            setIsAdding(false)
-        }
+        startTransition(async () => {
+            updateOptimisticIdeas({
+                type: 'add',
+                payload: {
+                    id: Math.random().toString(),
+                    content,
+                    created_at: new Date().toISOString()
+                }
+            })
+
+            try {
+                await addIdea(content)
+            } catch (error) {
+                toast.error('Error al guardar la idea. Inténtalo de nuevo.')
+                setInput(content)
+            }
+        })
     }
 
     const handleDelete = async (id: string) => {
-        const originalIdeas = [...ideas]
-        setIdeas(ideas.filter(i => i.id !== id))
-
-        try {
-            await deleteIdea(id)
-        } catch (error) {
-            setIdeas(originalIdeas)
-            alert('Error al eliminar la idea.')
-        }
+        startTransition(async () => {
+            updateOptimisticIdeas({ type: 'delete', payload: id })
+            try {
+                await deleteIdea(id)
+            } catch (error) {
+                toast.error('Error al eliminar la idea.')
+            }
+        })
     }
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -102,27 +110,29 @@ export default function BrainDump({ initialIdeas }: Props) {
                         <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest flex items-center gap-1">
                             <CornerDownLeft size={10} /> Enter para enterrar
                         </span>
-                        <button
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={handleAddIdea}
-                            disabled={!input.trim() || isAdding}
-                            className="flex items-center gap-2 px-6 py-2 text-white rounded-full text-xs font-bold hover:scale-105 active:scale-95 transition-all disabled:opacity-30 shadow-lg"
+                            disabled={!input.trim() || isPending}
+                            className="flex items-center gap-2 px-6 py-2 text-white rounded-full text-xs font-bold hover:shadow-lg transition-all disabled:opacity-30 shadow-md"
                             style={{ backgroundColor: 'var(--accent)' }}
                         >
                             <Plus size={14} />
                             Capturar
-                        </button>
+                        </motion.button>
                     </div>
                 </div>
             </div>
 
             {/* Ideas List */}
             <div className="space-y-4">
-                <AnimatePresence mode="popLayout">
-                    {ideas.map((idea) => (
+                <AnimatePresence mode="popLayout" initial={false}>
+                    {optimisticIdeas.map((idea) => (
                         <motion.div
                             key={idea.id}
                             layout
-                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                            initial={{ opacity: 0, y: 15, scale: 0.98 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
                             className="group relative border rounded-2xl p-5 transition-all hover:shadow-md duration-500"
@@ -148,15 +158,15 @@ export default function BrainDump({ initialIdeas }: Props) {
                         </motion.div>
                     ))}
                 </AnimatePresence>
+            </div>
 
-                {ideas.length === 0 && (
+                {optimisticIdeas.length === 0 && (
                     <div className="text-center py-20">
                         <div className="text-zinc-300 dark:text-zinc-800 text-sm font-medium italic">
                             El cementerio está vacío. Tu mente debería estarlo también.
                         </div>
                     </div>
                 )}
-            </div>
         </div>
     )
 }

@@ -37,9 +37,8 @@ export default function DailyProgress({ completed, total }: DailyProgressProps) 
                         style={{ stroke: 'var(--accent)' }}
                         strokeWidth="3.5"
                         strokeDasharray="100"
-                        initial={{ strokeDashoffset: 100 }}
                         animate={{ strokeDashoffset: 100 - percentage }}
-                        transition={{ duration: 0.8, ease: "easeOut" }}
+                        transition={{ type: "spring", stiffness: 60, damping: 15 }}
                         strokeLinecap="round"
                     />
                 </svg>

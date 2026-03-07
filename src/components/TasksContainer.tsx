@@ -42,11 +42,12 @@ export default function TasksContainer({ initialTasks, dateStr }: TasksContainer
         // Check for confetti: If we just completed a task, and now ALL are complete
         const newCompletedCount = updatedTasks.filter(t => t.is_completed).length
         if (newStatus && newCompletedCount === totalCount && totalCount > 0) {
+            const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()
             confetti({
                 particleCount: 150,
                 spread: 70,
                 origin: { y: 0.6 },
-                colors: ['#000000', '#ffffff', '#a1a1aa', '#3f3f46'] // Neutral / Dark mode friendly
+                colors: [accentColor, '#ffffff', '#a1a1aa'] 
             })
         }
 
@@ -100,16 +101,41 @@ export default function TasksContainer({ initialTasks, dateStr }: TasksContainer
                         <p className="text-sm text-center max-w-[200px] text-zinc-500">What is the one thing you want to accomplish today?</p>
                     </motion.div>
                 ) : (
-                    <AnimatePresence mode="popLayout">
-                        {tasks.map((task) => (
-                            <TaskItem
-                                key={task.id}
-                                task={task}
-                                onToggle={() => handleToggle(task.id, task.is_completed)}
-                                onDelete={() => handleDelete(task.id)}
-                            />
-                        ))}
-                    </AnimatePresence>
+                    <motion.div
+                        variants={{
+                            hidden: { opacity: 0 },
+                            show: {
+                                opacity: 1,
+                                transition: {
+                                    staggerChildren: 0.1
+                                }
+                            }
+                        }}
+                        initial="hidden"
+                        animate="show"
+                        className="space-y-4"
+                    >
+                        <AnimatePresence mode="popLayout" initial={false}>
+                            {tasks.map((task) => (
+                                <motion.div
+                                    key={task.id}
+                                    layout
+                                    variants={{
+                                        hidden: { opacity: 0, x: -20 },
+                                        show: { opacity: 1, x: 0 }
+                                    }}
+                                    exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
+                                    transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                                >
+                                    <TaskItem
+                                        task={task}
+                                        onToggle={() => handleToggle(task.id, task.is_completed)}
+                                        onDelete={() => handleDelete(task.id)}
+                                    />
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
+                    </motion.div>
                 )}
             </div>
         </section>

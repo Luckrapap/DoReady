@@ -46,6 +46,7 @@ export async function addIdea(content: string) {
     }
 
     revalidatePath('/brain-dump')
+    revalidatePath('/')
     return data[0] as BrainDumpIdea
 }
 
@@ -67,4 +68,5 @@ export async function deleteIdea(id: string) {
     }
 
     revalidatePath('/brain-dump')
+    revalidatePath('/')
 }

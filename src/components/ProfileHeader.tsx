@@ -181,12 +181,6 @@ export default function ProfileHeader({ profile, email, isGuest = false }: Profi
                     </div>
 
                     <div className="mt-8 flex flex-wrap justify-center md:justify-start gap-4">
-                        <div className="mt-8 flex flex-wrap justify-center md:justify-start gap-4">
-                            <div className="px-5 py-2.5 rounded-2xl text-xs font-bold uppercase tracking-wider text-zinc-500 shadow-sm border transition-colors duration-500"
-                                style={{ backgroundColor: 'var(--border)', borderColor: 'color-mix(in srgb, var(--border) 50%, transparent)' }}
-                            >
-                                Foco Core Nivel 7
-                            </div>
 
                             {/* Gender Segment */}
                             <AnimatePresence mode="wait">
@@ -293,7 +287,6 @@ export default function ProfileHeader({ profile, email, isGuest = false }: Profi
                                     </button>
                                 )}
                             </AnimatePresence>
-                        </div>
                     </div>
                 </div>
             </div>

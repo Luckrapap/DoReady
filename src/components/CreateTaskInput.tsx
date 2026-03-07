@@ -3,6 +3,9 @@
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
 import { createTask } from '@/app/actions/tasks'
+import { motion } from 'framer-motion'
+import { toast } from 'sonner'
+import Magnetic from './Magnetic'
 
 export default function CreateTaskInput({ dateStr }: { dateStr: string }) {
     const [title, setTitle] = useState('')
@@ -13,11 +16,21 @@ export default function CreateTaskInput({ dateStr }: { dateStr: string }) {
         if (!title.trim() || isSubmitting) return
 
         setIsSubmitting(true)
-        const success = await createTask(title.trim(), dateStr)
-        if (success) {
-            setTitle('')
+        const toastId = toast.loading('Creando tarea...')
+        try {
+            const result = await createTask(title.trim(), dateStr)
+            if (result) {
+                setTitle('')
+                toast.success('Tarea creada correctamente', { id: toastId })
+            } else {
+                toast.error('No se pudo crear la tarea', { id: toastId })
+            }
+        } catch (error: any) {
+            console.error('Task creation error:', error)
+            toast.error(error.message || 'Error al crear la tarea', { id: toastId })
+        } finally {
+            setIsSubmitting(false)
         }
-        setIsSubmitting(false)
     }
 
     return (
@@ -30,14 +43,18 @@ export default function CreateTaskInput({ dateStr }: { dateStr: string }) {
                 outlineColor: 'var(--accent)'
             }}
         >
-            <button
-                type="submit"
-                disabled={!title.trim() || isSubmitting}
-                className="p-2 ml-1 text-zinc-400 transition-colors rounded-lg group"
-                style={{ color: title.trim() ? 'var(--accent)' : 'var(--border)' }}
-            >
-                <Plus size={20} className="transition-transform group-hover:scale-110" />
-            </button>
+            <Magnetic strength={0.2}>
+                <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    type="submit"
+                    disabled={!title.trim() || isSubmitting}
+                    className="p-2 ml-1 text-zinc-400 transition-colors rounded-lg group"
+                    style={{ color: title.trim() ? 'var(--accent)' : 'var(--border)' }}
+                >
+                    <Plus size={20} className="transition-transform group-hover:scale-110" />
+                </motion.button>
+            </Magnetic>
             <input
                 type="text"
                 value={title}

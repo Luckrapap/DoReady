@@ -2,7 +2,7 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import ProfileHeader from '@/components/ProfileHeader'
 import { getProfile } from '@/app/actions/profile'
-import { Settings, ShieldCheck, Zap } from 'lucide-react'
+import { Settings, ShieldCheck } from 'lucide-react'
 
 export default async function ProfilePage() {
     const supabase = await createClient()
@@ -46,12 +46,9 @@ export default async function ProfilePage() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="flex items-center justify-between p-5 bg-zinc-50/50 dark:bg-zinc-950/50 rounded-2xl border border-zinc-100 dark:border-zinc-800 transition-all hover:border-zinc-200 dark:hover:border-zinc-700">
-                            <div className="flex items-center gap-3">
-                                <Zap size={20} className="text-yellow-500" />
-                                <span className="text-sm font-semibold text-zinc-600 dark:text-zinc-400">Nivel de Jugador</span>
-                            </div>
-                            <span className="text-xs font-bold text-zinc-900 dark:text-zinc-50 uppercase tracking-widest">N7</span>
+                        {/* Placeholder for future stats */}
+                        <div className="flex items-center justify-between p-5 bg-zinc-50/50 dark:bg-zinc-950/50 rounded-2xl border border-zinc-100 dark:border-zinc-800 opacity-50 italic">
+                            <span className="text-sm font-semibold text-zinc-400">Más estadísticas próximamente...</span>
                         </div>
                     </div>
                 </section>
