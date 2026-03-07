@@ -76,7 +76,8 @@ export default async function LoginPage(props: { searchParams: Promise<{ error?:
                     </p>
                 </div>
 
-                <form className="w-full flex flex-col gap-4 bg-white dark:bg-zinc-900 p-8 rounded-[2.5rem] shadow-xl border border-zinc-200 dark:border-zinc-800">
+                <form action={isRegistering ? signup : login} className="w-full flex flex-col gap-4 bg-white dark:bg-zinc-900 p-8 rounded-[2.5rem] shadow-xl border border-zinc-200 dark:border-zinc-800">
+                    <input type="hidden" name="type" value={isRegistering ? 'register' : 'login'} />
                     {errorMessage && (
                         <div className="bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 p-3 rounded-xl text-sm mb-2 text-center border border-red-200 dark:border-red-900 animate-pulse">
                             {errorMessage}
@@ -176,7 +177,7 @@ export default async function LoginPage(props: { searchParams: Promise<{ error?:
                     </AnimateIn>
 
                     <button
-                        formAction={isRegistering ? signup : login}
+                        type="submit"
                         className="w-full mt-4 py-3.5 bg-black hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-black rounded-2xl text-sm font-bold transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg"
                     >
                         {isRegistering ? 'Crear Cuenta' : 'Iniciar Sesión'}
