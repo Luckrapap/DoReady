@@ -32,8 +32,8 @@ export async function signup(formData: FormData) {
     const gender = formData.get('gender') as string
     const birthDate = formData.get('birth_date') as string
 
-    const headersList = await (await import('next/headers')).headers()
-    const origin = headersList.get('origin')
+    // Usar la URL base configurada en Vercel (o localhost). Extraer el origen de los headers puede fallar o devolver URLs de preview no autorizadas.
+    const origin = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
     const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
