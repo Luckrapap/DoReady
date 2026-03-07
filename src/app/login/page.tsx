@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { login, signup, signInAsGuest } from './actions'
+import { SubmitButton } from './SubmitButton'
 import { MountainSnow, User, Mail, Lock, Calendar, ClipboardList, Sparkles, Zap, ArrowRight, LogIn, ArrowLeft } from 'lucide-react'
 
 export default async function LoginPage(props: { searchParams: Promise<{ error?: string, type?: string }> }) {
@@ -176,12 +177,7 @@ export default async function LoginPage(props: { searchParams: Promise<{ error?:
                         </div>
                     </AnimateIn>
 
-                    <button
-                        type="submit"
-                        className="w-full mt-4 py-3.5 bg-black hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-black rounded-2xl text-sm font-bold transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg"
-                    >
-                        {isRegistering ? 'Crear Cuenta' : 'Iniciar Sesión'}
-                    </button>
+                    <SubmitButton isRegistering={isRegistering} />
 
                 </form>
             </div>
