@@ -53,10 +53,10 @@ export async function updateSession(request: NextRequest) {
         // but regular users get redirected to dashboard.
         const isAnonymous = user.is_anonymous
         if (isAnonymous && request.nextUrl.pathname === '/') {
-            // Fragile Guest Mode: Force logout for anonymous users on landing page
-            await supabase.auth.signOut()
-            // Force a redirect to clear cookies and reload a fresh landing page
-            return NextResponse.redirect(new URL('/', request.url))
+            // Guest Mode Handling: We keep them as guest but stay at landing
+            // If we want to force them to dashboard, we should change this.
+            // For now, we allow guests to see the landing page without forcing logout.
+            return supabaseResponse
         }
 
         const url = request.nextUrl.clone()

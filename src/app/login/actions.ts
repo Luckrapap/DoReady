@@ -32,8 +32,14 @@ export async function signup(formData: FormData) {
     const gender = formData.get('gender') as string
     const birthDate = formData.get('birth_date') as string
 
-    // Usar la URL base configurada en Vercel (o localhost). Extraer el origen de los headers puede fallar o devolver URLs de preview no autorizadas.
-    const origin = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+    // Helper to get reliable origin (localhost, vercel deployment, or configured site URL)
+    const getOrigin = () => {
+        if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL;
+        if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+        return 'http://localhost:3000';
+    };
+
+    const origin = getOrigin();
     const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
@@ -50,7 +56,7 @@ export async function signup(formData: FormData) {
     if (authError) {
         let errorMessage = authError.message
         if (errorMessage.includes('email rate limit exceeded')) {
-            errorMessage = 'Has intentado registrarte demasiadas veces seguidas. Por favor, espera unos minutos antes de intentar de nuevo.'
+            errorMessage = 'Has intentado registrarte demasiadas veces seguidas. Por favor, espera unos minutos o usa un correo distinto. Si eres el administrador, verifica la configuración SMTP en Supabase.'
         }
         return redirect(`/login?type=register&error=${encodeURIComponent(errorMessage)}`)
     }

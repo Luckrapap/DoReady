@@ -35,5 +35,6 @@ export async function GET(request: Request) {
     revalidatePath('/', 'layout')
 
     // Redirect to dashboard
-    return NextResponse.redirect(new URL('/today', process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'))
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || new URL(request.url).origin;
+    return NextResponse.redirect(new URL('/today', baseUrl))
 }
