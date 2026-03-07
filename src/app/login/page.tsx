@@ -38,7 +38,7 @@ export default async function LoginPage(props: { searchParams: Promise<{ error?:
                             highlight
                         />
                         <SelectionCard
-                            href="/api/auth/guest"
+                            action={signInAsGuest}
                             title="Guest"
                             description="Invitado Especial"
                             icon={<Zap size={32} />}
@@ -188,8 +188,9 @@ export default async function LoginPage(props: { searchParams: Promise<{ error?:
     )
 }
 
-function SelectionCard({ href, title, description, icon, delay, disabled = false, highlight = false }: {
-    href: string,
+function SelectionCard({ href, action, title, description, icon, delay, disabled = false, highlight = false }: {
+    href?: string,
+    action?: any,
     title: string,
     description: string,
     icon: React.ReactNode,
@@ -229,8 +230,18 @@ function SelectionCard({ href, title, description, icon, delay, disabled = false
 
     if (disabled) return <div className={animationClasses} style={animationStyle}>{cardContent}</div>
 
+    if (action) {
+        return (
+            <form action={action} className={animationClasses} style={animationStyle}>
+                <button type="submit" className="w-full h-full text-left outline-none block">
+                    {cardContent}
+                </button>
+            </form>
+        )
+    }
+
     return (
-        <Link href={href} className={animationClasses} style={animationStyle}>
+        <Link href={href!} className={animationClasses} style={animationStyle}>
             {cardContent}
         </Link>
     )

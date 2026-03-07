@@ -39,7 +39,7 @@ export default function CalendarGrid({ taskCounts }: CalendarGridProps) {
 
     const onDateClick = (day: Date) => {
         const dateStr = format(day, 'yyyy-MM-dd')
-        router.push(`/?date=${dateStr}`)
+        router.push(`/today?date=${dateStr}`)
     }
 
     return (
