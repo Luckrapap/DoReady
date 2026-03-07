@@ -20,6 +20,18 @@ export async function getProfile() {
         return null
     }
 
+    // Smart Sync: If profile exists but full_name is missing, try to sync from auth metadata
+    if (data && !data.full_name && user.user_metadata?.full_name) {
+        const { error: syncError } = await supabase
+            .from('profiles')
+            .update({ full_name: user.user_metadata.full_name })
+            .eq('id', user.id)
+
+        if (!syncError) {
+            data.full_name = user.user_metadata.full_name
+        }
+    }
+
     return data
 }
 

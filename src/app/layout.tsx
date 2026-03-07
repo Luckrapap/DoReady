@@ -46,18 +46,21 @@ export default function RootLayout({
             __html: `
                 (function() {
                   try {
+                    var path = window.location.pathname;
+                    var isPublic = path === '/' || path.startsWith('/login');
+                    
                     var t = localStorage.getItem('theme') || 'system';
-                    var p = localStorage.getItem('theme-preset') || 'slate';
+                    var p = isPublic ? 'slate' : (localStorage.getItem('theme-preset') || 'slate');
                     var h = localStorage.getItem('theme-custom-hue') || '220';
                     var d = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                    var isDark = t === 'dark' || (t === 'system' && d);
+                    var isDark = !isPublic && (t === 'dark' || (t === 'system' && d));
                     
                     var doc = document.documentElement;
                     doc.classList.toggle('dark', isDark);
                     doc.classList.toggle('light', !isDark);
                     doc.style.setProperty('color-scheme', isDark ? 'dark' : 'light');
                     
-                    if (p === 'custom') {
+                    if (!isPublic && p === 'custom') {
                       doc.style.setProperty('--custom-hue', h);
                     }
 

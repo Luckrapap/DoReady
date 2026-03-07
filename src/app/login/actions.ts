@@ -61,8 +61,9 @@ export async function signup(formData: FormData) {
     }
 
     if (authData.user) {
-        // Update the profile with the extra info (using upsert to handle trigger collision)
-        const { error: profileError } = await supabase
+        // Use admin client to bypass RLS as there might not be a session yet (awaiting email confirmation)
+        const adminClient = createAdminClient()
+        const { error: profileError } = await adminClient
             .from('profiles')
             .upsert({
                 id: authData.user.id,

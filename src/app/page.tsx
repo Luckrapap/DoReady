@@ -8,8 +8,8 @@ export default async function LandingPage() {
     // Check session
     const { data: { user } } = await supabase.auth.getUser()
 
-    // If already logged in, go to the dashboard
-    if (user) {
+    // If already logged in, regular users go to dashboard
+    if (user && !user.is_anonymous) {
         redirect('/today')
     }
 
