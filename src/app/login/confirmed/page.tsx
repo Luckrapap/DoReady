@@ -3,7 +3,8 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { CheckCircle2, MountainSnow, Sparkles } from 'lucide-react'
+import { CheckCircle2, Sparkles } from 'lucide-react'
+import Logo from '@/components/Logo'
 
 export default function ConfirmedPage() {
     const router = useRouter()
@@ -35,9 +36,8 @@ export default function ConfirmedPage() {
                             initial={{ rotate: -10, y: 10 }}
                             animate={{ rotate: 0, y: 0 }}
                             transition={{ duration: 1, type: 'spring' }}
-                            className="h-24 w-24 bg-black dark:bg-white rounded-[2.5rem] flex items-center justify-center text-white dark:text-black shadow-[0_20px_50px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_50px_rgba(255,255,255,0.1)]"
                         >
-                            <MountainSnow size={48} />
+                            <Logo size={72} style={{ color: 'var(--accent)' }} className="shadow-[0_20px_50px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_50px_rgba(255,255,255,0.1)]" />
                         </motion.div>
 
                         <motion.div

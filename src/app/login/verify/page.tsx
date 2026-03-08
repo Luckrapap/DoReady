@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Mail, MountainSnow, ArrowLeft, CheckCircle2 } from 'lucide-react'
+import { Mail, ArrowLeft, CheckCircle2 } from 'lucide-react'
+import Logo from '@/components/Logo'
 
 export default function VerifyPage() {
     return (
@@ -20,9 +21,7 @@ export default function VerifyPage() {
                 >
                     {/* Logo & Status Icon */}
                     <div className="relative">
-                        <div className="h-20 w-20 bg-black dark:bg-white rounded-[2rem] flex items-center justify-center text-white dark:text-black shadow-2xl skew-x-[-2deg]">
-                            <MountainSnow size={40} />
-                        </div>
+                        <Logo size={64} style={{ color: 'var(--accent)' }} className="skew-x-[-2deg] shadow-2xl" />
                         <motion.div
                             initial={{ scale: 0 }}
                             animate={{ scale: 1 }}

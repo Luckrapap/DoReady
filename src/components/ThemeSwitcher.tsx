@@ -118,49 +118,41 @@ export default function ThemeSwitcher() {
                     <PresetCircle
                         active={preset === 'slate'}
                         onClick={() => applyTheme(theme, 'slate')}
-                        theme={theme}
                         name="slate"
                     />
                     <PresetCircle
                         active={preset === 'blue'}
                         onClick={() => applyTheme(theme, 'blue')}
-                        theme={theme}
                         name="blue"
                     />
                     <PresetCircle
                         active={preset === 'purple'}
                         onClick={() => applyTheme(theme, 'purple')}
-                        theme={theme}
                         name="purple"
                     />
                     <PresetCircle
                         active={preset === 'pink'}
                         onClick={() => applyTheme(theme, 'pink')}
-                        theme={theme}
                         name="pink"
                     />
                     <PresetCircle
                         active={preset === 'red'}
                         onClick={() => applyTheme(theme, 'red')}
-                        theme={theme}
                         name="red"
                     />
                     <PresetCircle
                         active={preset === 'orange'}
                         onClick={() => applyTheme(theme, 'orange')}
-                        theme={theme}
                         name="orange"
                     />
                     <PresetCircle
                         active={preset === 'yellow'}
                         onClick={() => applyTheme(theme, 'yellow')}
-                        theme={theme}
                         name="yellow"
                     />
                     <PresetCircle
                         active={preset === 'green'}
                         onClick={() => applyTheme(theme, 'green')}
-                        theme={theme}
                         name="green"
                     />
 
@@ -168,19 +160,24 @@ export default function ThemeSwitcher() {
                     <button
                         onClick={() => setShowPicker(!showPicker)}
                         className={cn(
-                            "relative p-1 rounded-2xl transition-all",
-                            preset === 'custom' ? "bg-zinc-100 dark:bg-zinc-800 ring-2 ring-zinc-400 dark:ring-zinc-600 shadow-lg" : "hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
+                            "relative p-1 rounded-3xl transition-all duration-300 hover:scale-110 active:scale-95",
+                            preset === 'custom' ? "ring-2 ring-white/50 dark:ring-black/50" : ""
                         )}
+                        style={preset === 'custom' ? { boxShadow: `0 0 20px hsl(${customHue}, 85%, 60%)` } : {}}
                     >
                         <div
-                            className="w-16 h-16 rounded-xl overflow-hidden shadow-inner flex items-center justify-center border border-zinc-200/50 dark:border-zinc-700/50 relative"
-                            style={{ backgroundColor: `hsl(${customHue}, 85%, 60%)` }}
+                            className="w-16 h-16 rounded-[1.5rem] overflow-hidden shadow-inner flex items-center justify-center border border-white/20 relative"
+                            style={{ background: `linear-gradient(135deg, hsl(${customHue}, 85%, 65%), hsl(${customHue}, 85%, 45%))` }}
                         >
                             <Pipette className="text-white drop-shadow-md" size={24} />
                             {preset === 'custom' && (
-                                <div className="absolute -top-1 -right-1 bg-zinc-900 dark:bg-zinc-50 text-white dark:text-zinc-900 rounded-full p-1 shadow-md border border-white/20 dark:border-black/20">
-                                    <Check size={10} strokeWidth={4} />
-                                </div>
+                                <motion.div
+                                    initial={{ scale: 0 }}
+                                    animate={{ scale: 1 }}
+                                    className="absolute -top-1 -right-1 bg-white text-black rounded-full p-1.5 shadow-lg border border-black/10"
+                                >
+                                    <Check size={12} strokeWidth={4} />
+                                </motion.div>
                             )}
                         </div>
                     </button>
@@ -261,89 +258,43 @@ function ThemeButton({ active, onClick, icon, label }: { active: boolean, onClic
     )
 }
 
-function PresetCircle({ active, onClick, theme, name }: { active: boolean, onClick: () => void, theme: Theme, name: Preset }) {
-    const [isDarkGlobal, setIsDarkGlobal] = useState(false)
-
-    useEffect(() => {
-        const checkDark = () => {
-            const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
-            setIsDarkGlobal(isDark)
-        }
-        checkDark()
-
-        if (theme === 'system') {
-            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-            const listener = (e: MediaQueryListEvent) => setIsDarkGlobal(e.matches)
-            mediaQuery.addEventListener('change', listener)
-            return () => mediaQuery.removeEventListener('change', listener)
-        }
-    }, [theme])
-
-    const presets: Record<string, { light: { top: string, left: string, right: string }, dark: { top: string, left: string, right: string } }> = {
-        slate: {
-            light: { top: '#fafafa', left: '#475569', right: '#64748b' },
-            dark: { top: '#020617', left: '#94a3b8', right: '#475569' }
-        },
-        blue: {
-            light: { top: '#f4f9ff', left: '#2563eb', right: '#3b82f6' },
-            dark: { top: '#060914', left: '#60a5fa', right: '#3b82f6' }
-        },
-        purple: {
-            light: { top: '#fdfaff', left: '#8b5cf6', right: '#7c3aed' },
-            dark: { top: '#0a0914', left: '#c084fc', right: '#a855f7' }
-        },
-        pink: {
-            light: { top: '#fff0f6', left: '#ec4899', right: '#db2777' },
-            dark: { top: '#0f0508', left: '#f472b6', right: '#ec4899' }
-        },
-        red: {
-            light: { top: '#fff5f7', left: '#ef4444', right: '#dc2626' },
-            dark: { top: '#0f0505', left: '#f87171', right: '#ef4444' }
-        },
-        orange: {
-            light: { top: '#fffaf5', left: '#f97316', right: '#ea580c' },
-            dark: { top: '#0f0a05', left: '#fb923c', right: '#f97316' }
-        },
-        yellow: {
-            light: { top: '#fffdf0', left: '#eab308', right: '#ca8a04' },
-            dark: { top: '#0c0b05', left: '#facc15', right: '#eab308' }
-        },
-        green: {
-            light: { top: '#f2fff5', left: '#10b981', right: '#059669' },
-            dark: { top: '#050a08', left: '#34d399', right: '#10b981' }
-        }
+function PresetCircle({ active, onClick, name }: { active: boolean, onClick: () => void, name: Preset }) {
+    const presets: Record<string, string> = {
+        slate: '#64748b',
+        blue: '#3b82f6',
+        purple: '#a855f7',
+        pink: '#ec4899',
+        red: '#ef4444',
+        orange: '#f97316',
+        yellow: '#eab308',
+        green: '#10b981'
     }
 
-    // Skip colors if name is 'custom' but it shouldn't happen here as Custom has its own button
-    const colors = name === 'custom' ? { light: { top: '', left: '', right: '' }, dark: { top: '', left: '', right: '' } } : presets[name]
-    const currentPalette = isDarkGlobal ? colors.dark : colors.light
+    const color = presets[name]
 
     return (
         <button
             onClick={onClick}
             className={cn(
-                "relative p-1 rounded-2xl transition-all",
-                active ? "bg-zinc-100 dark:bg-zinc-800 ring-2 ring-zinc-400 dark:ring-zinc-600 shadow-lg" : "hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
+                "relative p-1 rounded-3xl transition-all duration-300 hover:scale-110 active:scale-95",
+                active ? "ring-2 ring-white/50 dark:ring-black/50" : ""
             )}
+            style={active ? { boxShadow: `0 0 20px ${color}66` } : {}}
         >
-            <div className="w-16 h-16 rounded-xl overflow-hidden shadow-inner flex flex-col border border-zinc-200/50 dark:border-zinc-700/50">
-                <div className="h-1/2 w-full transition-colors duration-500" style={{ backgroundColor: currentPalette.top }} />
-                <div className="h-1/2 w-full flex">
-                    <div className="w-1/2 h-full transition-colors duration-500" style={{ backgroundColor: currentPalette.left }} />
-                    <div className="w-1/2 h-full transition-colors duration-500" style={{ backgroundColor: currentPalette.right }} />
-                </div>
-            </div>
-            <AnimatePresence>
+            <div 
+                className="w-16 h-16 rounded-[1.5rem] overflow-hidden shadow-inner border border-white/20 flex items-center justify-center transition-transform duration-500"
+                style={{ background: `linear-gradient(135deg, ${color}, color-mix(in srgb, ${color}, black 20%))` }}
+            >
                 {active && (
                     <motion.div
                         initial={{ scale: 0, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
-                        className="absolute -top-1 -right-1 bg-zinc-900 dark:bg-zinc-50 text-white dark:text-zinc-900 rounded-full p-1 shadow-md border border-white/20 dark:border-black/20"
+                        className="bg-white/20 backdrop-blur-sm rounded-full p-2 border border-white/30"
                     >
-                        <Check size={10} strokeWidth={4} />
+                        <Check size={20} className="text-white drop-shadow-md" strokeWidth={3} />
                     </motion.div>
                 )}
-            </AnimatePresence>
+            </div>
         </button>
     )
 }

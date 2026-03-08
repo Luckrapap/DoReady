@@ -18,10 +18,15 @@ export default function AICoach() {
             {/* Floating Action Button */}
             <motion.button
                 onClick={() => setIsOpen(!isOpen)}
-                className="fixed bottom-20 right-4 md:bottom-6 md:right-8 z-50 flex h-14 w-14 items-center justify-center rounded-full text-white shadow-lg transition-all duration-300"
-                style={{ backgroundColor: 'var(--accent)' }}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                className="fixed bottom-20 right-4 md:bottom-6 md:right-8 z-50 flex h-14 w-14 items-center justify-center rounded-full text-white shadow-xl transition-all duration-300"
+                style={{ 
+                    backgroundColor: 'var(--accent)',
+                    boxShadow: '0 0 15px var(--accent)'
+                }}
             >
-                {isOpen ? <X size={24} /> : <Bot size={24} />}
+                {isOpen ? <X size={26} /> : <Bot size={28} />}
             </motion.button>
 
             {/* Chat Panel */}

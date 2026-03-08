@@ -41,6 +41,7 @@ export default function CheckDayCalendar() {
 
     async function fetchData() {
         setIsLoading(true)
+        setCheckMap({}) // Clear old data to prevent ghost icons from previous layer
         const data = await getCheckDays(currentDate.getFullYear(), currentDate.getMonth() + 1, activeLayer)
         setCheckMap(data)
         setIsLoading(false)
@@ -346,7 +347,10 @@ export default function CheckDayCalendar() {
                                     )}
                                 </>
                             ) : (
-                                status && <MoodIcon level={status as string} />
+                                // Ensure we only render mood icons if the status is a mood number (1-8)
+                                status && !['check', 'x'].includes(status as string) && (
+                                    <MoodIcon level={status as string} />
+                                )
                             )}
                         </motion.div>
                     )

@@ -1,8 +1,8 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { MountainSnow } from 'lucide-react'
 import Link from 'next/link'
+import Logo from './Logo'
 
 export default function LandingNavbar() {
     return (
@@ -13,10 +13,8 @@ export default function LandingNavbar() {
         >
             <div className="max-w-7xl mx-auto flex items-center justify-between">
                 <div className="flex items-center gap-4 pointer-events-auto group cursor-pointer">
-                    <div className="h-10 w-10 rounded-xl flex items-center justify-center text-white shadow-2xl bg-black dark:bg-white dark:text-black group-hover:bg-accent transition-all duration-500">
-                        <MountainSnow size={22} className="group-hover:rotate-12 transition-transform duration-500" />
-                    </div>
-                    <span className="font-black text-2xl tracking-tight text-zinc-900 dark:text-zinc-50 uppercase font-outfit">DoReady</span>
+                    <Logo size={36} className="bg-zinc-900 dark:bg-zinc-50 group-hover:text-accent group-hover:rotate-12" />
+                    <span className="font-black text-3xl tracking-tight text-zinc-900 dark:text-zinc-50 uppercase font-outfit group-hover:text-accent">DoReady</span>
                 </div>
 
                 <div className="hidden md:flex items-center gap-10 glass-elite px-10 py-4 rounded-full border border-white/20 dark:border-white/10 shadow-2xl pointer-events-auto">
