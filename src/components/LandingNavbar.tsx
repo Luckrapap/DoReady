@@ -13,7 +13,7 @@ export default function LandingNavbar() {
         >
             <div className="max-w-7xl mx-auto flex items-center justify-between">
                 <div className="flex items-center gap-4 pointer-events-auto group cursor-pointer">
-                    <Logo size={36} className="bg-zinc-900 dark:bg-zinc-50 group-hover:text-accent group-hover:rotate-12" />
+                    <Logo width={36} height={25} className="bg-zinc-900 dark:bg-zinc-50 group-hover:text-accent group-hover:rotate-12" />
                     <span className="font-black text-3xl tracking-tight text-zinc-900 dark:text-zinc-50 uppercase font-outfit group-hover:text-accent">DoReady</span>
                 </div>
 

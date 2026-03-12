@@ -1,14 +1,17 @@
 'use client'
 
-import { useState, useOptimistic, startTransition } from 'react'
-import CreateHabitInput from './CreateHabitInput'
+import { useState, useOptimistic, useTransition } from 'react'
+
 import HabitItem from './HabitItem'
+import HabitOptionsModal from './HabitOptionsModal'
 import { motion, AnimatePresence } from 'framer-motion'
+import { reorderHabit } from '@/app/actions/habits'
 
 type Habit = {
     id: string;
     title: string;
     is_completed: boolean;
+    created_at: string;
 }
 
 type HabitsContainerProps = {
@@ -17,15 +20,21 @@ type HabitsContainerProps = {
 }
 
 export default function HabitsContainer({ initialHabits, dateStr }: HabitsContainerProps) {
+    const [editingHabit, setEditingHabit] = useState<Habit | null>(null)
+
+    const [isPending, startTransition] = useTransition()
+
     // Setup optimistic UI state using the props from the server payload
     const [optimisticHabits, addOptimisticHabit] = useOptimistic(
         initialHabits,
-        (state: Habit[], newHabitStatus: { id: string, is_completed: boolean } | { type: 'delete', id: string } | { type: 'refresh', habits: Habit[] }) => {
+        (state: Habit[], newHabitStatus: { id: string, is_completed: boolean } | { type: 'delete', id: string } | { type: 'refresh', habits: Habit[] } | { type: 'reorder', id: string, created_at: string }) => {
             if ('type' in newHabitStatus) {
                 if (newHabitStatus.type === 'delete') {
                     return state.filter(h => h.id !== newHabitStatus.id);
                 } else if (newHabitStatus.type === 'refresh') {
                     return newHabitStatus.habits;
+                } else if (newHabitStatus.type === 'reorder') {
+                    return state.map(h => h.id === newHabitStatus.id ? { ...h, created_at: newHabitStatus.created_at } : h);
                 }
             }
             // Toggle scenario
@@ -51,39 +60,55 @@ export default function HabitsContainer({ initialHabits, dateStr }: HabitsContai
         addOptimisticHabit({ type: 'delete', id: habitId })
     }
     
-    // Sort habits: incomplete first, then completed. 
-    // And alphabetical or by creation within those groups.
-    const sortedHabits = [...optimisticHabits].sort((a, b) => {
-        if (a.is_completed === b.is_completed) {
-            return a.title.localeCompare(b.title);
+    const sortedHabits = [...optimisticHabits].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+
+    const handleMoveUp = async (habitId: string) => {
+        const index = sortedHabits.findIndex(h => h.id === habitId)
+        if (index <= 0) return
+        
+        let newTime: number;
+        if (index === 1) {
+            newTime = new Date(sortedHabits[0].created_at).getTime() - 60000;
+        } else {
+            newTime = (new Date(sortedHabits[index - 1].created_at).getTime() + new Date(sortedHabits[index - 2].created_at).getTime()) / 2;
         }
-        return a.is_completed ? 1 : -1;
-    });
+        
+        const newCreatedAt = new Date(newTime).toISOString()
+        
+        startTransition(() => {
+            addOptimisticHabit({ type: 'reorder', id: habitId, created_at: newCreatedAt })
+            setEditingHabit(prev => prev ? { ...prev, created_at: newCreatedAt } : null)
+        })
+        await reorderHabit(habitId, newCreatedAt)
+    }
+
+    const handleMoveDown = async (habitId: string) => {
+        const index = sortedHabits.findIndex(h => h.id === habitId)
+        if (index === -1 || index === sortedHabits.length - 1) return
+        
+        let newTime: number;
+        if (index === sortedHabits.length - 2) {
+            newTime = new Date(sortedHabits[sortedHabits.length - 1].created_at).getTime() + 60000;
+        } else {
+            newTime = (new Date(sortedHabits[index + 1].created_at).getTime() + new Date(sortedHabits[index + 2].created_at).getTime()) / 2;
+        }
+        
+        const newCreatedAt = new Date(newTime).toISOString()
+        
+        startTransition(() => {
+            addOptimisticHabit({ type: 'reorder', id: habitId, created_at: newCreatedAt })
+            setEditingHabit(prev => prev ? { ...prev, created_at: newCreatedAt } : null)
+        })
+        await reorderHabit(habitId, newCreatedAt)
+    }
 
     const completedCount = optimisticHabits.filter(h => h.is_completed).length;
     const totalCount = optimisticHabits.length;
-    const progressPercentage = totalCount === 0 ? 0 : Math.round((completedCount / totalCount) * 100);
 
     return (
         <div className="flex flex-col gap-6">
-            <CreateHabitInput onHabitCreated={handleHabitCreated} />
-
-            {totalCount > 0 && (
-                <div className="flex items-center gap-4 mb-2">
-                    <div className="flex-1 bg-zinc-200 dark:bg-zinc-800 h-2 rounded-full overflow-hidden">
-                        <motion.div 
-                            className="h-full bg-zinc-900 dark:bg-zinc-100 transition-all duration-500 ease-out"
-                            style={{ width: `${progressPercentage}%`, backgroundColor: 'var(--accent)' }}
-                            layoutId="progress-bar"
-                        />
-                    </div>
-                    <span className="text-sm font-medium text-zinc-500 dark:text-zinc-400 w-12 text-right">
-                        {progressPercentage}%
-                    </span>
-                </div>
-            )}
-
-            <div className="flex flex-col gap-3">
+            
+            <div className="flex flex-col gap-4">
                 <AnimatePresence mode="popLayout">
                     {sortedHabits.length > 0 ? (
                         sortedHabits.map((habit) => (
@@ -93,6 +118,7 @@ export default function HabitsContainer({ initialHabits, dateStr }: HabitsContai
                                 dateStr={dateStr}
                                 onStatusChange={handleStatusChange}
                                 onDelete={handleDelete}
+                                onEdit={() => setEditingHabit(habit)}
                             />
                         ))
                     ) : (
@@ -108,6 +134,17 @@ export default function HabitsContainer({ initialHabits, dateStr }: HabitsContai
                     )}
                 </AnimatePresence>
             </div>
+
+            <HabitOptionsModal
+                isOpen={!!editingHabit}
+                onClose={() => setEditingHabit(null)}
+                habitId={editingHabit?.id || ''}
+                initialTitle={editingHabit?.title || ''}
+                onHabitUpdated={() => {}}
+                onHabitDeleted={handleDelete}
+                onMoveUp={editingHabit ? () => handleMoveUp(editingHabit.id) : undefined}
+                onMoveDown={editingHabit ? () => handleMoveDown(editingHabit.id) : undefined}
+            />
         </div>
     )
 }

@@ -131,3 +131,50 @@ export async function toggleHabitLog(habitId: string, dateStr: string, isComplet
     revalidatePath('/habits')
     return true
 }
+
+export async function updateHabit(id: string, title: string) {
+    const supabase = await createClient()
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+        throw new Error('Not authenticated')
+    }
+
+    const { data, error } = await supabase
+        .from('habits')
+        .update({ title })
+        .eq('id', id)
+        .eq('user_id', user.id)
+        .select()
+
+    if (error) {
+        console.error('Error updating habit:', error)
+        return null
+    }
+
+    revalidatePath('/habits')
+    return data[0]
+}
+
+export async function reorderHabit(habitId: string, newCreatedAt: string) {
+    const supabase = await createClient()
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+        throw new Error('Not authenticated')
+    }
+
+    const { error } = await supabase
+        .from('habits')
+        .update({ created_at: newCreatedAt })
+        .eq('id', habitId)
+        .eq('user_id', user.id)
+
+    if (error) {
+        console.error('Error reordering habit:', error)
+        return false
+    }
+
+    revalidatePath('/habits')
+    return true
+}

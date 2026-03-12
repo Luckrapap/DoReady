@@ -37,7 +37,7 @@ export default function ConfirmedPage() {
                             animate={{ rotate: 0, y: 0 }}
                             transition={{ duration: 1, type: 'spring' }}
                         >
-                            <Logo size={72} style={{ color: 'var(--accent)' }} className="shadow-[0_20px_50px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_50px_rgba(255,255,255,0.1)]" />
+                            <Logo width={72} height={50} style={{ color: 'var(--accent)' }} className="shadow-[0_20px_50_rgba(0,0,0,0.15)] dark:shadow-[0_20px_50px_rgba(255,255,255,0.1)]" />
                         </motion.div>
 
                         <motion.div

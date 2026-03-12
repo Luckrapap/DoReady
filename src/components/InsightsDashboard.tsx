@@ -66,7 +66,7 @@ export default function InsightsDashboard({ analyticsData }: Props) {
                         <div className="flex flex-col items-center justify-center py-10 gap-4">
                             <Loader2 size={32} className="animate-spin text-zinc-400" />
                             <p className="text-sm font-bold text-zinc-500 uppercase tracking-widest animate-pulse">
-                                Procesando Matriz de Datos...
+                                Analizando tu progreso...
                             </p>
                         </div>
                     ) : (

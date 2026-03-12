@@ -16,7 +16,7 @@ export default async function LoginPage(props: { searchParams: Promise<{ error?:
             <div className="flex min-h-screen w-full items-center justify-center bg-white dark:bg-zinc-950 px-4 py-12 font-outfit">
                 <div className="w-full max-w-4xl flex flex-col items-center">
                     <div className="flex flex-col items-center mb-16 gap-4">
-                        <Logo size={56} style={{ color: 'var(--accent)' }} className="animate-in zoom-in duration-700" />
+                        <Logo width={56} height={39} style={{ color: 'var(--accent)' }} className="animate-in zoom-in duration-700" />
                         <h1 className="text-4xl font-black tracking-tighter uppercase" style={{ color: 'var(--accent)' }}>DoReady</h1>
                         <p className="text-zinc-500 dark:text-zinc-400 font-medium tracking-tight">Selecciona tu puerta de entrada al enfoque radical</p>
                     </div>
@@ -68,7 +68,7 @@ export default async function LoginPage(props: { searchParams: Promise<{ error?:
                     </Link>
 
                     <Link href="/login" className="flex flex-col items-center gap-2 hover:scale-110 transition-transform">
-                        <Logo size={40} style={{ color: 'var(--accent)' }} className="shadow-lg" />
+                        <Logo width={40} height={28} style={{ color: 'var(--accent)' }} className="shadow-lg" />
                     </Link>
                     <h1 className="text-2xl font-bold tracking-tight" style={{ color: 'var(--accent)' }}>DoReady</h1>
                     <p className="text-sm text-zinc-500 dark:text-zinc-400">

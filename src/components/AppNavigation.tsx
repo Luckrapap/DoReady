@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { CalendarDays, CheckSquare, MountainSnow, User, BrainCircuit, Gamepad2, Lightbulb, Settings, Repeat, ChevronUp, ChevronDown } from 'lucide-react'
+import { CalendarDays, CheckSquare, MountainSnow, User, BrainCircuit, Gamepad2, Lightbulb, Settings, Orbit, ChevronUp, ChevronDown } from 'lucide-react'
 import { cn } from '@/utils/utils'
 import { motion, AnimatePresence } from 'framer-motion'
 import Logo from './Logo'
@@ -20,7 +20,7 @@ export default function AppNavigation() {
         { name: 'Insights', href: '/insights', icon: BrainCircuit },
         { name: 'Brain Dump', href: '/brain-dump', icon: Lightbulb },
         { name: 'ProcasTive', href: '/procastive', icon: Gamepad2 },
-        { name: 'Habits', href: '/habits', icon: Repeat },
+        { name: 'HabitOrbit', href: '/habits', icon: Orbit },
     ]
 
     const profileLink = { name: 'Profile', href: '/profile', icon: User }
@@ -34,7 +34,7 @@ export default function AppNavigation() {
                 style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
             >
                 <div className="flex items-center gap-4 mb-8 px-2">
-                    <Logo size={36} style={{ color: 'var(--accent)' }} />
+                    <Logo width={36} height={25} style={{ color: 'var(--accent)' }} />
                     <span className="font-bold text-2xl tracking-tight" style={{ color: 'var(--accent)' }}>DoReady</span>
                 </div>
 

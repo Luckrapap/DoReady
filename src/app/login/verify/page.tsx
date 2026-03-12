@@ -21,7 +21,7 @@ export default function VerifyPage() {
                 >
                     {/* Logo & Status Icon */}
                     <div className="relative">
-                        <Logo size={64} style={{ color: 'var(--accent)' }} className="skew-x-[-2deg] shadow-2xl" />
+                        <Logo width={64} height={45} style={{ color: 'var(--accent)' }} className="skew-x-[-2deg] shadow-2xl" />
                         <motion.div
                             initial={{ scale: 0 }}
                             animate={{ scale: 1 }}
