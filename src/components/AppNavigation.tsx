@@ -14,17 +14,17 @@ export default function AppNavigation() {
     const MAX_VISIBLE = 6
 
     const mainLinks = [
-        { name: 'Today', href: '/today', icon: CheckSquare },
-        { name: 'Calendar', href: '/calendar', icon: CalendarDays },
+        { name: 'Hoy', href: '/today', icon: CheckSquare },
+        { name: 'Calendario', href: '/calendar', icon: CalendarDays },
         { name: 'CheckDay', href: '/check-day', icon: MountainSnow },
-        { name: 'Insights', href: '/insights', icon: BrainCircuit },
-        { name: 'Brain Dump', href: '/brain-dump', icon: Lightbulb },
+        { name: 'Análisis', href: '/insights', icon: BrainCircuit },
+        { name: 'Tablero de Ideas', href: '/brain-dump', icon: Lightbulb },
         { name: 'ProcasTive', href: '/procastive', icon: Gamepad2 },
-        { name: 'HabitOrbit', href: '/habits', icon: Orbit },
+        { name: 'Órbita de Hábitos', href: '/habits', icon: Orbit },
     ]
 
-    const profileLink = { name: 'Profile', href: '/profile', icon: User }
-    const settingsLink = { name: 'Configuration', href: '/settings', icon: Settings }
+    const profileLink = { name: 'Perfil', href: '/profile', icon: User }
+    const settingsLink = { name: 'Configuración', href: '/settings', icon: Settings }
 
     return (
         <>
@@ -33,9 +33,9 @@ export default function AppNavigation() {
                 className="hidden md:flex flex-col w-72 border-r px-6 py-8 h-screen sticky top-0"
                 style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
             >
-                <div className="flex items-center gap-4 mb-8 px-2">
-                    <Logo width={36} height={25} style={{ color: 'var(--accent)' }} />
-                    <span className="font-bold text-2xl tracking-tight" style={{ color: 'var(--accent)' }}>DoReady</span>
+                <div className="flex items-center gap-1 mb-10 px-2">
+                    <Logo size={36} style={{ color: 'var(--accent)' }} />
+                    <span className="font-bold text-4xl tracking-tight" style={{ color: 'var(--accent)' }}>DoReady</span>
                 </div>
 
                 <nav className="flex flex-col gap-2 flex-1 relative overflow-visible">
@@ -135,10 +135,10 @@ export default function AppNavigation() {
 
             {/* Mobile Bottom Bar */}
             <nav
-                className="md:hidden fixed bottom-0 left-0 right-0 border-t backdrop-blur-md pb-safe z-50 transition-colors duration-500"
-                style={{ backgroundColor: 'color-mix(in srgb, var(--surface) 80%, transparent)', borderColor: 'var(--border)' }}
+                className="md:hidden border-t backdrop-blur-md pb-safe transition-colors duration-500 shrink-0"
+                style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
             >
-                <div className="flex justify-start md:justify-center items-center h-20 px-4 gap-2 overflow-x-auto no-scrollbar touch-pan-x">
+                <div className="flex justify-start items-center h-20 px-4 gap-2 overflow-x-auto no-scrollbar touch-pan-x">
                     {[...mainLinks, settingsLink, profileLink].map((link) => {
                         const isActive = pathname === link.href
                         return (
@@ -146,16 +146,16 @@ export default function AppNavigation() {
                                 key={link.name}
                                 href={link.href}
                                 className={cn(
-                                    "flex flex-col items-center justify-center min-w-[72px] h-full gap-1.5 transition-all relative shrink-0",
+                                    "flex flex-col items-center justify-center min-w-[84px] h-full gap-1 transition-all relative shrink-0",
                                     isActive ? "text-zinc-900 dark:text-zinc-100" : "text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
                                 )}
                             >
-                                <div className="p-2 rounded-xl transition-all duration-300"
+                                <div className="p-2.5 rounded-xl transition-all duration-300"
                                     style={isActive ? { backgroundColor: 'color-mix(in srgb, var(--accent) 15%, transparent)' } : {}}
                                 >
-                                    <link.icon size={22} className={cn(isActive && "stroke-[2.5px]")} />
+                                    <link.icon size={26} className={cn(isActive && "stroke-[2.5px]")} />
                                 </div>
-                                <span className="text-[10px] font-bold uppercase tracking-wider">{link.name}</span>
+                                <span className="text-xs font-bold uppercase tracking-wider">{link.name}</span>
                             </Link>
                         )
                     })}

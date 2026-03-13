@@ -14,7 +14,7 @@ export default function StreakCounter({ streak }: { streak: number }) {
             className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 dark:bg-orange-950/30 text-orange-600 dark:text-orange-500 rounded-full border border-orange-200 dark:border-orange-900/50 shadow-sm"
         >
             <Flame size={16} className={cn(streak > 2 && "fill-orange-500")} />
-            <span className="text-sm font-bold tracking-tight">{streak} Day{streak !== 1 ? 's' : ''}</span>
+            <span className="text-sm font-bold tracking-tight">{streak} Día{streak !== 1 ? 's' : ''}</span>
         </motion.div>
     )
 }

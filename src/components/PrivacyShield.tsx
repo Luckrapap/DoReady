@@ -13,7 +13,7 @@ export default function PrivacyShield() {
                     <ShieldCheck size={24} />
                 </div>
                 <div>
-                    <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-50">DoReady Privacy Shield</h3>
+                    <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-50">Escudo de Privacidad DoReady</h3>
                     <p className="text-xs text-zinc-500">Protección de datos de grado empresarial activa.</p>
                 </div>
             </div>
@@ -49,7 +49,7 @@ export default function PrivacyShield() {
                 <div className="space-y-2">
                     <h4 className="text-sm font-bold text-zinc-900 dark:text-zinc-50 flex items-center gap-2">
                         <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-                        Zero-Knowledge System
+                        Sistema de Conocimiento Cero
                     </h4>
                     <p className="text-xs text-zinc-500 leading-relaxed">
                         DoReady está diseñado para que nosotros no podamos ver tus tareas. La privacidad es el valor predeterminado, no una opción.

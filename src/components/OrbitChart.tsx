@@ -123,10 +123,10 @@ export default function OrbitChart() {
     )
 
     return (
-        <div className="w-full h-full p-8 relative overflow-visible flex items-center justify-center">
+        <div className="w-full h-full p-2 sm:p-8 relative overflow-visible flex items-center justify-center">
             <svg 
                 viewBox={`0 0 ${width} ${height}`} 
-                className="w-full h-full overflow-visible"
+                className="w-full h-auto max-h-[70vh] overflow-visible"
             >
                 {/* Wave Segments */}
                 {segments.map((seg, i) => (

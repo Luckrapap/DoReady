@@ -90,7 +90,7 @@ export default function LandingHero() {
                             initial={{ opacity: 0, y: 40 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                            className="text-5xl sm:text-7xl md:text-8xl lg:text-[9rem] font-black tracking-tight leading-[0.95] sm:leading-[0.8] mb-8 lg:mb-12 text-gradient font-outfit"
+                            className="text-4xl sm:text-7xl md:text-8xl lg:text-[9rem] font-black tracking-tight leading-[1.05] sm:leading-[0.8] mb-8 lg:mb-12 text-gradient font-outfit"
                         >
                             Domina el <br />
                             caos. Recupera <br />
@@ -101,7 +101,7 @@ export default function LandingHero() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2, duration: 1 }}
-                            className="text-lg sm:text-xl md:text-2xl text-zinc-500 dark:text-zinc-400 max-w-xl mb-10 lg:mb-14 leading-relaxed font-medium tracking-tight"
+                            className="text-base sm:text-xl md:text-2xl text-zinc-500 dark:text-zinc-400 max-w-xl mb-10 lg:mb-14 leading-relaxed font-medium tracking-tight"
                         >
                             DoReady es el centro de mando para mentes de alto rendimiento. Un ecosistema radical donde la inteligencia artificial protege tu atención.
                         </motion.p>
@@ -116,11 +116,11 @@ export default function LandingHero() {
                                 <motion.button
                                     ref={buttonRef}
                                     style={{ x: springX, y: springY }}
-                                    className="group relative flex items-center justify-center gap-4 px-12 py-6 bg-black dark:bg-white text-white dark:text-black rounded-[2rem] font-black text-xl transition-shadow hover:shadow-[0_30px_60px_-15px_rgba(var(--accent-rgb),0.3)] shadow-2xl active:scale-[0.98]"
+                                    className="group relative flex items-center justify-center gap-4 px-8 py-5 sm:px-12 sm:py-6 bg-black dark:bg-white text-white dark:text-black rounded-2xl sm:rounded-[2rem] font-black text-lg sm:text-xl transition-shadow hover:shadow-[0_30px_60px_-15px_rgba(var(--accent-rgb),0.3)] shadow-2xl active:scale-[0.98]"
                                 >
                                     <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
                                     <span>Empezar Ahora</span>
-                                    <ArrowRight size={24} className="group-hover:translate-x-2 transition-transform duration-500" />
+                                    <ArrowRight size={20} className="sm:w-6 sm:h-6 group-hover:translate-x-2 transition-transform duration-500" />
                                 </motion.button>
                             </Link>
 
@@ -133,10 +133,10 @@ export default function LandingHero() {
                             >
                                 <div className="flex -space-x-2">
                                     {[1, 2, 3].map(i => (
-                                        <div key={i} className="w-8 h-8 rounded-full border-2 border-white dark:border-zinc-950 bg-zinc-200 dark:bg-zinc-800" />
+                                        <div key={i} className="w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 border-white dark:border-zinc-950 bg-zinc-200 dark:bg-zinc-800" />
                                     ))}
                                 </div>
-                                <span className="text-[11px] font-bold uppercase tracking-widest">+1,240 Sprints hoy</span>
+                                <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-widest">+1,240 Sprints hoy</span>
                             </motion.div>
                         </motion.div>
                     </div>

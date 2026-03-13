@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { Check, Trash2 } from 'lucide-react'
+import { cn } from '@/utils/utils'
 
 interface Task {
     id: string
@@ -19,55 +20,68 @@ export default function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
     const isCompleted = task.is_completed
 
     return (
-        <div
-            className="group flex items-center gap-4 p-4 rounded-2xl border shadow-sm transition-all duration-300 hover:shadow-md"
-            style={{
-                backgroundColor: 'var(--surface)',
-                borderColor: 'var(--border)'
+        <motion.div
+            layout
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            whileHover={{ scale: 1.01 }}
+            className={cn(
+                "group relative flex items-center gap-6 p-6 rounded-3xl transition-all duration-300",
+                isCompleted ? "bg-opacity-50" : "bg-opacity-100"
+            )}
+            style={{ 
+                backgroundColor: 'var(--surface)', 
+                border: '1px solid',
+                borderColor: isCompleted ? 'var(--accent)' : 'var(--border)'
             }}
         >
-            <div className="flex items-center gap-4 flex-1">
-                <motion.button
-                    whileTap={{ scale: 0.8 }}
-                    onClick={onToggle}
-                    className={`flex-shrink-0 flex items-center justify-center w-8 h-8 md:w-6 md:h-6 rounded-full border transition-all duration-300 ${isCompleted
-                        ? 'text-white dark:text-black border-transparent scale-110'
-                        : 'border-zinc-300 dark:border-zinc-700 hover:border-zinc-500 dark:hover:border-zinc-400'
-                        }`}
-                    style={isCompleted ? { backgroundColor: 'var(--accent)' } : {}}
+            {/* Checkbox */}
+            <div 
+                onClick={onToggle}
+                className={cn(
+                    "flex-shrink-0 w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-300 relative overflow-hidden cursor-pointer",
+                    isCompleted ? "border-transparent" : "border-zinc-300 dark:border-zinc-700 hover:border-zinc-400 dark:hover:border-zinc-500"
+                )}
+                style={isCompleted ? { backgroundColor: 'var(--accent)' } : {}}
+            >
+                <motion.div
+                    initial={false}
+                    animate={{ scale: isCompleted ? 1 : 0 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 >
-                    {isCompleted && <Check size={16} strokeWidth={4} />}
-                </motion.button>
+                    <Check size={18} strokeWidth={3} className="text-white" />
+                </motion.div>
+            </div>
 
-                <div className="relative flex-1 group/text">
-                    <span
-                        className={`text-base transition-all duration-500 ${isCompleted
-                            ? 'text-zinc-400 dark:text-zinc-600'
-                            : 'text-zinc-800 dark:text-zinc-200'
-                            }`}
-                    >
-                        {task.title}
-                    </span>
-                    <motion.div
-                        initial={false}
-                        animate={{ 
-                            width: isCompleted ? '100%' : '0%',
-                            opacity: isCompleted ? 1 : 0
-                        }}
-                        transition={{ duration: 0.5, ease: "easeInOut" }}
-                        className="absolute left-0 top-1/2 -translate-y-1/2 h-[2px] bg-zinc-400 dark:bg-zinc-600 rounded-full"
-                        style={{ pointerEvents: 'none' }}
-                    />
-                </div>
+            {/* Title */}
+            <div className="flex-1 flex flex-col justify-center min-w-0">
+                <span className={cn(
+                    "text-xl font-medium transition-all duration-300 truncate",
+                    isCompleted ? "text-zinc-500 dark:text-zinc-400 line-through decoration-zinc-400/50" : "text-zinc-900 dark:text-zinc-100"
+                )}>
+                    {task.title}
+                </span>
             </div>
 
             <button
-                onClick={onDelete}
-                className="opacity-100 md:opacity-0 group-hover:opacity-100 p-3 -mr-2 text-zinc-400 hover:text-red-500 transition-colors"
+                onClick={(e) => {
+                    e.stopPropagation()
+                    onDelete()
+                }}
+                className="p-3 text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-xl transition-all active:scale-90"
                 aria-label="Delete task"
             >
                 <Trash2 size={20} />
             </button>
-        </div>
+
+            {/* Subtle background glow when completed */}
+            {isCompleted && (
+                <div 
+                    className="absolute inset-0 rounded-3xl opacity-5 pointer-events-none"
+                    style={{ backgroundColor: 'var(--accent)' }}
+                />
+            )}
+        </motion.div>
     )
 }

@@ -82,7 +82,7 @@ export default function BrainDump({ initialIdeas }: Props) {
                     <Brain size={32} style={{ color: 'var(--accent)' }} className="opacity-60" />
                 </div>
                 <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-                    El Cementerio de Ideas
+                    Tablero de Ideas
                 </h1>
                 <p className="text-zinc-500 dark:text-zinc-400 mt-2 max-w-sm text-sm">
                     Sácalo de tu mente. Entiérralo aquí. Recupera tu enfoque.
@@ -163,7 +163,7 @@ export default function BrainDump({ initialIdeas }: Props) {
                 {optimisticIdeas.length === 0 && (
                     <div className="text-center py-20">
                         <div className="text-zinc-300 dark:text-zinc-800 text-sm font-medium italic">
-                            El cementerio está vacío. Tu mente debería estarlo también.
+                            Tu Tablero de Ideas está vacío. Tu mente debería estarlo también.
                         </div>
                     </div>
                 )}

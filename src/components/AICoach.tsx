@@ -20,7 +20,7 @@ export default function AICoach() {
                 onClick={() => setIsOpen(!isOpen)}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
-                className="fixed bottom-20 right-4 md:bottom-6 md:right-8 z-50 flex h-14 w-14 items-center justify-center rounded-full text-white shadow-xl transition-all duration-300"
+                className="absolute bottom-6 right-4 md:bottom-6 md:right-8 z-50 flex h-14 w-14 items-center justify-center rounded-full text-white shadow-xl transition-all duration-300"
                 style={{ 
                     backgroundColor: 'var(--accent)',
                     boxShadow: '0 0 15px var(--accent)'
@@ -37,7 +37,7 @@ export default function AICoach() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 20, scale: 0.95 }}
                         transition={{ duration: 0.2 }}
-                        className="fixed bottom-36 right-4 md:bottom-24 md:right-8 z-40 w-[calc(100vw-32px)] max-w-[380px] h-[500px] max-h-[70vh] flex flex-col border rounded-2xl shadow-xl overflow-hidden transition-colors duration-500"
+                        className="absolute bottom-24 right-4 md:bottom-24 md:right-8 z-40 w-[calc(100vw-32px)] max-w-[380px] h-[500px] max-h-[70vh] flex flex-col border rounded-2xl shadow-xl overflow-hidden transition-colors duration-500"
                         style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
                     >
                         {/* Header */}
@@ -54,7 +54,7 @@ export default function AICoach() {
                             </div>
                             <div>
                                 <h3 className="font-bold text-sm text-zinc-900 dark:text-zinc-50">Do IA</h3>
-                                <p className="text-xs text-zinc-500 dark:text-zinc-400">Focus Coach</p>
+                                <p className="text-xs text-zinc-500 dark:text-zinc-400">Entrenador de Enfoque</p>
                             </div>
                         </div>
 

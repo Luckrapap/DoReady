@@ -8,7 +8,7 @@ export async function getTasks(dateStr: string) {
 
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
-        throw new Error('Not authenticated')
+        throw new Error('No autenticado')
     }
 
     const { data, error } = await supabase
@@ -32,7 +32,7 @@ export async function getMonthTaskCounts() {
 
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
-        throw new Error('Not authenticated')
+        throw new Error('No autenticado')
     }
 
     // Fetch all incomplete tasks or you could group by in SQL. 
@@ -125,7 +125,7 @@ export async function createTask(title: string, dateStr: string) {
 
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
-        throw new Error('Not authenticated')
+        throw new Error('No autenticado')
     }
 
     const { data, error } = await supabase

@@ -21,7 +21,10 @@ export default function VerifyPage() {
                 >
                     {/* Logo & Status Icon */}
                     <div className="relative">
-                        <Logo width={64} height={45} style={{ color: 'var(--accent)' }} className="skew-x-[-2deg] shadow-2xl" />
+                    <Link href="/login" className="flex flex-col items-center gap-1 hover:scale-110 transition-transform mb-4">
+                        <Logo size={36} style={{ color: 'var(--accent)' }} />
+                        <h1 className="text-4xl font-bold tracking-tight leading-none" style={{ color: 'var(--accent)' }}>DoReady</h1>
+                    </Link>
                         <motion.div
                             initial={{ scale: 0 }}
                             animate={{ scale: 1 }}

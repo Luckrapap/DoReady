@@ -73,69 +73,46 @@ export default function TasksContainer({ initialTasks, dateStr }: TasksContainer
     }
 
     return (
-        <section>
+        <section className="flex flex-col gap-6">
             <DailyProgress completed={completedCount} total={totalCount} />
 
-            <div className="mb-6">
-                <h2 className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 uppercase tracking-wider mb-3">Tasks</h2>
+            <div>
+                <h2 className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] mb-4 ml-1">Tareas</h2>
                 <CreateTaskInput dateStr={dateStr} />
             </div>
 
-            <div className="w-full mt-6 flex flex-col">
+            <div className="flex flex-col gap-4">
                 {tasks.length === 0 ? (
                     <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="flex flex-col items-center justify-center py-16 transition-colors duration-500 border border-dashed rounded-2xl gap-3"
+                        initial={{ opacity: 0, scale: 0.98 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="flex flex-col items-center justify-center py-16 transition-colors duration-500 border border-dashed rounded-[32px] gap-4"
                         style={{
                             backgroundColor: 'color-mix(in srgb, var(--surface) 20%, transparent)',
                             borderColor: 'var(--border)'
                         }}
                     >
-                        <div className="w-16 h-16 shadow-sm rounded-full flex items-center justify-center mb-2"
-                            style={{ backgroundColor: 'var(--surface)' }}
+                        <div
+                            className="w-16 h-16 flex items-center justify-center rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-sm"
                         >
-                            <span className="text-2xl">🌱</span>
+                            <span className="text-3xl">🌱</span>
                         </div>
-                        <p className="font-medium text-zinc-900 dark:text-zinc-100">A fresh start</p>
-                        <p className="text-sm text-center max-w-[200px] text-zinc-500">What is the one thing you want to accomplish today?</p>
+                        <div className="text-center">
+                            <p className="font-semibold text-zinc-900 dark:text-zinc-100 text-lg">Un nuevo comienzo</p>
+                            <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1 max-w-[240px]">¿Qué es lo más importante que quieres lograr hoy?</p>
+                        </div>
                     </motion.div>
                 ) : (
-                    <motion.div
-                        variants={{
-                            hidden: { opacity: 0 },
-                            show: {
-                                opacity: 1,
-                                transition: {
-                                    staggerChildren: 0.1
-                                }
-                            }
-                        }}
-                        initial="hidden"
-                        animate="show"
-                        className="space-y-4"
-                    >
-                        <AnimatePresence mode="popLayout" initial={false}>
-                            {tasks.map((task) => (
-                                <motion.div
-                                    key={task.id}
-                                    layout
-                                    variants={{
-                                        hidden: { opacity: 0, x: -20 },
-                                        show: { opacity: 1, x: 0 }
-                                    }}
-                                    exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
-                                    transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                                >
-                                    <TaskItem
-                                        task={task}
-                                        onToggle={() => handleToggle(task.id, task.is_completed)}
-                                        onDelete={() => handleDelete(task.id)}
-                                    />
-                                </motion.div>
-                            ))}
-                        </AnimatePresence>
-                    </motion.div>
+                    <AnimatePresence mode="popLayout" initial={false}>
+                        {tasks.map((task) => (
+                            <TaskItem
+                                key={task.id}
+                                task={task}
+                                onToggle={() => handleToggle(task.id, task.is_completed)}
+                                onDelete={() => handleDelete(task.id)}
+                            />
+                        ))}
+                    </AnimatePresence>
                 )}
             </div>
         </section>

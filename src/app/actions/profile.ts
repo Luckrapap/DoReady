@@ -39,7 +39,7 @@ export async function updateProfile(data: { full_name?: string, gender?: string,
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
-    if (!user) throw new Error('No authenticated user')
+    if (!user) throw new Error('Usuario no autenticado')
 
     // Guest protection
     if (user.is_anonymous) {
@@ -71,7 +71,7 @@ export async function updateAvatarUrl(avatarUrl: string) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
-    if (!user) throw new Error('No authenticated user')
+    if (!user) throw new Error('Usuario no autenticado')
 
     // Guest protection
     if (user.is_anonymous) {

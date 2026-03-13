@@ -20,7 +20,7 @@ export default function DailyProgress({ completed, total }: DailyProgressProps) 
     if (!mounted) return null // Prevent hydration mismatch on animated SVG
 
     return (
-        <div className="flex items-center gap-4 border p-4 rounded-2xl shadow-sm mb-6 transition-colors duration-500"
+        <div className="flex items-center gap-6 border p-6 rounded-3xl shadow-sm mb-6 transition-colors duration-500"
             style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
         >
             <div className="relative w-12 h-12 flex items-center justify-center flex-shrink-0">
@@ -48,9 +48,9 @@ export default function DailyProgress({ completed, total }: DailyProgressProps) 
             </div>
 
             <div>
-                <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50 tracking-tight">Daily Progress</h3>
+                <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50 tracking-tight">Progreso Diario</h3>
                 <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-                    {total === 0 ? "No tasks for today" : `${completed} of ${total} tasks completed`}
+                    {total === 0 ? "Sin tareas para hoy" : `${completed} de ${total} tareas completadas`}
                 </p>
             </div>
         </div>

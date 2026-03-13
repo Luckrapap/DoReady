@@ -26,13 +26,32 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: "DoReady | Focus & Consistency",
   description: "Your daily action core. Track your focus and build consistency.",
-  manifest: "/manifest.json",
+  manifest: "/manifest.json?v=3",
+  icons: {
+    icon: [
+      { url: "/Icon.png?v=7" },
+      { url: "/Icon.png?v=7", sizes: "32x32", type: "image/png" },
+      { url: "/Icon.png?v=7", sizes: "16x16", type: "image/png" },
+    ],
+    shortcut: ["/Icon.png?v=7"],
+    apple: [
+      { url: "/Icon.png?v=7", sizes: "180x180", type: "image/png" },
+    ],
+  },
   themeColor: "#0a0a0a",
   appleWebApp: {
     title: "DoReady",
     statusBarStyle: "black-translucent",
   }
 };
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
 
 export default function RootLayout({
   children,

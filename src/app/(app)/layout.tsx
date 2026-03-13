@@ -8,19 +8,21 @@ export default function AppLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <div className="flex h-screen overflow-hidden transition-colors duration-500" style={{ backgroundColor: 'var(--background)' }}>
-            {/* Sidebar will be hidden on mobile */}
+        <div className="flex flex-col-reverse md:flex-row h-[100dvh] overflow-hidden transition-colors duration-500" style={{ backgroundColor: 'var(--background)' }}>
+            {/* Navigation: Sidebar on desktop, Bottom Bar on mobile */}
             <AppNavigation />
 
             {/* Main content area */}
-            <div className="flex-1 overflow-y-auto pb-20 md:pb-0">
-                <PageTransition>
-                    {children}
-                </PageTransition>
-            </div>
-
-            {/* AI Assistant FAB and Chat */}
-            <AICoach />
+            <main className="flex-1 relative overflow-hidden flex flex-col">
+                <div className="flex-1 overflow-y-auto">
+                    <PageTransition>
+                        {children}
+                    </PageTransition>
+                </div>
+                
+                {/* AI Assistant: Now absolute inside the content area */}
+                <AICoach />
+            </main>
         </div>
     );
 }

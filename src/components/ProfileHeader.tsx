@@ -279,7 +279,7 @@ export default function ProfileHeader({ profile, email, isGuest = false }: Profi
                                         style={{ backgroundColor: 'var(--border)', borderColor: 'color-mix(in srgb, var(--border) 50%, transparent)' }}
                                     >
                                         {profile?.birth_date ? (
-                                            new Date(profile.birth_date).toLocaleDateString()
+                                            new Date(profile.birth_date).toLocaleDateString('es-ES')
                                         ) : (
                                             'Añadir Nacimiento'
                                         )}

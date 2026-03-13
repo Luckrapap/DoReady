@@ -3,6 +3,8 @@ import { login, signup, signInAsGuest } from './actions'
 import { SubmitButton } from './SubmitButton'
 import { User, Mail, Lock, Calendar, ClipboardList, Sparkles, Zap, ArrowRight, LogIn, ArrowLeft } from 'lucide-react'
 import Logo from '@/components/Logo'
+import PasswordInput from '@/components/PasswordInput'
+import { createClient } from '@/utils/supabase/server'
 
 export default async function LoginPage(props: { searchParams: Promise<{ error?: string, type?: string }> }) {
     const searchParams = await props.searchParams
@@ -11,27 +13,37 @@ export default async function LoginPage(props: { searchParams: Promise<{ error?:
     const showChoice = !type // Show choice if no type is selected
     const isRegistering = type === 'register'
 
+    // Fragile Guest Mode: If an anonymous user returns to the login selection screen,
+    // we effectively "sign them out" so they start fresh or choose another path.
+    if (showChoice) {
+        const supabase = await createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user?.is_anonymous) {
+            await supabase.auth.signOut()
+        }
+    }
+
     if (showChoice) {
         return (
             <div className="flex min-h-screen w-full items-center justify-center bg-white dark:bg-zinc-950 px-4 py-12 font-outfit">
                 <div className="w-full max-w-4xl flex flex-col items-center">
-                    <div className="flex flex-col items-center mb-16 gap-4">
-                        <Logo width={56} height={39} style={{ color: 'var(--accent)' }} className="animate-in zoom-in duration-700" />
-                        <h1 className="text-4xl font-black tracking-tighter uppercase" style={{ color: 'var(--accent)' }}>DoReady</h1>
+                    <div className="flex flex-col items-center mb-16 gap-1">
+                        <Logo size={64} style={{ color: 'var(--accent)' }} className="animate-in zoom-in duration-700" />
+                        <h1 className="text-6xl font-black tracking-tighter uppercase leading-none" style={{ color: 'var(--accent)' }}>DoReady</h1>
                         <p className="text-zinc-500 dark:text-zinc-400 font-medium tracking-tight">Selecciona tu puerta de entrada al enfoque radical</p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full px-4 max-w-4xl">
                         <SelectionCard
                             href="/login?type=login"
-                            title="Login"
+                            title="Entrar"
                             description="Bienvenido de nuevo"
                             icon={<LogIn size={32} />}
                             delay={0}
                         />
                         <SelectionCard
                             href="/login?type=register"
-                            title="Register"
+                            title="Registrarse"
                             description="Empezar ahora"
                             icon={<Sparkles size={32} />}
                             delay={0.1}
@@ -39,7 +51,7 @@ export default async function LoginPage(props: { searchParams: Promise<{ error?:
                         />
                         <SelectionCard
                             action={signInAsGuest}
-                            title="Guest"
+                            title="Invitado"
                             description="Invitado Especial"
                             icon={<Zap size={32} />}
                             delay={0.2}
@@ -57,7 +69,7 @@ export default async function LoginPage(props: { searchParams: Promise<{ error?:
     return (
         <div className="flex min-h-screen w-full items-center justify-center bg-zinc-50 dark:bg-zinc-950 px-4 py-12">
             <div className="w-full max-w-md flex flex-col items-center">
-                <div className="flex flex-col items-center mb-8 gap-2 relative w-full">
+                <div className="flex flex-col items-center mb-8 gap-1 relative w-full">
                     <Link
                         href="/login"
                         className="absolute left-0 top-1/2 -translate-y-1/2 p-2 text-zinc-400 hover:text-black dark:hover:text-white transition-colors flex items-center gap-1 group"
@@ -67,10 +79,10 @@ export default async function LoginPage(props: { searchParams: Promise<{ error?:
                         <span className="text-xs font-bold uppercase tracking-widest hidden sm:inline">Volver</span>
                     </Link>
 
-                    <Link href="/login" className="flex flex-col items-center gap-2 hover:scale-110 transition-transform">
-                        <Logo width={40} height={28} style={{ color: 'var(--accent)' }} className="shadow-lg" />
+                    <Link href="/login" className="flex flex-col items-center gap-1 hover:scale-110 transition-transform">
+                        <Logo size={36} style={{ color: 'var(--accent)' }} className="shadow-lg" />
                     </Link>
-                    <h1 className="text-2xl font-bold tracking-tight" style={{ color: 'var(--accent)' }}>DoReady</h1>
+                    <h1 className="text-4xl font-bold tracking-tight leading-none" style={{ color: 'var(--accent)' }}>DoReady</h1>
                     <p className="text-sm text-zinc-500 dark:text-zinc-400">
                         {isRegistering ? "Empieza tu camino al enfoque radical." : "Bienvenido de nuevo. Hagamos que suceda."}
                     </p>
@@ -161,17 +173,12 @@ export default async function LoginPage(props: { searchParams: Promise<{ error?:
 
                             <div className="flex flex-col gap-1.5 mb-2">
                                 <label className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider ml-1" htmlFor="password">Contraseña</label>
-                                <div className="relative group">
-                                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-black dark:group-focus-within:text-white transition-colors" size={16} />
-                                    <input
-                                        className="w-full pl-10 pr-4 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-sm outline-none focus:ring-2 focus:ring-black dark:focus:ring-white transition-all"
-                                        id="password"
-                                        name="password"
-                                        type="password"
-                                        placeholder="••••••••"
-                                        required
-                                    />
-                                </div>
+                                <PasswordInput
+                                    id="password"
+                                    name="password"
+                                    required
+                                    className="w-full py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-sm outline-none focus:ring-2 focus:ring-black dark:focus:ring-white transition-all"
+                                />
                             </div>
                         </div>
                     </AnimateIn>
@@ -213,11 +220,7 @@ function SelectionCard({ href, action, title, description, icon, delay, disabled
                 <h3 className="text-2xl font-black uppercase tracking-widest">{title}</h3>
                 <p className={`text-[11px] font-bold uppercase tracking-[0.2em] ${highlight ? 'text-zinc-400' : 'text-zinc-500'}`}>{description}</p>
             </div>
-            {!disabled && (
-                <div className={`absolute top-6 right-6 p-2 rounded-full border transition-all ${highlight ? 'border-white/20' : 'border-zinc-200 opacity-0 group-hover:opacity-100'}`}>
-                    <ArrowRight size={16} />
-                </div>
-            )}
+
         </div>
     )
 

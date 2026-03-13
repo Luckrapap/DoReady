@@ -41,7 +41,7 @@ export default async function TodayPage({
     const [year, month, day] = activeDateStr.split('-').map(Number)
     const dateObj = new Date(Date.UTC(year, month - 1, day))
 
-    const displayDate = dateObj.toLocaleDateString('en-US', {
+    const displayDate = dateObj.toLocaleDateString('es-ES', {
         weekday: 'long',
         month: 'long',
         day: 'numeric',
@@ -52,12 +52,12 @@ export default async function TodayPage({
         <main className="min-h-screen flex justify-center py-12 px-4 selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black">
             <div className="w-full max-w-xl">
                 {/* Header (Simplified compared to Sprint 2 since Sidebar exists) */}
-                <header className="mb-12 flex items-start justify-between">
-                    <div>
-                        <h1 className="font-bold text-2xl tracking-tight text-zinc-900 dark:text-zinc-50">
-                            {isToday ? "Today" : "Daily Focus"}
+                <header className="mb-12 flex flex-col items-center justify-center text-center gap-10">
+                    <div className="flex flex-col items-center">
+                        <h1 className="font-playfair font-medium text-6xl md:text-8xl tracking-tight text-zinc-900 dark:text-zinc-50 py-2">
+                            {isToday ? "Hoy" : "Enfoque Diario"}
                         </h1>
-                        <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400 mt-1">{displayDate}</p>
+                        <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400 mt-2">{displayDate}</p>
                     </div>
                     <StreakCounter streak={streak} />
                 </header>

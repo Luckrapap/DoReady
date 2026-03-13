@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, KeyRound, CheckCircle2, AlertCircle } from 'lucide-react'
+import PasswordInput from './PasswordInput'
 import { changePassword } from '@/app/actions/auth'
 
 interface PasswordModalProps {
@@ -75,11 +76,11 @@ export default function PasswordModal({ isOpen, onClose }: PasswordModalProps) {
                             <form action={handleSubmit} className="space-y-5">
                                 <div>
                                     <label className="block text-[10px] font-bold uppercase tracking-[0.1em] text-zinc-500 mb-2 px-1">Nueva Contraseña</label>
-                                    <input
-                                        type="password"
+                                    <PasswordInput
                                         name="newPassword"
                                         required
                                         minLength={6}
+                                        showIcon={false}
                                         className="w-full p-4 rounded-2xl border-none transition-all text-sm text-zinc-900 dark:text-zinc-50 outline-none"
                                         style={{ backgroundColor: 'color-mix(in srgb, var(--surface) 90%, var(--accent))' }}
                                         placeholder="Min. 6 caracteres"
@@ -87,11 +88,11 @@ export default function PasswordModal({ isOpen, onClose }: PasswordModalProps) {
                                 </div>
                                 <div>
                                     <label className="block text-[10px] font-bold uppercase tracking-[0.1em] text-zinc-500 mb-2 px-1">Confirmar Nueva Contraseña</label>
-                                    <input
-                                        type="password"
+                                    <PasswordInput
                                         name="confirmPassword"
                                         required
                                         minLength={6}
+                                        showIcon={false}
                                         className="w-full p-4 rounded-2xl border-none transition-all text-sm text-zinc-900 dark:text-zinc-50 outline-none"
                                         style={{ backgroundColor: 'color-mix(in srgb, var(--surface) 90%, var(--accent))' }}
                                         placeholder="Repite la contraseña"

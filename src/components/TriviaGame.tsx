@@ -114,7 +114,7 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                         style={{ backgroundColor: 'var(--border)', borderColor: 'color-mix(in srgb, var(--border) 50%, transparent)' }}
                     >
                         <Brain className="text-zinc-900 dark:text-zinc-100" size={18} />
-                        <span className="text-sm font-black tracking-tighter" style={{ color: 'var(--accent)' }}> Streak {streak}</span>
+                        <span className="text-sm font-black tracking-tighter" style={{ color: 'var(--accent)' }}> Racha {streak}</span>
                     </motion.div>
                 )}
             </div>

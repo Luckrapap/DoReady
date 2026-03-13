@@ -12,9 +12,9 @@ export default function LandingNavbar() {
             className="fixed top-0 left-0 right-0 z-50 px-6 py-8 pointer-events-none"
         >
             <div className="max-w-7xl mx-auto flex items-center justify-between">
-                <div className="flex items-center gap-4 pointer-events-auto group cursor-pointer">
-                    <Logo width={36} height={25} className="bg-zinc-900 dark:bg-zinc-50 group-hover:text-accent group-hover:rotate-12" />
-                    <span className="font-black text-3xl tracking-tight text-zinc-900 dark:text-zinc-50 uppercase font-outfit group-hover:text-accent">DoReady</span>
+                <div className="flex items-center gap-1 pointer-events-auto group cursor-pointer">
+                    <Logo size={46} className="bg-zinc-900 dark:bg-zinc-50 transition-transform duration-300" />
+                    <span className="font-black text-5xl tracking-tight text-zinc-900 dark:text-zinc-50 uppercase font-outfit">DoReady</span>
                 </div>
 
                 <div className="hidden md:flex items-center gap-10 glass-elite px-10 py-4 rounded-full border border-white/20 dark:border-white/10 shadow-2xl pointer-events-auto">

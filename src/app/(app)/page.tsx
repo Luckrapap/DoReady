@@ -41,7 +41,7 @@ export default async function Home({
   const [year, month, day] = activeDateStr.split('-').map(Number)
   const dateObj = new Date(Date.UTC(year, month - 1, day))
 
-  const displayDate = dateObj.toLocaleDateString('en-US', {
+  const displayDate = dateObj.toLocaleDateString('es-ES', {
     weekday: 'long',
     month: 'long',
     day: 'numeric',
@@ -58,7 +58,7 @@ export default async function Home({
         <header className="mb-12 flex items-start justify-between">
           <div>
             <h1 className="font-bold text-2xl tracking-tight text-zinc-900 dark:text-zinc-50">
-              {isToday ? "Today" : "Daily Focus"}
+              {isToday ? "Hoy" : "Enfoque Diario"}
             </h1>
             <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400 mt-1">{displayDate}</p>
           </div>

@@ -52,10 +52,9 @@ export async function updateSession(request: NextRequest) {
         // Differentiation: Guest users (anonymous) stay at landing page when entering site root, 
         // but regular users get redirected to dashboard.
         const isAnonymous = user.is_anonymous
-        if (isAnonymous && request.nextUrl.pathname === '/') {
-            // Guest Mode Handling: We keep them as guest but stay at landing
-            // If we want to force them to dashboard, we should change this.
-            // For now, we allow guests to see the landing page without forcing logout.
+        
+        // If it's a guest on the landing page OR trying to see login options, let them stay.
+        if (isAnonymous && (request.nextUrl.pathname === '/' || request.nextUrl.pathname === '/login')) {
             return supabaseResponse
         }
 

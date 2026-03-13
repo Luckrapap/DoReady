@@ -13,6 +13,7 @@ import {
     endOfWeek,
     isSameMonth
 } from 'date-fns'
+import { es } from 'date-fns/locale'
 import { ChevronLeft, ChevronRight, Check, X } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { cn } from '@/utils/utils'
@@ -250,7 +251,7 @@ export default function CheckDayCalendar() {
                         <ChevronLeft size={20} />
                     </button>
                     <h2 className="text-3xl md:text-4xl font-dancing text-zinc-900 dark:text-zinc-50 lowercase transition-all capitalize italic">
-                        {format(currentDate, 'MMMM')}
+                        {format(currentDate, 'MMMM', { locale: es })}
                         <span className="text-xl ml-4 font-sans not-italic font-bold"
                             style={{ color: 'var(--border)' }}
                         >
@@ -301,7 +302,7 @@ export default function CheckDayCalendar() {
                             key={idx}
                             variants={{
                                 hidden: { opacity: 0, scale: 0.9 },
-                                show: { opacity: 1, scale: 1 }
+                                show: { opacity: inCurrentMonth ? 1 : 0.2, scale: 1 }
                             }}
                             onContextMenu={(e) => handleDayInteraction(day, false, e)}
                             onClick={(e) => handleDayInteraction(day, true, e)}
@@ -315,7 +316,7 @@ export default function CheckDayCalendar() {
                                 isToday(day) && "ring-2 ring-[var(--accent)] ring-offset-2 ring-offset-[var(--background)] shadow-sm"
                             )}
                             style={{
-                                borderColor: 'color-mix(in srgb, var(--border) 30%, transparent)'
+                                borderColor: 'var(--border)'
                             }}
                         >
                             <span className="absolute top-1.5 left-2 text-[10px] font-bold"
@@ -357,31 +358,6 @@ export default function CheckDayCalendar() {
                 })}
             </motion.div>
 
-            {/* Helper text */}
-            <div className="mt-6 flex flex-col md:flex-row items-center justify-center gap-6 text-[10px] font-bold text-zinc-400 uppercase tracking-widest text-center">
-                <div className="flex items-center gap-2">
-                    {activeLayer === 'performance' ? (
-                        <>
-                            <div className="w-2 h-2 rounded-full bg-green-500" />
-                            <div className="w-2 h-2 rounded-full bg-red-500 -ml-1 border border-white dark:border-zinc-900" />
-                            <span>Click: Check / X</span>
-                        </>
-                    ) : (
-                        <>
-                            <div className="flex -space-x-1">
-                                <div className="w-2 h-2 rounded-full bg-yellow-400" />
-                                <div className="w-2 h-2 rounded-full bg-white border border-zinc-200" />
-                                <div className="w-2 h-2 rounded-full bg-red-500" />
-                            </div>
-                            <span>Click: Cambiar Emoción</span>
-                        </>
-                    )}
-                </div>
-                <div className="flex items-center gap-2">
-                    <span className="px-1 border border-zinc-300 dark:border-zinc-700 rounded whitespace-nowrap">Der. / Mantener</span>
-                    <span>Eliminar</span>
-                </div>
-            </div>
         </div>
     )
 }
