@@ -67,12 +67,12 @@ export default function ThemeSwitcher() {
     if (!mounted) return null
 
     return (
-        <div className="rounded-3xl p-6 shadow-sm space-y-8 border transition-colors" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
+        <div className="rounded-3xl p-4 sm:p-6 shadow-sm space-y-6 sm:space-y-8 border transition-colors" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
             {/* Theme Toggle */}
             <div className="flex flex-col gap-6">
                 <div>
-                    <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">Modo de Visualización</h3>
-                    <p className="text-sm text-zinc-500">Elige la apariencia que mejor se adapte a tu entorno.</p>
+                    <h3 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-50">Modo de Visualización</h3>
+                    <p className="text-xs sm:text-sm text-zinc-500">Elige la apariencia que mejor se adapte a tu entorno.</p>
                 </div>
 
                 <div className="relative flex p-1.5 bg-zinc-100 dark:bg-zinc-800/50 rounded-2xl md:rounded-full overflow-hidden border border-zinc-200/50 dark:border-zinc-700/50">
@@ -110,8 +110,8 @@ export default function ThemeSwitcher() {
             {/* Color Presets */}
             <div className="flex flex-col gap-6 pt-2 border-t border-zinc-100 dark:border-zinc-800">
                 <div>
-                    <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">Color de Acentuación</h3>
-                    <p className="text-sm text-zinc-500">Personaliza los tonos principales de la aplicación.</p>
+                    <h3 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-50">Color de Acentuación</h3>
+                    <p className="text-xs sm:text-sm text-zinc-500">Personaliza los tonos principales de la aplicación.</p>
                 </div>
 
                 <div className="flex flex-wrap gap-4">
@@ -166,10 +166,10 @@ export default function ThemeSwitcher() {
                         style={preset === 'custom' ? { boxShadow: `0 0 20px hsl(${customHue}, 85%, 60%)` } : {}}
                     >
                         <div
-                            className="w-16 h-16 rounded-[1.5rem] overflow-hidden shadow-inner flex items-center justify-center border border-white/20 relative"
+                            className="w-12 h-12 sm:w-16 sm:h-16 rounded-[1.2rem] sm:rounded-[1.5rem] overflow-hidden shadow-inner flex items-center justify-center border border-white/20 relative"
                             style={{ background: `linear-gradient(135deg, hsl(${customHue}, 85%, 65%), hsl(${customHue}, 85%, 45%))` }}
                         >
-                            <Pipette className="text-white drop-shadow-md" size={24} />
+                            <Pipette className="text-white drop-shadow-md" size={18} />
                             {preset === 'custom' && (
                                 <motion.div
                                     initial={{ scale: 0 }}
@@ -238,7 +238,7 @@ function ThemeButton({ active, onClick, icon, label }: { active: boolean, onClic
         <button
             onClick={onClick}
             className={cn(
-                "flex-1 relative z-10 flex items-center justify-center gap-2 py-3 px-4 transition-colors",
+                "flex-1 relative z-10 flex items-center justify-center gap-1 sm:gap-2 py-2.5 sm:py-3 px-1 sm:px-4 transition-colors",
                 active ? "text-zinc-950 dark:text-white font-bold" : "text-zinc-500 font-medium hover:text-zinc-700 dark:hover:text-zinc-300"
             )}
         >
@@ -253,7 +253,7 @@ function ThemeButton({ active, onClick, icon, label }: { active: boolean, onClic
                     </motion.div>
                 )}
             </AnimatePresence>
-            <span className="text-sm">{label}</span>
+            <span className="text-[10px] sm:text-xs md:text-sm whitespace-nowrap">{label}</span>
         </button>
     )
 }
@@ -282,7 +282,7 @@ function PresetCircle({ active, onClick, name }: { active: boolean, onClick: () 
             style={active ? { boxShadow: `0 0 20px ${color}66` } : {}}
         >
             <div 
-                className="w-16 h-16 rounded-[1.5rem] overflow-hidden shadow-inner border border-white/20 flex items-center justify-center transition-transform duration-500"
+                className="w-12 h-12 sm:w-16 sm:h-16 rounded-[1.2rem] sm:rounded-[1.5rem] overflow-hidden shadow-inner border border-white/20 flex items-center justify-center transition-transform duration-500"
                 style={{ background: `linear-gradient(135deg, ${color}, color-mix(in srgb, ${color}, black 20%))` }}
             >
                 {active && (
