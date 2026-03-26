@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Outfit, Playfair_Display } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
@@ -44,12 +44,12 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
   }
 };
-
-export const viewport = {
+export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
+  viewportFit: "cover",
 };
 
 

@@ -133,12 +133,15 @@ export default function AppNavigation() {
                 </nav>
             </aside>
 
-            {/* Mobile Bottom Bar */}
-            <nav
-                className="md:hidden border-t backdrop-blur-md pb-safe transition-colors duration-500 shrink-0"
-                style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
-            >
-                <div className="flex justify-start items-center h-20 px-4 gap-2 overflow-x-auto no-scrollbar touch-pan-x">
+            {/* Mobile Bottom Floating Dock */}
+            <div className="md:hidden w-full shrink-0 z-50 px-3 pb-4 pt-1 transition-colors duration-500 bg-transparent">
+                <nav
+                    className="flex justify-start items-center h-[68px] px-2 gap-1.5 overflow-x-auto no-scrollbar touch-pan-x rounded-[24px] border backdrop-blur-2xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]"
+                    style={{ 
+                        backgroundColor: 'color-mix(in srgb, var(--surface) 80%, transparent)', 
+                        borderColor: 'color-mix(in srgb, var(--border) 60%, transparent)'
+                    }}
+                >
                     {[...mainLinks, settingsLink, profileLink].map((link) => {
                         const isActive = pathname === link.href
                         return (
@@ -146,21 +149,28 @@ export default function AppNavigation() {
                                 key={link.name}
                                 href={link.href}
                                 className={cn(
-                                    "flex flex-col items-center justify-center min-w-[84px] h-full gap-1 transition-all relative shrink-0",
+                                    "flex items-center justify-center min-w-[60px] h-full transition-all relative shrink-0 group",
                                     isActive ? "text-zinc-900 dark:text-zinc-100" : "text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
                                 )}
                             >
-                                <div className="p-2.5 rounded-xl transition-all duration-300"
-                                    style={isActive ? { backgroundColor: 'color-mix(in srgb, var(--accent) 15%, transparent)' } : {}}
-                                >
-                                    <link.icon size={26} className={cn(isActive && "stroke-[2.5px]")} />
+                                <div className={cn(
+                                    "flex items-center justify-center w-[50px] h-[50px] rounded-full transition-all duration-300 group-hover:scale-105 group-active:scale-95",
+                                    isActive && "bg-[color-mix(in_srgb,var(--accent)_12%,transparent)]"
+                                )}>
+                                    <link.icon 
+                                        size={26} 
+                                        className={cn(
+                                            "transition-all duration-300", 
+                                            isActive && "stroke-[2.5px] scale-110",
+                                            !isActive && "group-hover:-translate-y-0.5"
+                                        )} 
+                                    />
                                 </div>
-                                <span className="text-xs font-bold uppercase tracking-wider">{link.name}</span>
                             </Link>
                         )
                     })}
-                </div>
-            </nav>
+                </nav>
+            </div>
         </>
     )
 }
