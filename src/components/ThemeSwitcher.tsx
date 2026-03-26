@@ -33,6 +33,15 @@ export default function ThemeSwitcher() {
         if (savedPreset === 'custom') {
             document.documentElement.style.setProperty('--custom-hue', savedHue.toString())
         }
+
+        // Sincronizar cambios desde otras pestañas
+        const handleStorageChange = (e: StorageEvent) => {
+            if (e.key === 'theme') setTheme(e.newValue as Theme || 'system')
+            if (e.key === 'theme-preset') setPreset(e.newValue as Preset || 'slate')
+            if (e.key === 'theme-custom-hue') setCustomHue(Number(e.newValue) || 220)
+        }
+        window.addEventListener('storage', handleStorageChange)
+        return () => window.removeEventListener('storage', handleStorageChange)
     }, [])
 
     const applyTheme = (newTheme: Theme, newPreset: Preset, newHue?: number) => {

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Outfit, Playfair_Display } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
+import ThemeHandler from "@/components/ThemeHandler";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -73,7 +74,7 @@ export default function RootLayout({
                     var p = isPublic ? 'slate' : (localStorage.getItem('theme-preset') || 'slate');
                     var h = localStorage.getItem('theme-custom-hue') || '220';
                     var d = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                    var isDark = !isPublic && (t === 'dark' || (t === 'system' && d));
+                    var isDark = t === 'dark' || (t === 'system' && d);
                     
                     var doc = document.documentElement;
                     doc.classList.toggle('dark', isDark);
@@ -96,6 +97,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${outfit.variable} ${playfair.variable} antialiased`}
       >
+        <ThemeHandler />
         {children}
         <Toaster richColors closeButton position="top-right" />
       </body>
