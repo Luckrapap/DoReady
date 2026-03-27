@@ -27,7 +27,7 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: "DoReady | Focus & Consistency",
   description: "Your daily action core. Track your focus and build consistency.",
-  manifest: "/manifest.json?v=10",
+  manifest: "/manifest.json?v=11",
   icons: {
     icon: [
       { url: "/Icon.png?v=7" },
@@ -68,7 +68,7 @@ export default function RootLayout({
             __html: `
                 (function() {
                   try {
-                    console.log('DoReady Hydration v1.8 - Unified Sync');
+                    console.log('DoReady Hydration v1.9 - No Time');
                     var path = window.location.pathname;
                     var isPublic = path === '/' || path.startsWith('/login');
                     
@@ -77,9 +77,18 @@ export default function RootLayout({
                     var h = localStorage.getItem('theme-custom-hue') || '220';
                     var d = window.matchMedia('(prefers-color-scheme: dark)').matches;
                     
-                    // SMART SYSTEM: Media Query || CSS Fallback || Time-based (7PM - 7AM)
-                    var isNight = (new Date().getHours() >= 19 || new Date().getHours() < 7);
-                    var isDark = t === 'dark' || (t === 'system' && (d || isNight));
+                    // SYSTEM COLOR SENSOR (No-Time)
+                    var isDark = t === 'dark' || (t === 'system' && d);
+                    
+                    // Fallback for restricted WebViews (Check if system is dark via CanvasText)
+                    if (t === 'system' && !isDark && typeof document !== 'undefined') {
+                        var s = document.createElement('div');
+                        s.style.color = 'CanvasText';
+                        document.documentElement.appendChild(s);
+                        var c = getComputedStyle(s).color;
+                        document.documentElement.removeChild(s);
+                        if (c.includes('255')) isDark = true;
+                    }
                     
                     var doc = document.documentElement;
                     doc.classList.toggle('dark', isDark);

@@ -285,9 +285,9 @@ export default function ThemeSwitcher() {
             </div>
             {/* Version indicator for troubleshooting */}
             <div className="flex flex-col items-center pt-2 opacity-20 hover:opacity-100 transition-opacity gap-1">
-                <span className="text-[10px] font-mono text-zinc-500">v1.8-sync</span>
+                <span className="text-[10px] font-mono text-zinc-500">v1.9-no-time</span>
                 <span className="text-[8px] font-bold text-zinc-400 uppercase tracking-tighter">
-                    Global Engine: {mounted ? (isDarkModeRequested() ? 'Dark Active' : 'Light Active') : '...'}
+                    Native Sensor: {mounted ? (isDarkModeRequested() ? 'Dark Mode' : 'Light Mode') : '...'}
                 </span>
             </div>
         </div>
