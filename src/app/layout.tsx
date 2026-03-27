@@ -27,7 +27,7 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: "DoReady | Focus & Consistency",
   description: "Your daily action core. Track your focus and build consistency.",
-  manifest: "/manifest.json?v=7",
+  manifest: "/manifest.json?v=8",
   icons: {
     icon: [
       { url: "/Icon.png?v=7" },
@@ -68,7 +68,7 @@ export default function RootLayout({
             __html: `
                 (function() {
                   try {
-                    console.log('DoReady Hydration v1.5 - Definitive APK Shield');
+                    console.log('DoReady Hydration v1.6 - Smart System');
                     var path = window.location.pathname;
                     var isPublic = path === '/' || path.startsWith('/login');
                     
@@ -76,7 +76,10 @@ export default function RootLayout({
                     var p = isPublic ? 'slate' : (localStorage.getItem('theme-preset') || 'slate');
                     var h = localStorage.getItem('theme-custom-hue') || '220';
                     var d = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                    var isDark = t === 'dark' || (t === 'system' && d);
+                    
+                    // SMART SYSTEM: Media Query || CSS Fallback || Time-based (7PM - 7AM)
+                    var isNight = (new Date().getHours() >= 19 || new Date().getHours() < 7);
+                    var isDark = t === 'dark' || (t === 'system' && (d || isNight));
                     
                     var doc = document.documentElement;
                     doc.classList.toggle('dark', isDark);

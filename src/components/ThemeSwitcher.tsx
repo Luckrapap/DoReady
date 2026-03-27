@@ -285,9 +285,9 @@ export default function ThemeSwitcher() {
             </div>
             {/* Version indicator for troubleshooting */}
             <div className="flex flex-col items-center pt-2 opacity-20 hover:opacity-100 transition-opacity gap-1">
-                <span className="text-[10px] font-mono text-zinc-500">v1.5-final-shield</span>
+                <span className="text-[10px] font-mono text-zinc-500">v1.6-ultimate</span>
                 <span className="text-[8px] font-bold text-zinc-400 uppercase tracking-tighter">
-                    APK Safe Engine: {mounted ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'Dark API' : 'Light API') : '...'}
+                    Smart Engine: {mounted ? ((window.matchMedia('(prefers-color-scheme: dark)').matches || (new Date().getHours() >= 19 || new Date().getHours() < 7)) ? 'Night Active' : 'Day Active') : '...'}
                 </span>
             </div>
         </div>

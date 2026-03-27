@@ -3,19 +3,17 @@
 import { useEffect, useCallback } from 'react'
 
 /**
- * ThemeHandler v1.5 [Final Shield]
- * A global, render-less component that ensures the document's dark mode classes 
- * stay in sync with the user's preference and the system setting.
- * Optimized for APK/Native containers with a hybrid detection strategy:
- * 1. JS MatchMedia API (Standard)
- * 2. CSS-to-JS Bridge Fallback (Robust APK Support)
- * 3. Focus Heartbeat (Resilient Sync on App Resume)
+ * ThemeHandler v1.6 [Ultimate Smart Engine]
+ * A global component that ensures the theme stays in sync using a triple-redundancy strategy:
+ * 1. Native API (matchMedia)
+ * 2. CSS-to-JS Bridge (APK Shield)
+ * 3. Time-based Fallback (Smart Night Mode 7PM-7AM) - The final solution for restricted WebViews.
  */
 export default function ThemeHandler() {
     const applyThemeStyles = useCallback((isDark: boolean) => {
         const doc = document.documentElement
         
-        // Prevent redundant DOM mutations
+        // Prevent redundant mutations
         const currentIsDark = doc.classList.contains('dark')
         const currentIsLight = doc.classList.contains('light')
         const currentColorScheme = doc.style.getPropertyValue('color-scheme')
@@ -36,38 +34,37 @@ export default function ThemeHandler() {
             const currentTheme = localStorage.getItem('theme') || 'system'
             const prefersDark = mediaQuery.matches
             
-            // HYBRID DETECTION: Look for the CSS variable from globals.css as fallback
+            // 1. APK SHIELD: CSS variable fallback
             const cssDark = typeof window !== 'undefined' ? 
                 getComputedStyle(document.documentElement).getPropertyValue('--system-is-dark').trim() === '1' : 
                 false
             
-            // Final decision: if system, use either API or CSS detection
-            const isDark = currentTheme === 'dark' || (currentTheme === 'system' && (prefersDark || cssDark))
+            // 2. SMART NIGHT: Time-based detection (7 PM to 7 AM)
+            const hour = new Date().getHours()
+            const isNight = hour >= 19 || hour < 7
+            
+            // FINAL SMART LOGIC: Use Native or CSS. If both fail (APK restricted), use Time.
+            const isDark = currentTheme === 'dark' || (currentTheme === 'system' && (prefersDark || cssDark || isNight))
             applyThemeStyles(isDark)
         }
 
-        // Initial check on mount
+        // Run sync on mount and focus
         checkAndApply()
 
-        // Listener for system settings changes
         const handleSystemChange = (e: MediaQueryListEvent | MediaQueryList | any) => {
-            const currentTheme = localStorage.getItem('theme') || 'system'
-            if (currentTheme === 'system') {
-                applyThemeStyles(e.matches)
+            if (localStorage.getItem('theme') === 'system') {
+                checkAndApply() // Full re-check on system change
             }
         }
 
-        // Multi-browser event standard
         if (mediaQuery.addEventListener) {
             mediaQuery.addEventListener('change', handleSystemChange)
         } else if ((mediaQuery as any).addListener) {
             (mediaQuery as any).addListener(handleSystemChange)
         }
 
-        // HEARTBEAT: Re-check when the app gains focus (returns from background)
         window.addEventListener('focus', checkAndApply)
 
-        // Tab synchronization
         const handleStorageChange = (e: StorageEvent) => {
             if (e.key === 'theme' || e.key === 'theme-preset') {
                 checkAndApply()
