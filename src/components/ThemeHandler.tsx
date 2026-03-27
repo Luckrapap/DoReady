@@ -6,6 +6,7 @@ import { useEffect, useCallback } from 'react'
  * ThemeHandler is a global, render-less component that listens for system theme changes
  * and ensures the document's dark mode classes stay in sync with the user's preference.
  * Specifically tuned for Mobile WebViews with extra mount-time checks and compatibility fallbacks.
+ * v1.4: Added CSS-based detection fallback for buggy WebViews.
  */
 export default function ThemeHandler() {
     const applyThemeStyles = useCallback((isDark: boolean) => {
@@ -20,7 +21,11 @@ export default function ThemeHandler() {
         
         const checkAndApply = () => {
             const currentTheme = localStorage.getItem('theme') || 'system'
-            const isDark = currentTheme === 'dark' || (currentTheme === 'system' && mediaQuery.matches)
+            const prefersDark = mediaQuery.matches
+            // CSS variable fallback for WebViews that don't pass media queries to JS
+            const cssDark = typeof window !== 'undefined' ? getComputedStyle(document.documentElement).getPropertyValue('--system-is-dark').trim() === '1' : false
+            
+            const isDark = currentTheme === 'dark' || (currentTheme === 'system' && (prefersDark || cssDark))
             applyThemeStyles(isDark)
         }
 
@@ -35,7 +40,6 @@ export default function ThemeHandler() {
             }
         }
 
-        // Compatibility fallback
         if (mediaQuery.addEventListener) {
             mediaQuery.addEventListener('change', handleSystemChange)
         } else if ((mediaQuery as any).addListener) {

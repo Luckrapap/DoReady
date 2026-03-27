@@ -49,6 +49,13 @@
   --accent-muted: #f1f5f9;
 
   color-scheme: light;
+  --system-is-dark: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --system-is-dark: 1;
+  }
 }
 
 /* BLUE: Oceanic Theme (Symmetrically Aligned) */

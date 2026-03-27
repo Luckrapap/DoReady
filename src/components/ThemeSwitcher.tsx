@@ -30,18 +30,63 @@ export default function ThemeSwitcher() {
         setPreset(savedPreset)
         setCustomHue(savedHue)
 
-        if (savedPreset === 'custom') {
-            document.documentElement.style.setProperty('--custom-hue', savedHue.toString())
+        // Apply initial theme and preset
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+        const applyInitialTheme = () => {
+            const currentTheme = localStorage.getItem('theme') || 'system'
+            const prefersDark = mediaQuery.matches
+            // Fallback to CSS variable if media query is not reliable or for initial load
+            const cssDark = typeof window !== 'undefined' ? getComputedStyle(document.documentElement).getPropertyValue('--system-is-dark').trim() === '1' : false
+            const isDark = currentTheme === 'dark' || (currentTheme === 'system' && (prefersDark || cssDark))
+            
+            const doc = document.documentElement
+            doc.classList.toggle('dark', isDark)
+            doc.classList.toggle('light', !isDark)
+            doc.style.setProperty('color-scheme', isDark ? 'dark' : 'light')
+
+            // Apply custom hue if needed
+            if (savedPreset === 'custom') {
+                doc.style.setProperty('--custom-hue', savedHue.toString())
+            }
+
+            // Apply preset class
+            doc.classList.remove('theme-blue', 'theme-slate', 'theme-purple', 'theme-green', 'theme-red', 'theme-orange', 'theme-yellow', 'theme-pink', 'theme-custom')
+            if (savedPreset !== 'slate') {
+                doc.classList.add(`theme-${savedPreset}`)
+            }
         }
+
+        applyInitialTheme()
+
+        // Listen for system theme changes
+        const handleSystemThemeChange = () => {
+            if (localStorage.getItem('theme') === 'system') {
+                applyInitialTheme() // Re-apply theme based on new system preference
+            }
+        }
+        mediaQuery.addEventListener('change', handleSystemThemeChange)
 
         // Sincronizar cambios desde otras pestañas
         const handleStorageChange = (e: StorageEvent) => {
-            if (e.key === 'theme') setTheme(e.newValue as Theme || 'system')
-            if (e.key === 'theme-preset') setPreset(e.newValue as Preset || 'slate')
-            if (e.key === 'theme-custom-hue') setCustomHue(Number(e.newValue) || 220)
+            if (e.key === 'theme') {
+                setTheme(e.newValue as Theme || 'system')
+                applyInitialTheme() // Re-apply theme if theme setting changes
+            }
+            if (e.key === 'theme-preset') {
+                setPreset(e.newValue as Preset || 'slate')
+                applyInitialTheme() // Re-apply theme if preset changes
+            }
+            if (e.key === 'theme-custom-hue') {
+                setCustomHue(Number(e.newValue) || 220)
+                applyInitialTheme() // Re-apply theme if custom hue changes
+            }
         }
         window.addEventListener('storage', handleStorageChange)
-        return () => window.removeEventListener('storage', handleStorageChange)
+
+        return () => {
+            mediaQuery.removeEventListener('change', handleSystemThemeChange)
+            window.removeEventListener('storage', handleStorageChange)
+        }
     }, [])
 
     const applyTheme = (newTheme: Theme, newPreset: Preset, newHue?: number) => {
@@ -239,8 +284,11 @@ export default function ThemeSwitcher() {
                 </AnimatePresence>
             </div>
             {/* Version indicator for troubleshooting */}
-            <div className="flex justify-center pt-2 opacity-20 hover:opacity-100 transition-opacity">
-                <span className="text-[10px] font-mono text-zinc-500">v1.3-webview-boost</span>
+            <div className="flex flex-col items-center pt-2 opacity-20 hover:opacity-100 transition-opacity gap-1">
+                <span className="text-[10px] font-mono text-zinc-500">v1.4-apk-debug</span>
+                <span className="text-[8px] font-bold text-zinc-400 uppercase tracking-tighter">
+                    Sistema detectado: {mounted ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'Oscuro' : 'Claro') : '...'}
+                </span>
             </div>
         </div>
     )
