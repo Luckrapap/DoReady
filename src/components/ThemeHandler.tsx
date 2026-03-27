@@ -1,13 +1,12 @@
 'use client'
 
 import { useEffect, useCallback } from 'react'
+import { isDarkModeRequested } from '@/utils/theme'
 
 /**
- * ThemeHandler v1.6 [Ultimate Smart Engine]
- * A global component that ensures the theme stays in sync using a triple-redundancy strategy:
- * 1. Native API (matchMedia)
- * 2. CSS-to-JS Bridge (APK Shield)
- * 3. Time-based Fallback (Smart Night Mode 7PM-7AM) - The final solution for restricted WebViews.
+ * ThemeHandler v1.8 [Unified Sync]
+ * Uses the centralized isDarkModeRequested utility to ensure the theme 
+ * is always consistent across the entire application, including restricted WebViews.
  */
 export default function ThemeHandler() {
     const applyThemeStyles = useCallback((isDark: boolean) => {
@@ -31,29 +30,16 @@ export default function ThemeHandler() {
         const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
         
         const checkAndApply = () => {
-            const currentTheme = localStorage.getItem('theme') || 'system'
-            const prefersDark = mediaQuery.matches
-            
-            // 1. APK SHIELD: CSS variable fallback
-            const cssDark = typeof window !== 'undefined' ? 
-                getComputedStyle(document.documentElement).getPropertyValue('--system-is-dark').trim() === '1' : 
-                false
-            
-            // 2. SMART NIGHT: Time-based detection (7 PM to 7 AM)
-            const hour = new Date().getHours()
-            const isNight = hour >= 19 || hour < 7
-            
-            // FINAL SMART LOGIC: Use Native or CSS. If both fail (APK restricted), use Time.
-            const isDark = currentTheme === 'dark' || (currentTheme === 'system' && (prefersDark || cssDark || isNight))
-            applyThemeStyles(isDark)
+            applyThemeStyles(isDarkModeRequested())
         }
 
-        // Run sync on mount and focus
+        // Initial sync
         checkAndApply()
 
-        const handleSystemChange = (e: MediaQueryListEvent | MediaQueryList | any) => {
+        // Listen for system changes (standard API)
+        const handleSystemChange = () => {
             if (localStorage.getItem('theme') === 'system') {
-                checkAndApply() // Full re-check on system change
+                checkAndApply()
             }
         }
 
@@ -63,8 +49,10 @@ export default function ThemeHandler() {
             (mediaQuery as any).addListener(handleSystemChange)
         }
 
+        // Resiliency sync
         window.addEventListener('focus', checkAndApply)
 
+        // Storage sync (tabs/settings)
         const handleStorageChange = (e: StorageEvent) => {
             if (e.key === 'theme' || e.key === 'theme-preset') {
                 checkAndApply()

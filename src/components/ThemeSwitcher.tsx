@@ -1,7 +1,8 @@
 'use client'
 
-import { Sun, Moon, Monitor, Check, Pipette, X } from 'lucide-react'
+import { Monitor, Moon, Sun, Palette, Check, Sparkles, Pipette, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { isDarkModeRequested } from '@/utils/theme'
 import { useEffect, useState } from 'react'
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
@@ -33,11 +34,7 @@ export default function ThemeSwitcher() {
         // Apply initial theme and preset
         const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
         const applyInitialTheme = () => {
-            const currentTheme = localStorage.getItem('theme') || 'system'
-            const prefersDark = mediaQuery.matches
-            // Fallback to CSS variable if media query is not reliable or for initial load
-            const cssDark = typeof window !== 'undefined' ? getComputedStyle(document.documentElement).getPropertyValue('--system-is-dark').trim() === '1' : false
-            const isDark = currentTheme === 'dark' || (currentTheme === 'system' && (prefersDark || cssDark))
+            const isDark = isDarkModeRequested()
             
             const doc = document.documentElement
             doc.classList.toggle('dark', isDark)
@@ -99,11 +96,7 @@ export default function ThemeSwitcher() {
         localStorage.setItem('theme-preset', newPreset)
         localStorage.setItem('theme-custom-hue', finalHue.toString())
 
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-        const cssDark = typeof window !== 'undefined' ? getComputedStyle(document.documentElement).getPropertyValue('--system-is-dark').trim() === '1' : false
-        const isNight = new Date().getHours() >= 19 || new Date().getHours() < 7
-        
-        const isDark = newTheme === 'dark' || (newTheme === 'system' && (prefersDark || cssDark || isNight))
+        const isDark = isDarkModeRequested()
 
         const doc = document.documentElement
         doc.classList.toggle('dark', isDark)
@@ -292,9 +285,9 @@ export default function ThemeSwitcher() {
             </div>
             {/* Version indicator for troubleshooting */}
             <div className="flex flex-col items-center pt-2 opacity-20 hover:opacity-100 transition-opacity gap-1">
-                <span className="text-[10px] font-mono text-zinc-500">v1.7-definitive</span>
+                <span className="text-[10px] font-mono text-zinc-500">v1.8-sync</span>
                 <span className="text-[8px] font-bold text-zinc-400 uppercase tracking-tighter">
-                    Engine Status: {mounted ? (((window.matchMedia('(prefers-color-scheme: dark)').matches || (new Date().getHours() >= 19 || new Date().getHours() < 7))) ? 'Dark Mode [Sync]' : 'Light Mode [Sync]') : '...'}
+                    Global Engine: {mounted ? (isDarkModeRequested() ? 'Dark Active' : 'Light Active') : '...'}
                 </span>
             </div>
         </div>
