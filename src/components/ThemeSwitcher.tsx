@@ -99,7 +99,11 @@ export default function ThemeSwitcher() {
         localStorage.setItem('theme-preset', newPreset)
         localStorage.setItem('theme-custom-hue', finalHue.toString())
 
-        const isDark = newTheme === 'dark' || (newTheme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+        const cssDark = typeof window !== 'undefined' ? getComputedStyle(document.documentElement).getPropertyValue('--system-is-dark').trim() === '1' : false
+        const isNight = new Date().getHours() >= 19 || new Date().getHours() < 7
+        
+        const isDark = newTheme === 'dark' || (newTheme === 'system' && (prefersDark || cssDark || isNight))
 
         const doc = document.documentElement
         doc.classList.toggle('dark', isDark)
@@ -154,7 +158,10 @@ export default function ThemeSwitcher() {
                     />
                     <ThemeButton
                         active={theme === 'system'}
-                        onClick={() => applyTheme('system', preset)}
+                        onClick={() => {
+                            console.log('DoReady Hydration v1.7 - Definitive Fix');
+                            applyTheme('system', preset)
+                        }}
                         icon={<Monitor size={18} />}
                         label="Dispositivo"
                     />
@@ -285,9 +292,9 @@ export default function ThemeSwitcher() {
             </div>
             {/* Version indicator for troubleshooting */}
             <div className="flex flex-col items-center pt-2 opacity-20 hover:opacity-100 transition-opacity gap-1">
-                <span className="text-[10px] font-mono text-zinc-500">v1.6-ultimate</span>
+                <span className="text-[10px] font-mono text-zinc-500">v1.7-definitive</span>
                 <span className="text-[8px] font-bold text-zinc-400 uppercase tracking-tighter">
-                    Smart Engine: {mounted ? ((window.matchMedia('(prefers-color-scheme: dark)').matches || (new Date().getHours() >= 19 || new Date().getHours() < 7)) ? 'Night Active' : 'Day Active') : '...'}
+                    Engine Status: {mounted ? (((window.matchMedia('(prefers-color-scheme: dark)').matches || (new Date().getHours() >= 19 || new Date().getHours() < 7))) ? 'Dark Mode [Sync]' : 'Light Mode [Sync]') : '...'}
                 </span>
             </div>
         </div>
