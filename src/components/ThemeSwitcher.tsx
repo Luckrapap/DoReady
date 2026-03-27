@@ -240,7 +240,7 @@ export default function ThemeSwitcher() {
             </div>
             {/* Version indicator for troubleshooting */}
             <div className="flex justify-center pt-2 opacity-20 hover:opacity-100 transition-opacity">
-                <span className="text-[10px] font-mono text-zinc-500">v1.2-theme-fix</span>
+                <span className="text-[10px] font-mono text-zinc-500">v1.3-webview-boost</span>
             </div>
         </div>
     )

@@ -51,6 +51,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: "cover",
+  colorScheme: "light dark",
 };
 
 
@@ -67,7 +68,7 @@ export default function RootLayout({
             __html: `
                 (function() {
                   try {
-                    console.log('DoReady Hydration v1.2');
+                    console.log('DoReady Hydration v1.3 - WebView Check');
                     var path = window.location.pathname;
                     var isPublic = path === '/' || path.startsWith('/login');
                     
