@@ -27,7 +27,7 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: "DoReady | Focus & Consistency",
   description: "Your daily action core. Track your focus and build consistency.",
-  manifest: "/manifest.json?v=6",
+  manifest: "/manifest.json?v=7",
   icons: {
     icon: [
       { url: "/Icon.png?v=7" },
@@ -68,7 +68,7 @@ export default function RootLayout({
             __html: `
                 (function() {
                   try {
-                    console.log('DoReady Hydration v1.4 - APK Diagnostic');
+                    console.log('DoReady Hydration v1.5 - Definitive APK Shield');
                     var path = window.location.pathname;
                     var isPublic = path === '/' || path.startsWith('/login');
                     

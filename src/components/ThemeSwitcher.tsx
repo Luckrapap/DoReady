@@ -285,9 +285,9 @@ export default function ThemeSwitcher() {
             </div>
             {/* Version indicator for troubleshooting */}
             <div className="flex flex-col items-center pt-2 opacity-20 hover:opacity-100 transition-opacity gap-1">
-                <span className="text-[10px] font-mono text-zinc-500">v1.4-apk-debug</span>
+                <span className="text-[10px] font-mono text-zinc-500">v1.5-final-shield</span>
                 <span className="text-[8px] font-bold text-zinc-400 uppercase tracking-tighter">
-                    Sistema detectado: {mounted ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'Oscuro' : 'Claro') : '...'}
+                    APK Safe Engine: {mounted ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'Dark API' : 'Light API') : '...'}
                 </span>
             </div>
         </div>
