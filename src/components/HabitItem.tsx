@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react'
 import { Check, Repeat, Pencil, Orbit } from 'lucide-react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import { Haptics, ImpactStyle } from '@capacitor/haptics'
 import { cn } from '@/utils/utils'
 import { toggleHabitLog, deleteHabit } from '@/app/actions/habits'
 
@@ -23,6 +24,13 @@ export default function HabitItem({ habit, dateStr, onStatusChange, onDelete, on
     const handleToggle = () => {
         const newStatus = !habit.is_completed;
         
+        // Haptic feedback
+        if (newStatus) {
+            Haptics.impact({ style: ImpactStyle.Medium }).catch(() => {})
+        } else {
+            Haptics.impact({ style: ImpactStyle.Light }).catch(() => {})
+        }
+
         startTransition(async () => {
             // Optimistic UI update
             onStatusChange(habit.id, newStatus);
@@ -40,14 +48,12 @@ export default function HabitItem({ habit, dateStr, onStatusChange, onDelete, on
     return (
         <motion.div
             layout
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            whileHover={{ scale: 1.01 }}
-            onHoverStart={() => setIsHovered(true)}
-            onHoverEnd={() => setIsHovered(false)}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            whileTap={{ scale: 0.98 }}
             className={cn(
-                "group relative flex items-center gap-6 p-6 rounded-3xl transition-all duration-300",
+                "group relative flex items-center gap-5 p-5 rounded-3xl transition-all duration-300 tap-highlight-transparent",
                 habit.is_completed ? "bg-opacity-50" : "bg-opacity-100"
             )}
             style={{ 
@@ -56,21 +62,21 @@ export default function HabitItem({ habit, dateStr, onStatusChange, onDelete, on
                 borderColor: habit.is_completed ? 'var(--accent)' : 'var(--border)'
             }}
         >
-            {/* Minimalist Checkbox */}
+            {/* Minimalist Checkbox - Increased touch target for mobile (44px) */}
             <div 
                 onClick={handleToggle}
                 className={cn(
-                    "flex-shrink-0 w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-300 relative overflow-hidden cursor-pointer",
+                    "flex-shrink-0 w-11 h-11 rounded-full border-2 flex items-center justify-center transition-all duration-300 relative overflow-hidden cursor-pointer active:scale-90",
                     habit.is_completed ? "border-transparent" : "border-zinc-300 dark:border-zinc-700 hover:border-zinc-400 dark:hover:border-zinc-500"
                 )}
                 style={habit.is_completed ? { backgroundColor: 'var(--accent)' } : {}}
             >
                 <motion.div
                     initial={false}
-                    animate={{ scale: habit.is_completed ? 1 : 0 }}
+                    animate={{ scale: habit.is_completed ? 1.1 : 0 }}
                     transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 >
-                    <Check size={18} strokeWidth={3} className="text-white" />
+                    <Check size={22} strokeWidth={3} className="text-white" />
                 </motion.div>
             </div>
 

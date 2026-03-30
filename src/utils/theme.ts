@@ -1,9 +1,16 @@
+import { Capacitor } from '@capacitor/core'
+
 /**
- * Theme Detection Utility v1.9 (Definitive No-Time)
- * Uses a hybrid approach to detect system theme WITHOUT using the clock:
+ * Theme Detection Utility v3.0 (Capacitor Native Bridge)
+ * Hybrid approach:
  * 1. prefers-color-scheme (Standard API)
- * 2. CanvasText System Color (CSS Level 4 Sensor) - Reliable for restricted WebViews.
+ * 2. Capacitor Native Plugin (SystemTheme) - Definitive for Android/APK
+ * 3. CanvasText System Color (CSS Level 4 Sensor) - Fallback
  */
+
+// Native Cache to avoid async flickering on every call
+let nativeThemeCache: 'dark' | 'light' | null = null
+
 export const isDarkModeRequested = () => {
   if (typeof window === 'undefined') return false
 
@@ -11,22 +18,42 @@ export const isDarkModeRequested = () => {
   if (theme === 'dark') return true
   if (theme === 'light') return false
 
+  // If we have a cached native theme from Capacitor, use it
+  if (nativeThemeCache === 'dark') return true
+  if (nativeThemeCache === 'light') return false
+
   // Standard API Check
   if (window.matchMedia('(prefers-color-scheme: dark)').matches) return true
 
-  // APK SHIELD: System Color Sensing fallback
-  // In many restricted WebViews, System Colors (CanvasText) adapt even if media queries don't.
+  // Sensor fallback (Web only)
   try {
     const temp = document.createElement('div')
     temp.style.color = 'CanvasText'
     document.body.appendChild(temp)
     const color = getComputedStyle(temp).color
     document.body.removeChild(temp)
-    
-    // If CanvasText is white or very light, the system is in Dark mode
-    // (rgb(255, 255, 255), white, etc.)
     return color.includes('255') || color === 'white'
   } catch (e) {
     return false
   }
+}
+
+/**
+ * Triggers a native theme check (Async)
+ * Stores the result in nativeThemeCache for synchronous consumption
+ */
+export const syncNativeTheme = async () => {
+    if (Capacitor.getPlatform() === 'android') {
+        try {
+            // Use the custom plugin we created in MainActivity.java
+            const { value } = await (Capacitor as any).Plugins.SystemTheme.getTheme()
+            if (value === 'dark' || value === 'light') {
+                nativeThemeCache = value as 'dark' | 'light'
+                return value === 'dark'
+            }
+        } catch (e) {
+            console.error('Capacitor Native Theme Error:', e)
+        }
+    }
+    return isDarkModeRequested()
 }

@@ -803,8 +803,8 @@ body {
 /* Ensure all themed components transition in sync */
 div, aside, nav, header, section, button, input, span, h1, h2, h3, p, a {
   transition-property: background-color, border-color, color, fill, stroke, box-shadow;
-  transition-duration: 500ms;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms; /* Snappier for mobile */
+  transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1); /* Ease out quint for better feel */
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera but keep functionality */
@@ -846,6 +846,25 @@ div, aside, nav, header, section, button, input, span, h1, h2, h3, p, a {
     border-top-color: rgba(255, 255, 255, 0.1);
     border-left-color: rgba(255, 255, 255, 0.1);
   }
+
+  /* Safe Area Utilities */
+  .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+  .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+  .px-safe { 
+    padding-left: env(safe-area-inset-left, 0px); 
+    padding-right: env(safe-area-inset-right, 0px); 
+  }
+  .mb-safe { margin-bottom: env(safe-area-inset-bottom, 0px); }
+  .mt-safe { margin-top: env(safe-area-inset-top, 0px); }
+  
+  /* Compound Safe Utilities */
+  .pb-safe-4 { padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); }
+  .pb-safe-20 { padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px)); }
+
+  /* Touch optimizations */
+  .touch-none { touch-action: none; }
+  .touch-pan-y { touch-action: pan-y; }
+  .tap-highlight-transparent { -webkit-tap-highlight-color: transparent; }
 }
 
 :root {

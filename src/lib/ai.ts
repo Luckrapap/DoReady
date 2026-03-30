@@ -5,4 +5,12 @@ const groq = createOpenAI({
     apiKey: process.env.GROQ_API_KEY,
 });
 
-export const defaultModel = groq('llama-3.3-70b-versatile');
+// Definición de modelos para rotación automática (Definitive Solution)
+export const models = {
+    primary: groq('llama-3.3-70b-versatile'),
+    secondary: groq('llama-3.1-70b-versatile'),
+    fast: groq('llama-3.1-8b-instant'),
+    extra: groq('gemma2-9b-it')
+};
+
+export const defaultModel = models.primary;

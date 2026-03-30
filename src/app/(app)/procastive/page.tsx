@@ -4,13 +4,20 @@ import { useState } from 'react'
 import TriviaGame from '@/components/TriviaGame'
 import GameSelector from '@/components/GameSelector'
 import { motion, AnimatePresence } from 'framer-motion'
+import { cn } from '@/utils/utils'
 
 export default function ProcastivePage() {
     const [activeGame, setActiveGame] = useState<string | null>(null)
 
     return (
-        <main className="min-h-screen py-2 md:py-6 px-2 md:px-4 flex justify-center selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black relative">
-            <div className="w-full max-w-5xl mt-2 md:mt-12 mb-24">
+        <main className={cn(
+            "w-full px-2 md:px-4 flex flex-col items-center selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black relative",
+            activeGame ? "h-full overflow-hidden pt-6 justify-start" : "min-h-[60dvh] md:min-h-screen py-4 md:py-6 justify-center"
+        )}>
+            <div className={cn(
+                "w-full max-w-5xl flex flex-col transition-all duration-500",
+                activeGame ? "h-full mb-0" : "mb-20 md:mb-24 mt-2 md:mt-12"
+            )}>
                 <AnimatePresence mode="wait">
                     {!activeGame ? (
                         <motion.div
@@ -27,6 +34,7 @@ export default function ProcastivePage() {
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
+                            className="h-full w-full"
                         >
                             {activeGame === 'trivia' && (
                                 <TriviaGame onBack={() => setActiveGame(null)} />

@@ -1,12 +1,12 @@
 'use client'
 
 import { useEffect, useCallback } from 'react'
-import { isDarkModeRequested } from '@/utils/theme'
+import { isDarkModeRequested, syncNativeTheme } from '@/utils/theme'
 
 /**
- * ThemeHandler v1.8 [Unified Sync]
- * Uses the centralized isDarkModeRequested utility to ensure the theme 
- * is always consistent across the entire application, including restricted WebViews.
+ * ThemeHandler v3.0 [Native Bridge Ready]
+ * Updates the theme cache via Capacitor (if available) before 
+ * applying the standard hydration logic.
  */
 export default function ThemeHandler() {
     const applyThemeStyles = useCallback((isDark: boolean) => {
@@ -29,7 +29,9 @@ export default function ThemeHandler() {
     useEffect(() => {
         const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
         
-        const checkAndApply = () => {
+        const checkAndApply = async () => {
+            // Priority: Attempt Native Sync first (100% reliable in APK)
+            await syncNativeTheme()
             applyThemeStyles(isDarkModeRequested())
         }
 

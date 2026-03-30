@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { Check, Trash2 } from 'lucide-react'
+import { Haptics, ImpactStyle } from '@capacitor/haptics'
 import { cn } from '@/utils/utils'
 
 interface Task {
@@ -19,15 +20,25 @@ interface TaskItemProps {
 export default function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
     const isCompleted = task.is_completed
 
+    const handleToggle = () => {
+        // Haptic feedback
+        if (!isCompleted) {
+            Haptics.impact({ style: ImpactStyle.Medium }).catch(() => {})
+        } else {
+            Haptics.impact({ style: ImpactStyle.Light }).catch(() => {})
+        }
+        onToggle()
+    }
+
     return (
         <motion.div
             layout
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            whileHover={{ scale: 1.01 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            whileTap={{ scale: 0.98 }}
             className={cn(
-                "group relative flex items-center gap-6 p-6 rounded-3xl transition-all duration-300",
+                "group relative flex items-center gap-5 p-5 rounded-3xl transition-all duration-300 tap-highlight-transparent",
                 isCompleted ? "bg-opacity-50" : "bg-opacity-100"
             )}
             style={{ 
@@ -36,21 +47,21 @@ export default function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
                 borderColor: isCompleted ? 'var(--accent)' : 'var(--border)'
             }}
         >
-            {/* Checkbox */}
+            {/* Checkbox - 44px for primary mobile action */}
             <div 
-                onClick={onToggle}
+                onClick={handleToggle}
                 className={cn(
-                    "flex-shrink-0 w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-300 relative overflow-hidden cursor-pointer",
+                    "flex-shrink-0 w-11 h-11 rounded-full border-2 flex items-center justify-center transition-all duration-300 relative overflow-hidden cursor-pointer active:scale-90",
                     isCompleted ? "border-transparent" : "border-zinc-300 dark:border-zinc-700 hover:border-zinc-400 dark:hover:border-zinc-500"
                 )}
                 style={isCompleted ? { backgroundColor: 'var(--accent)' } : {}}
             >
                 <motion.div
                     initial={false}
-                    animate={{ scale: isCompleted ? 1 : 0 }}
+                    animate={{ scale: isCompleted ? 1.1 : 0 }}
                     transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 >
-                    <Check size={18} strokeWidth={3} className="text-white" />
+                    <Check size={22} strokeWidth={3} className="text-white" />
                 </motion.div>
             </div>
 

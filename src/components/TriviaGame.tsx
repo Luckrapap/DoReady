@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Loader2, ArrowRight, Gamepad2, Brain } from 'lucide-react'
+import { Loader2, ArrowRight, Gamepad2, Brain, ChevronLeft, Pin, Lightbulb, X, Flame } from 'lucide-react'
 import { cn } from '@/utils/utils'
 import type { TriviaResponse } from '@/app/api/trivia/route'
 
@@ -17,8 +17,17 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
     const [streak, setStreak] = useState(0)
     const [isFetching, setIsFetching] = useState(false)
     const [errorMessage, setErrorMessage] = useState('')
+    const [showContext, setShowContext] = useState(false)
+    const [showFact, setShowFact] = useState(false)
+    const [gameMode, setGameMode] = useState<'chill' | 'expert' | 'random' | 'focus' | null>(null)
+    const [isEnteringTopic, setIsEnteringTopic] = useState(false)
+    const [customTopic, setCustomTopic] = useState('')
 
-    const fetchTrivia = useCallback(async (isMountedRef?: { current: boolean }) => {
+    const fetchTrivia = useCallback(async (
+        isMountedRef?: { current: boolean }, 
+        forcedMode?: string,
+        forcedTopic?: string
+    ) => {
         if (isFetching) return
 
         // If no ref is provided (e.g. from button click), we assume it's mounted
@@ -31,7 +40,10 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
             const res = await fetch('/api/trivia', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ topic: null })
+                body: JSON.stringify({ 
+                    mode: forcedMode || gameMode || 'random',
+                    topic: forcedTopic || customTopic || null
+                })
             })
             if (!res.ok) {
                 const errorData = await res.json().catch(() => ({ error: 'Error desconocido' }))
@@ -56,12 +68,7 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
         }
     }, [isFetching])
 
-    // Load first question on mount
-    useEffect(() => {
-        const isMounted = { current: true }
-        fetchTrivia(isMounted)
-        return () => { isMounted.current = false }
-    }, [])
+    // Pregunta inicial se carga a través de la selección de modo
 
     const handleAnswer = (answer: string) => {
         if (gameState !== 'playing' || !currentTrivia) return
@@ -76,160 +83,488 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
         }
     }
 
-    return (
-        <div className="w-full max-w-2xl mx-auto">
-            {/* Header & Streak */}
-            <div className="flex items-center justify-between mb-8 px-4">
-                <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg transition-colors duration-500"
-                        style={{ backgroundColor: 'var(--accent)', color: 'var(--surface)' }}
+    const handleStartMode = (mode: 'chill' | 'expert' | 'random' | 'focus') => {
+        if (mode === 'focus') {
+            setIsEnteringTopic(true)
+            return
+        }
+        setGameMode(mode)
+        fetchTrivia(undefined, mode)
+    }
+
+    const handleConfirmFocus = () => {
+        if (!customTopic.trim()) return
+        setGameMode('focus')
+        setIsEnteringTopic(false)
+        fetchTrivia(undefined, 'focus', customTopic)
+    }
+
+    if (isEnteringTopic) {
+        return (
+            <div className="w-full max-w-2xl mx-auto h-full flex flex-col">
+                <div className="flex items-center gap-4 mb-8 px-4 shrink-0">
+                    <button
+                        onClick={() => setIsEnteringTopic(false)}
+                        className="p-3 rounded-2xl bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:scale-105 transition-all"
                     >
-                        <Gamepad2 size={24} />
+                        <ChevronLeft size={20} />
+                    </button>
+                    <div className="flex flex-col items-start leading-none ml-2">
+                        <h2 className="text-2xl font-black text-zinc-900 dark:text-zinc-50 tracking-tight">Modo Enfoque</h2>
+                        <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] mt-1">Personalizado</span>
                     </div>
-                    <div>
-                        <div className="flex items-center gap-2">
-                            {onBack && (
-                                <button
-                                    onClick={onBack}
-                                    className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-50 transition-colors"
-                                >
-                                    ← Volver
-                                </button>
-                            )}
-                            <h2 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 leading-none">
-                                Trivia General
-                            </h2>
-                        </div>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-[#94a3b8] mt-1.5 opacity-60">
-                            Desafío Diario DoReady
-                        </p>
+                    <div className="ml-auto">
+                        <StreakBadge count={streak} />
                     </div>
                 </div>
 
-                {streak > 0 && (
-                    <motion.div
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        className="flex items-center gap-2 px-4 py-2 rounded-2xl border transition-colors duration-500"
-                        style={{ backgroundColor: 'var(--border)', borderColor: 'color-mix(in srgb, var(--border) 50%, transparent)' }}
+                <div className="flex-1 flex flex-col justify-center px-6 gap-8">
+                    <div className="text-center space-y-4">
+                        <span className="text-6xl">🎯</span>
+                        <h3 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">Tú pones las reglas</h3>
+                        <p className="text-sm text-zinc-500 font-medium">¿Sobre qué tema quieres que te desafíe hoy?</p>
+                    </div>
+
+                    <div className="relative">
+                        <input 
+                            autoFocus
+                            type="text"
+                            value={customTopic}
+                            onChange={(e) => setCustomTopic(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleConfirmFocus()}
+                            placeholder="Ej: Mitología Griega, IA, Formula 1..."
+                            className="w-full p-6 rounded-[2rem] border-2 border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-lg font-bold focus:border-blue-500 outline-none transition-all placeholder:text-zinc-300 dark:placeholder:text-zinc-700"
+                        />
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                            <span className="text-xs font-bold text-zinc-300 dark:text-zinc-700 px-3 uppercase tracking-widest">Tema</span>
+                        </div>
+                    </div>
+
+                    <motion.button
+                        whileHover={{ scale: 1.02, y: -2 }}
+                        whileTap={{ scale: 0.98 }}
+                        disabled={!customTopic.trim() || isFetching}
+                        onClick={handleConfirmFocus}
+                        className={cn(
+                            "w-full p-6 rounded-[2rem] font-black text-lg transition-all shadow-xl shadow-blue-500/10",
+                            customTopic.trim() 
+                                ? "bg-blue-500 text-white hover:bg-blue-600" 
+                                : "bg-zinc-100 dark:bg-zinc-800 text-zinc-400 cursor-not-allowed"
+                        )}
                     >
-                        <Brain className="text-zinc-900 dark:text-zinc-100" size={18} />
-                        <span className="text-sm font-black tracking-tighter" style={{ color: 'var(--accent)' }}> Racha {streak}</span>
-                    </motion.div>
-                )}
+                        {isFetching ? "Preparando desafío..." : "EMPEZAR DESAFÍO"}
+                    </motion.button>
+                </div>
+            </div>
+        )
+    }
+
+    if (gameMode === null) {
+        return (
+            <div className="w-full max-w-2xl mx-auto h-full flex flex-col">
+                <div className="flex items-center gap-4 mb-8 px-4 shrink-0">
+                    <button
+                        onClick={onBack}
+                        className="p-3 rounded-2xl bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:scale-105 transition-all"
+                    >
+                        <ChevronLeft size={20} />
+                    </button>
+                    <div className="flex flex-col items-start leading-none">
+                        <h2 className="text-2xl font-black text-zinc-900 dark:text-zinc-50 tracking-tight">Trivia General</h2>
+                        <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] mt-1">Selecciona un modo</span>
+                    </div>
+                    <div className="ml-auto">
+                        <StreakBadge count={streak} />
+                    </div>
+                </div>
+
+                <div className="flex-1 flex flex-col justify-center px-4 gap-4">
+                    <ModeCard 
+                        title="Chill" 
+                        icon="🌿" 
+                        description="Preguntas fáciles y relajantes para pasar el rato." 
+                        onClick={() => handleStartMode('chill')}
+                        color="bg-green-500/10 border-green-500/20 text-green-600"
+                    />
+                    <ModeCard 
+                        title="Experto" 
+                        icon="🧠" 
+                        description="Retos difíciles solo para mentes maestras." 
+                        onClick={() => handleStartMode('expert')}
+                        color="bg-purple-500/10 border-purple-500/20 text-purple-600"
+                    />
+                    <ModeCard 
+                        title="Random" 
+                        icon="🎲" 
+                        description="Una mezcla de todo; nunca sabes qué vendrá." 
+                        onClick={() => handleStartMode('random')}
+                        color="bg-orange-500/10 border-orange-500/20 text-orange-600"
+                    />
+                    <ModeCard 
+                        title="Enfoque" 
+                        icon="🎯" 
+                        description="Elige el tema que tú quieras y yo te pregunto." 
+                        onClick={() => handleStartMode('focus')}
+                        color="bg-blue-500/10 border-blue-500/20 text-blue-600"
+                    />
+                </div>
+            </div>
+        )
+    }
+
+    return (
+        <div className="w-full max-w-2xl mx-auto h-full flex flex-col">
+            {/* Header & Streak */}
+            <div className="flex items-center justify-between mb-8 px-4 relative shrink-0">
+                <div className="flex items-center gap-4">
+                    {onBack && (
+                        <motion.button
+                            onClick={() => {
+                                setGameMode(null)
+                                setGameState('playing') // Reset gameState to ensure clean return
+                            }}
+                            whileHover={{ scale: 1.1, x: -2 }}
+                            whileTap={{ scale: 0.9 }}
+                            className="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300"
+                            style={{ 
+                                backgroundColor: 'color-mix(in srgb, var(--surface) 80%, transparent)',
+                                borderColor: 'var(--border)',
+                                color: 'var(--accent)',
+                                backdropFilter: 'blur(8px)'
+                            }}
+                        >
+                            <ChevronLeft size={24} strokeWidth={2.5} />
+                        </motion.button>
+                    )}
+                    <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg transition-colors duration-500"
+                            style={{ backgroundColor: 'var(--accent)', color: 'var(--surface)' }}
+                        >
+                            <Gamepad2 size={24} />
+                        </div>
+                        <div>
+                            <div className="flex flex-col">
+                                <h2 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 leading-tight">
+                                    {gameMode === 'focus' ? 'Modo Enfoque' : 'Trivia General'}
+                                </h2>
+                            </div>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[#94a3b8] mt-1.5 opacity-60">
+                                {gameMode === 'focus' ? customTopic : 'Desafío Diario DoReady'}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="ml-auto">
+                        <StreakBadge count={streak} />
+                    </div>
+                </div>
+
             </div>
 
-            {/* Game Container */}
-            <AnimatePresence mode="wait">
-                {gameState === 'loading' ? (
-                    <motion.div
-                        key="loading"
-                        className="p-12 border rounded-[2.5rem] flex flex-col items-center justify-center gap-4 transition-colors duration-500"
-                        style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
-                    >
-                        <Loader2 className="animate-spin text-zinc-400" size={32} />
-                        <p className="text-sm font-bold text-zinc-500 uppercase tracking-widest">Invocando pregunta...</p>
-                    </motion.div>
-                ) : gameState === 'error' ? (
-                    <motion.div
-                        key="error"
-                        className="p-12 border rounded-[2.5rem] transition-colors duration-500"
-                        style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
-                    >
-                        <div className="flex flex-col items-center gap-4">
-                            <p className="text-red-500 font-medium">{errorMessage}</p>
-                            <button
-                                onClick={() => fetchTrivia()}
-                                className="px-6 py-2 rounded-full font-bold text-sm bg-zinc-900 dark:bg-zinc-50 text-white dark:text-black"
-                            >
-                                Reintentar
-                            </button>
-                        </div>
-                    </motion.div>
-                ) : (
-                    <motion.div
-                        key="content"
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="p-10 border rounded-[2.5rem] shadow-xl md:shadow-2xl transition-colors duration-500"
-                        style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
-                    >
-                        <h3 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-zinc-50 mb-8 leading-tight">
-                            {currentTrivia?.question}
-                        </h3>
-
-                        <div className="grid grid-cols-1 gap-3">
-                            {currentTrivia?.options.map((option, idx) => {
-                                const isSelected = selectedAnswer === option
-                                const isCorrect = gameState === 'answered' && option === currentTrivia?.correctAnswer
-                                const isWrong = gameState === 'answered' && isSelected && option !== currentTrivia?.correctAnswer
-
-                                return (
-                                    <button
-                                        key={idx}
-                                        onClick={() => handleAnswer(option)}
-                                        disabled={gameState === 'answered'}
-                                        className={cn(
-                                            "group relative w-full p-5 text-left rounded-2xl font-bold transition-all border-2 overflow-hidden",
-                                            gameState === 'playing'
-                                                ? "hover:border-zinc-900 dark:hover:border-zinc-50 hover:scale-[1.01]"
-                                                : "cursor-default"
-                                        )}
-                                        style={{
-                                            backgroundColor: isCorrect
-                                                ? 'rgba(34, 197, 94, 0.1)'
-                                                : isWrong
-                                                    ? 'rgba(239, 68, 68, 0.1)'
-                                                    : 'color-mix(in srgb, var(--surface) 95%, var(--accent))',
-                                            borderColor: isCorrect
-                                                ? '#22c55e'
-                                                : isWrong
-                                                    ? '#ef4444'
-                                                    : 'var(--border)'
+            {/* Game Content Area */}
+            <div className="flex-1 flex flex-col justify-start md:justify-center overflow-y-auto no-scrollbar">
+                <AnimatePresence mode="wait">
+                    {gameState === 'loading' ? (
+                        <motion.div
+                            key="loading"
+                            className="flex-1 flex flex-col items-center justify-center gap-6 p-6 transition-all duration-500"
+                        >
+                            <div className="relative w-16 h-16">
+                                {[...Array(12)].map((_, i) => (
+                                    <motion.div
+                                        key={i}
+                                        className="absolute left-[30px] top-0 w-[5px] h-[16px] rounded-full bg-zinc-400 dark:bg-zinc-500"
+                                        style={{ transformOrigin: '2.5px 32px', rotate: i * 30 }}
+                                        animate={{ opacity: [0.15, 1, 0.15] }}
+                                        transition={{ 
+                                            repeat: Infinity, 
+                                            duration: 1.2, 
+                                            delay: i * 0.1,
+                                            ease: "linear"
                                         }}
-                                    >
-                                        <div className="flex items-center justify-between">
-                                            <span className={cn(
-                                                "text-sm tracking-tight transition-colors",
-                                                isCorrect ? "text-green-600 dark:text-green-400" :
-                                                    isWrong ? "text-red-600 dark:text-red-400" :
-                                                        "text-zinc-700 dark:text-zinc-300"
-                                            )}>
-                                                {option}
-                                            </span>
-                                            <ArrowRight
-                                                size={16}
-                                                className={cn(
-                                                    "transition-all",
-                                                    gameState === 'playing' ? "opacity-0 group-hover:opacity-100 group-hover:translate-x-1" : "opacity-0"
-                                                )}
-                                            />
-                                        </div>
-                                    </button>
-                                )
-                            })}
-                        </div>
-
-                        {gameState === 'answered' && (
-                            <motion.div
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="mt-8 pt-6 border-t"
-                                style={{ borderColor: 'var(--border)' }}
-                            >
+                                    />
+                                ))}
+                            </div>
+                            <p className="text-base font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.25em] text-center">
+                                Generando pregunta
+                            </p>
+                        </motion.div>
+                    ) : gameState === 'error' ? (
+                        <motion.div
+                            key="error"
+                            className="p-12 border rounded-[2.5rem] transition-colors duration-500"
+                            style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
+                        >
+                            <div className="flex flex-col items-center gap-4">
+                                <p className="text-red-500 font-medium">{errorMessage}</p>
                                 <button
                                     onClick={() => fetchTrivia()}
-                                    className="w-full py-4 text-white rounded-2xl font-bold transition-all shadow-lg flex items-center justify-center gap-2 group"
-                                    style={{ backgroundColor: 'var(--accent)' }}
+                                    className="px-6 py-2 rounded-full font-bold text-sm bg-zinc-900 dark:bg-zinc-50 text-white dark:text-black"
                                 >
-                                    Siguiente Pregunta
-                                    <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                                    Reintentar
                                 </button>
-                            </motion.div>
-                        )}
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                            </div>
+                        </motion.div>
+                    ) : (
+                        <motion.div
+                            key="content"
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="flex flex-col w-full max-h-full p-4 md:p-8 border rounded-[2rem] md:rounded-[2.5rem] shadow-xl md:shadow-2xl transition-colors duration-500 overflow-hidden"
+                            style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
+                        >
+                            {/* Question with dynamic font size */}
+                            <div className="flex-1 overflow-y-auto no-scrollbar min-h-0 mb-4 md:mb-6">
+                                <h3 className={cn(
+                                    "font-bold text-zinc-900 dark:text-zinc-50 leading-tight transition-all text-center md:text-left",
+                                    (currentTrivia?.question.length || 0) > 150 ? "text-lg md:text-xl" :
+                                    (currentTrivia?.question.length || 0) > 100 ? "text-xl md:text-2xl" :
+                                    "text-2xl md:text-3xl"
+                                )}>
+                                    {currentTrivia?.question}
+                                </h3>
+                            </div>
+
+                            <div className="grid grid-cols-1 gap-2 md:gap-3 shrink-0">
+                                {currentTrivia?.options.map((option, idx) => {
+                                    const isSelected = selectedAnswer === option
+                                    const isCorrect = gameState === 'answered' && option === currentTrivia?.correctAnswer
+                                    const isWrong = gameState === 'answered' && isSelected && option !== currentTrivia?.correctAnswer
+
+                                    return (
+                                        <button
+                                            key={idx}
+                                            onClick={() => handleAnswer(option)}
+                                            disabled={gameState === 'answered'}
+                                            className={cn(
+                                                "group relative w-full p-4 md:p-5 text-left rounded-2xl font-bold transition-all border-2 overflow-hidden",
+                                                gameState === 'playing'
+                                                    ? "hover:border-zinc-900 dark:hover:border-zinc-50 hover:scale-[1.01]"
+                                                    : "cursor-default"
+                                            )}
+                                            style={{
+                                                backgroundColor: isCorrect
+                                                    ? 'rgba(34, 197, 94, 0.1)'
+                                                    : isWrong
+                                                        ? 'rgba(239, 68, 68, 0.1)'
+                                                        : 'color-mix(in srgb, var(--surface) 95%, var(--accent))',
+                                                borderColor: isCorrect
+                                                    ? '#22c55e'
+                                                    : isWrong
+                                                        ? '#ef4444'
+                                                        : 'var(--border)'
+                                            }}
+                                        >
+                                            <div className="flex items-center justify-between">
+                                                <span className={cn(
+                                                    "text-sm tracking-tight transition-colors",
+                                                    isCorrect ? "text-green-600 dark:text-green-400" :
+                                                        isWrong ? "text-red-600 dark:text-red-400" :
+                                                            "text-zinc-700 dark:text-zinc-300"
+                                                )}>
+                                                    {option}
+                                                </span>
+                                                <ArrowRight
+                                                    size={16}
+                                                    className={cn(
+                                                        "transition-all",
+                                                        gameState === 'playing' ? "opacity-0 group-hover:opacity-100 group-hover:translate-x-1" : "opacity-0"
+                                                    )}
+                                                />
+                                            </div>
+                                        </button>
+                                    )
+                                })}
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+
+            {/* Selector de Acción Inferior (Independiente y Permanente) */}
+            <div className="mt-auto px-4 pt-0 pb-4 grid grid-cols-4 gap-3 shrink-0 w-full transition-opacity"
+                style={{ opacity: gameState === 'answered' ? 1 : 0.5 }}
+            >
+                <motion.button
+                    disabled={gameState !== 'answered'}
+                    onClick={() => setShowContext(true)}
+                    whileHover={{ scale: gameState === 'answered' ? 1.05 : 1 }}
+                    whileTap={{ scale: gameState === 'answered' ? 0.95 : 1 }}
+                    className="col-span-1 flex items-center justify-center py-4 rounded-2xl transition-all border-2 shadow-sm"
+                    style={{ 
+                        backgroundColor: 'color-mix(in srgb, var(--surface) 95%, var(--accent))', 
+                        borderColor: 'var(--border)',
+                        color: 'var(--accent)'
+                    }}
+                >
+                    <Pin size={22} />
+                </motion.button>
+                
+                <motion.button
+                    disabled={gameState !== 'answered'}
+                    onClick={() => setShowFact(true)}
+                    whileHover={{ scale: gameState === 'answered' ? 1.05 : 1 }}
+                    whileTap={{ scale: gameState === 'answered' ? 0.95 : 1 }}
+                    className="col-span-1 flex items-center justify-center py-4 rounded-2xl transition-all border-2 shadow-sm"
+                    style={{ 
+                        backgroundColor: 'color-mix(in srgb, var(--surface) 95%, var(--accent))', 
+                        borderColor: 'var(--border)',
+                        color: 'var(--accent)'
+                    }}
+                >
+                    <Lightbulb size={22} />
+                </motion.button>
+                
+                <motion.button
+                    disabled={gameState !== 'answered'}
+                    onClick={() => fetchTrivia()}
+                    whileHover={{ scale: gameState === 'answered' ? 1.02 : 1 }}
+                    whileTap={{ scale: gameState === 'answered' ? 0.98 : 1 }}
+                    className="col-span-2 flex items-center justify-center py-4 rounded-2xl transition-all border-2 shadow-sm"
+                    style={{ 
+                        backgroundColor: 'color-mix(in srgb, var(--surface) 95%, var(--accent))', 
+                        borderColor: 'var(--border)',
+                        color: 'var(--accent)'
+                    }}
+                >
+                    <ArrowRight size={22} />
+                </motion.button>
+            </div>
+
+            {/* Modales de Información */}
+            <GameModal
+                isOpen={showContext}
+                onClose={() => setShowContext(false)}
+                title="Contexto"
+                icon={<Pin size={20} />}
+                content={currentTrivia?.explanation}
+            />
+
+            <GameModal
+                isOpen={showFact}
+                onClose={() => setShowFact(false)}
+                title="Dato curioso"
+                icon={<Lightbulb size={20} />}
+                content={currentTrivia?.funFact}
+            />
         </div>
+    )
+}
+
+// Sub-componente para la Racha (Fuego)
+function StreakBadge({ count }: { count: number }) {
+    if (count === 0) return null;
+    
+    return (
+        <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            key={count}
+            className="relative flex items-center justify-center w-14 h-14 rounded-full transition-transform active:scale-95"
+            style={{ 
+                backgroundColor: 'color-mix(in srgb, var(--accent) 10%, transparent)',
+                color: 'var(--accent)'
+            }}
+        >
+            <Flame size={28} fill="currentColor" className="opacity-20 absolute" />
+            <span className="relative z-10 text-lg font-black tracking-tighter leading-none mt-1">
+                {count}
+            </span>
+        </motion.div>
+    )
+}
+
+// Sub-componente para las tarjetas de modo
+function ModeCard({ title, icon, description, onClick, color }: {
+    title: string,
+    icon: string,
+    description: string,
+    onClick: () => void,
+    color: string
+}) {
+    return (
+        <motion.button
+            whileHover={{ scale: 1.02, x: 5 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={onClick}
+            className={cn(
+                "w-full p-5 rounded-[2rem] border-2 flex items-center gap-5 transition-all text-left",
+                color,
+                "hover:shadow-lg dark:hover:shadow-none"
+            )}
+        >
+            <span className="text-4xl">{icon}</span>
+            <div className="flex flex-col gap-1">
+                <h3 className="text-xl font-bold tracking-tight">{title}</h3>
+                <p className="text-xs opacity-80 font-medium leading-relaxed">{description}</p>
+            </div>
+            <ArrowRight className="ml-auto opacity-40" size={20} />
+        </motion.button>
+    )
+}
+
+// Sub-componente para Modales de Información
+function GameModal({ isOpen, onClose, title, icon, content }: { 
+    isOpen: boolean, 
+    onClose: () => void, 
+    title: string, 
+    icon: React.ReactNode, 
+    content?: string 
+}) {
+    return (
+        <AnimatePresence>
+            {isOpen && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={onClose}
+                        className="absolute inset-0 bg-black/40 backdrop-blur-md"
+                    />
+                    <motion.div
+                        initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                        animate={{ scale: 1, opacity: 1, y: 0 }}
+                        exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                        className="relative w-full max-w-sm p-6 rounded-[2rem] border shadow-2xl z-10"
+                        style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
+                    >
+                        <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+                                    style={{ backgroundColor: 'color-mix(in srgb, var(--accent) 15%, transparent)', color: 'var(--accent)' }}
+                                >
+                                    {icon}
+                                </div>
+                                <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-50">{title}</h2>
+                            </div>
+                            <button
+                                onClick={onClose}
+                                className="w-10 h-10 rounded-full flex items-center justify-center transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                                style={{ color: 'var(--accent)' }}
+                            >
+                                <X size={24} />
+                            </button>
+                        </div>
+                        
+                        <div className="space-y-4">
+                            <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed font-medium">
+                                {content || "Sin información disponible."}
+                            </p>
+                        </div>
+
+                        <motion.button
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={onClose}
+                            className="w-full mt-8 py-4 rounded-2xl font-bold transition-all shadow-lg"
+                            style={{ backgroundColor: 'var(--accent)', color: 'var(--surface)' }}
+                        >
+                            Entendido
+                        </motion.button>
+                    </motion.div>
+                </div>
+            )}
+        </AnimatePresence>
     )
 }
