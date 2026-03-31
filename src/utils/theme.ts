@@ -1,4 +1,13 @@
-import { Capacitor } from '@capacitor/core'
+import { Capacitor, registerPlugin } from '@capacitor/core'
+
+/**
+ * System Theme Plugin Definition (Bridge to MainActivity.java)
+ */
+interface SystemThemePlugin {
+  getTheme(): Promise<{ value: string }>;
+}
+
+const SystemTheme = registerPlugin<SystemThemePlugin>('SystemTheme');
 
 /**
  * Theme Detection Utility v3.0 (Capacitor Native Bridge)
@@ -45,8 +54,8 @@ export const isDarkModeRequested = () => {
 export const syncNativeTheme = async () => {
     if (Capacitor.getPlatform() === 'android') {
         try {
-            // Use the custom plugin we created in MainActivity.java
-            const { value } = await (Capacitor as any).Plugins.SystemTheme.getTheme()
+            // Use the registered plugin
+            const { value } = await SystemTheme.getTheme()
             if (value === 'dark' || value === 'light') {
                 nativeThemeCache = value as 'dark' | 'light'
                 return value === 'dark'

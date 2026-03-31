@@ -99,22 +99,50 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
         fetchTrivia(undefined, 'focus', customTopic)
     }
 
+    const renderHeaderContent = (subtitle: string) => (
+        <div className="flex items-center gap-4">
+            <div className="relative group">
+                <div className="absolute -inset-1 bg-gradient-to-r from-[var(--accent)] to-blue-500 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+                <div className="relative w-12 h-12 rounded-2xl flex items-center justify-center shadow-2xl transition-all duration-500 border border-white/20"
+                    style={{ backgroundColor: 'var(--accent)', color: 'var(--surface)' }}
+                >
+                    <Gamepad2 size={24} strokeWidth={2.5} />
+                </div>
+            </div>
+            <div className="flex flex-col items-start justify-center">
+                <h2 className="text-2xl font-black tracking-tight leading-none bg-clip-text text-transparent bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-600 dark:from-zinc-50 dark:via-zinc-200 dark:to-zinc-400">
+                    {gameMode === 'focus' ? 'Modo Enfoque' : 'Trivia General'}
+                </h2>
+                <div className="flex items-center gap-2 mt-1.5">
+                    <div className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse"></div>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 dark:text-zinc-500 leading-none">
+                        {subtitle}
+                    </p>
+                </div>
+            </div>
+        </div>
+    )
+
     if (isEnteringTopic) {
         return (
             <div className="w-full max-w-2xl mx-auto h-full flex flex-col">
-                <div className="flex items-center gap-4 mb-8 px-4 shrink-0">
-                    <button
-                        onClick={() => setIsEnteringTopic(false)}
-                        className="p-3 rounded-2xl bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:scale-105 transition-all"
-                    >
-                        <ChevronLeft size={20} />
-                    </button>
-                    <div className="flex flex-col items-start leading-none ml-2">
-                        <h2 className="text-2xl font-black text-zinc-900 dark:text-zinc-50 tracking-tight">Modo Enfoque</h2>
-                        <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] mt-1">Personalizado</span>
-                    </div>
-                    <div className="ml-auto">
-                        <StreakBadge count={streak} />
+                <div className="flex items-center justify-between mb-8 px-4 relative shrink-0">
+                    <div className="flex items-center gap-4">
+                        <motion.button
+                            onClick={() => setIsEnteringTopic(false)}
+                            whileHover={{ scale: 1.1, x: -2 }}
+                            whileTap={{ scale: 0.9 }}
+                            className="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300"
+                            style={{ 
+                                backgroundColor: 'color-mix(in srgb, var(--surface) 80%, transparent)',
+                                borderColor: 'var(--border)',
+                                color: 'var(--accent)',
+                                backdropFilter: 'blur(8px)'
+                            }}
+                        >
+                            <ChevronLeft size={24} strokeWidth={2.5} />
+                        </motion.button>
+                        {renderHeaderContent("Personalizado")}
                     </div>
                 </div>
 
@@ -162,19 +190,23 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
     if (gameMode === null) {
         return (
             <div className="w-full max-w-2xl mx-auto h-full flex flex-col">
-                <div className="flex items-center gap-4 mb-8 px-4 shrink-0">
-                    <button
-                        onClick={onBack}
-                        className="p-3 rounded-2xl bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:scale-105 transition-all"
-                    >
-                        <ChevronLeft size={20} />
-                    </button>
-                    <div className="flex flex-col items-start leading-none">
-                        <h2 className="text-2xl font-black text-zinc-900 dark:text-zinc-50 tracking-tight">Trivia General</h2>
-                        <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] mt-1">Selecciona un modo</span>
-                    </div>
-                    <div className="ml-auto">
-                        <StreakBadge count={streak} />
+                <div className="flex items-center justify-between mb-8 px-4 relative shrink-0">
+                    <div className="flex items-center gap-4">
+                        <motion.button
+                            onClick={onBack}
+                            whileHover={{ scale: 1.1, x: -2 }}
+                            whileTap={{ scale: 0.9 }}
+                            className="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300"
+                            style={{ 
+                                backgroundColor: 'color-mix(in srgb, var(--surface) 80%, transparent)',
+                                borderColor: 'var(--border)',
+                                color: 'var(--accent)',
+                                backdropFilter: 'blur(8px)'
+                            }}
+                        >
+                            <ChevronLeft size={24} strokeWidth={2.5} />
+                        </motion.button>
+                        {renderHeaderContent("Selecciona un modo")}
                     </div>
                 </div>
 
@@ -212,6 +244,12 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
         )
     }
 
+    const currentModeSubtitle = 
+        gameMode === 'chill' ? 'Chill' : 
+        gameMode === 'expert' ? 'Experto' : 
+        gameMode === 'random' ? 'Random' : 
+        gameMode === 'focus' ? 'Enfoque' : 'General';
+
     return (
         <div className="w-full max-w-2xl mx-auto h-full flex flex-col">
             {/* Header & Streak */}
@@ -236,23 +274,7 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                             <ChevronLeft size={24} strokeWidth={2.5} />
                         </motion.button>
                     )}
-                    <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg transition-colors duration-500"
-                            style={{ backgroundColor: 'var(--accent)', color: 'var(--surface)' }}
-                        >
-                            <Gamepad2 size={24} />
-                        </div>
-                        <div>
-                            <div className="flex flex-col">
-                                <h2 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 leading-tight">
-                                    {gameMode === 'focus' ? 'Modo Enfoque' : 'Trivia General'}
-                                </h2>
-                            </div>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-[#94a3b8] mt-1.5 opacity-60">
-                                {gameMode === 'focus' ? customTopic : 'Desafío Diario DoReady'}
-                            </p>
-                        </div>
-                    </div>
+                    {renderHeaderContent(currentModeSubtitle)}
 
                     <div className="ml-auto">
                         <StreakBadge count={streak} />
