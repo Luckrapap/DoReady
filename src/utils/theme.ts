@@ -71,14 +71,22 @@ export const isDarkModeRequested = () => {
 export const syncNativeTheme = async () => {
   if (Capacitor.getPlatform() === 'android') {
     try {
-      // Use the registered plugin
-      const { value } = await SystemTheme.getTheme()
+      // Use race for a 2s timeout to prevent UI hang if native side is slow
+      const timeoutPromise = new Promise<{ value: string }>((_, reject) =>
+        setTimeout(() => reject(new Error('Native theme timeout')), 2000)
+      )
+
+      const { value } = await Promise.race([
+        SystemTheme.getTheme(),
+        timeoutPromise
+      ])
+
       if (value === 'dark' || value === 'light') {
         nativeThemeCache = value as 'dark' | 'light'
         return value === 'dark'
       }
     } catch (e) {
-      console.error('Capacitor Native Theme Error:', e)
+      console.warn('Capacitor Native Theme Sync skip/error:', e)
     }
   }
   return isDarkModeRequested()

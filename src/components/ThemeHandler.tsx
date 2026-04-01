@@ -12,9 +12,6 @@ export default function ThemeHandler() {
     const applyThemeStyles = useCallback((isDark: boolean) => {
         const doc = document.documentElement
 
-        // Update native bars (Android)
-        setNativeSystemBars(isDark)
-
         // Prevent redundant mutations
         const currentIsDark = doc.classList.contains('dark')
         const currentIsLight = doc.classList.contains('light')
@@ -24,9 +21,10 @@ export default function ThemeHandler() {
             return
         }
 
-        doc.classList.toggle('dark', isDark)
-        doc.classList.toggle('light', !isDark)
         doc.style.setProperty('color-scheme', isDark ? 'dark' : 'light')
+
+        // Update native bars (Android) - Only on actual change
+        setNativeSystemBars(isDark)
     }, [])
 
     useEffect(() => {
