@@ -109,10 +109,12 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${outfit.variable} ${playfair.variable} antialiased select-none`}
+        className={`${geistSans.variable} ${geistMono.variable} ${outfit.variable} ${playfair.variable} antialiased select-none overflow-x-hidden`}
       >
         <ThemeHandler />
-        {children}
+        <main className="min-h-screen pt-safe pb-safe">
+          {children}
+        </main>
         <Toaster richColors closeButton position="top-right" />
       </body>
     </html>

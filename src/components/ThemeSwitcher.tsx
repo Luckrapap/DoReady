@@ -35,7 +35,7 @@ export default function ThemeSwitcher() {
         const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
         const applyInitialTheme = () => {
             const isDark = isDarkModeRequested()
-            
+
             const doc = document.documentElement
             doc.classList.toggle('dark', isDark)
             doc.classList.toggle('light', !isDark)
@@ -128,11 +128,11 @@ export default function ThemeSwitcher() {
 
                 <div className="relative flex p-1.5 bg-zinc-100 dark:bg-zinc-800/50 rounded-2xl md:rounded-full overflow-hidden border border-zinc-200/50 dark:border-zinc-700/50">
                     <motion.div
-                        className="absolute inset-y-1.5 bg-white dark:bg-zinc-700 shadow-sm rounded-xl md:rounded-full z-0 border border-zinc-200 dark:border-zinc-600"
+                        className="absolute inset-y-1.5 left-1.5 bg-white dark:bg-zinc-700 shadow-sm rounded-xl md:rounded-full z-0 border border-zinc-200 dark:border-zinc-600"
                         initial={false}
                         animate={{
                             x: theme === 'light' ? 0 : theme === 'dark' ? '100%' : '200%',
-                            width: '33.33%'
+                            width: 'calc((100% - 0.75rem) / 3)'
                         }}
                         transition={{ type: "spring", stiffness: 300, damping: 30 }}
                     />
@@ -342,7 +342,7 @@ function PresetCircle({ active, onClick, name }: { active: boolean, onClick: () 
             )}
             style={active ? { boxShadow: `0 0 20px ${color}66` } : {}}
         >
-            <div 
+            <div
                 className="w-12 h-12 sm:w-16 sm:h-16 rounded-[1.2rem] sm:rounded-[1.5rem] overflow-hidden shadow-inner border border-white/20 flex items-center justify-center transition-transform duration-500"
                 style={{ background: `linear-gradient(135deg, ${color}, color-mix(in srgb, ${color}, black 20%))` }}
             >

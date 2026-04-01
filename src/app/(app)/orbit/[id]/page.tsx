@@ -38,8 +38,8 @@ export default async function OrbitPage({ params }: OrbitPageProps) {
             <div className="w-full max-w-5xl">
                 {/* Header (Same layout as Habits) */}
                 <header className="mb-12 sm:mb-20 flex flex-col items-center justify-center text-center gap-4 relative w-full pt-16 md:pt-0">
-                    <Link 
-                        href="/habits" 
+                    <Link
+                        href="/habits"
                         className="absolute left-2 top-0 md:top-14 inline-flex items-center gap-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors font-medium text-sm"
                     >
                         <ChevronLeft size={20} />
@@ -53,7 +53,7 @@ export default async function OrbitPage({ params }: OrbitPageProps) {
                         {habit.title}
                     </p>
                 </header>
-                
+
                 {/* Content area */}
                 <div className="flex-1 flex flex-col items-center justify-center w-full px-0">
                     <OrbitChart />
