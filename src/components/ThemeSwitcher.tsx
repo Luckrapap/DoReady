@@ -1,3 +1,5 @@
+'use client'
+
 import { Monitor, Moon, Sun, Palette, Check, Sparkles, Pipette, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { isDarkModeRequested, addNativeThemeListener } from '@/utils/theme'
@@ -98,7 +100,7 @@ export default function ThemeSwitcher() {
         }
     }, [])
 
-    const applyTheme = (newTheme: Theme, newPreset: Preset, newHue?: number) => {
+    const applyTheme = async (newTheme: Theme, newPreset: Preset, newHue?: number) => {
         const finalHue = newHue ?? customHue
         setTheme(newTheme)
         setPreset(newPreset)
@@ -107,6 +109,11 @@ export default function ThemeSwitcher() {
         localStorage.setItem('theme', newTheme)
         localStorage.setItem('theme-preset', newPreset)
         localStorage.setItem('theme-custom-hue', finalHue.toString())
+
+        if (newTheme === 'system') {
+            const { syncNativeTheme } = await import('@/utils/theme')
+            await syncNativeTheme()
+        }
 
         const isDark = isDarkModeRequested()
 

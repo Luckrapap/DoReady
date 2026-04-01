@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useCallback } from 'react'
 import { isDarkModeRequested, syncNativeTheme, addNativeThemeListener } from '@/utils/theme'
 

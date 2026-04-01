@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'DoReady',
   webDir: 'out',
   server: {
-    url: 'http://192.168.18.23:3000',
+    url: 'https://do-ready.vercel.app/',
     cleartext: true
   }
 };
