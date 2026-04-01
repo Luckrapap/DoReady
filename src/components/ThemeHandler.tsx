@@ -27,7 +27,6 @@ export default function ThemeHandler() {
     }, [])
 
     useEffect(() => {
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
 
         const checkAndApply = async () => {
             // Priority: Attempt Native Sync first (100% reliable in APK)
@@ -87,11 +86,6 @@ export default function ThemeHandler() {
         window.addEventListener('storage', handleStorageChange)
 
         return () => {
-            if (mediaQuery.removeEventListener) {
-                mediaQuery.removeEventListener('change', handleSystemChange)
-            } else if ((mediaQuery as any).removeListener) {
-                (mediaQuery as any).removeListener(handleSystemChange)
-            }
             nativeSyncPromise.then(h => {
                 if (h && typeof h.remove === 'function') h.remove()
             })

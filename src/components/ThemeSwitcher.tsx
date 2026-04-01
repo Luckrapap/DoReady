@@ -124,8 +124,8 @@ export default function ThemeSwitcher() {
     // Calculate active index for the slider pill
     const getActiveIndex = () => {
         if (theme === 'light') return 0;
-        if (theme === 'system') return 1;
-        return 2; // dark
+        if (theme === 'dark') return 1;
+        return 2; // system
     }
     const idx = getActiveIndex()
 
@@ -149,16 +149,16 @@ export default function ThemeSwitcher() {
                         label="Claro"
                     />
                     <ThemeButton
-                        active={theme === 'system'}
-                        onClick={() => applyTheme('system', preset)}
-                        icon={<Monitor size={18} />}
-                        label="Dispositivo"
-                    />
-                    <ThemeButton
                         active={theme === 'dark'}
                         onClick={() => applyTheme('dark', preset)}
                         icon={<Moon size={18} />}
                         label="Oscuro"
+                    />
+                    <ThemeButton
+                        active={theme === 'system'}
+                        onClick={() => applyTheme('system', preset)}
+                        icon={<Monitor size={18} />}
+                        label="Dispositivo"
                     />
                 </div>
             </div>

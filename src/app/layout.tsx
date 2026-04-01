@@ -75,19 +75,23 @@ export default function RootLayout({
                     var t = localStorage.getItem('theme') || 'system';
                     var p = isPublic ? 'slate' : (localStorage.getItem('theme-preset') || 'slate');
                     var h = localStorage.getItem('theme-custom-hue') || '220';
-                    var d = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    var isDark = t === 'dark';
                     
-                    // SYSTEM COLOR SENSOR (No-Time)
-                    var isDark = t === 'dark' || (t === 'system' && d);
-                    
-                    // Fallback for restricted WebViews (Check if system is dark via CanvasText)
-                    if (t === 'system' && !isDark && typeof document !== 'undefined') {
-                        var s = document.createElement('div');
-                        s.style.color = 'CanvasText';
-                        document.documentElement.appendChild(s);
-                        var c = getComputedStyle(s).color;
-                        document.documentElement.removeChild(s);
-                        if (c.includes('255')) isDark = true;
+                    if (t === 'system') {
+                      try {
+                        isDark = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                      } catch(e) {
+                        try {
+                          var s = document.createElement('div');
+                          s.style.color = 'CanvasText';
+                          document.documentElement.appendChild(s);
+                          var c = getComputedStyle(s).color;
+                          document.documentElement.removeChild(s);
+                          if (c.includes('255')) isDark = true;
+                        } catch(e2) {
+                          isDark = false;
+                        }
+                      }
                     }
                     
                     var doc = document.documentElement;
