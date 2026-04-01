@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useCallback } from 'react'
-import { isDarkModeRequested, syncNativeTheme, addNativeThemeListener } from '@/utils/theme'
+import { isDarkModeRequested, syncNativeTheme, addNativeThemeListener, setNativeSystemBars } from '@/utils/theme'
 
 /**
  * ThemeHandler v4.0 [Definitive Sync]
@@ -11,6 +11,9 @@ import { isDarkModeRequested, syncNativeTheme, addNativeThemeListener } from '@/
 export default function ThemeHandler() {
     const applyThemeStyles = useCallback((isDark: boolean) => {
         const doc = document.documentElement
+
+        // Update native bars (Android)
+        setNativeSystemBars(isDark)
 
         // Prevent redundant mutations
         const currentIsDark = doc.classList.contains('dark')

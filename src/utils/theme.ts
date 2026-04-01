@@ -5,6 +5,7 @@ import { Capacitor, registerPlugin, type PluginListenerHandle } from '@capacitor
  */
 interface SystemThemePlugin {
   getTheme(): Promise<{ value: string }>;
+  setStatusBarTheme(options: { isDark: boolean }): Promise<void>;
   addListener(eventName: 'systemThemeChange', listenerFunc: (data: { value: string }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
 }
 
@@ -81,4 +82,14 @@ export const syncNativeTheme = async () => {
     }
   }
   return isDarkModeRequested()
+}
+
+export const setNativeSystemBars = async (isDark: boolean) => {
+  if (Capacitor.getPlatform() === 'android') {
+    try {
+      await SystemTheme.setStatusBarTheme({ isDark })
+    } catch (e) {
+      console.error('Failed to set native system bars:', e)
+    }
+  }
 }

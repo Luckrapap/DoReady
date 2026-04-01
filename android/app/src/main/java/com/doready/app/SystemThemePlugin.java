@@ -1,6 +1,7 @@
 package com.doready.app;
 
 import android.content.res.Configuration;
+import androidx.core.view.WindowInsetsControllerCompat;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
@@ -14,6 +15,19 @@ public class SystemThemePlugin extends Plugin {
         JSObject ret = new JSObject();
         ret.put("value", getCurrentTheme());
         call.resolve(ret);
+    }
+
+    @PluginMethod
+    public void setStatusBarTheme(PluginCall call) {
+        boolean isDark = call.getBoolean("isDark", true);
+        getActivity().runOnUiThread(() -> {
+            try {
+                WindowInsetsControllerCompat controller = new WindowInsetsControllerCompat(getActivity().getWindow(), getActivity().getWindow().getDecorView());
+                controller.setAppearanceLightStatusBars(!isDark);
+                controller.setAppearanceLightNavigationBars(!isDark);
+            } catch (Exception e) {}
+            call.resolve();
+        });
     }
 
     private String getCurrentTheme() {
