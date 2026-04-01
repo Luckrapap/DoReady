@@ -1,4 +1,5 @@
 import { Capacitor, registerPlugin, type PluginListenerHandle } from '@capacitor/core'
+import { StatusBar, Style } from '@capacitor/status-bar'
 
 /**
  * System Theme Plugin Definition (Bridge to MainActivity.java)
@@ -73,9 +74,12 @@ export const syncNativeTheme = async () => {
 export const setNativeSystemBars = async (isDark: boolean) => {
   if (Capacitor.getPlatform() === 'android') {
     try {
-      await SystemTheme.setStatusBarTheme({ isDark })
+      // Use the official Capacitor StatusBar plugin for maximum stability
+      await StatusBar.setStyle({
+        style: isDark ? Style.Dark : Style.Light,
+      });
     } catch (e) {
-      console.error('Failed to set native system bars:', e)
+      console.warn('StatusBar Plugin error:', e);
     }
   }
 }

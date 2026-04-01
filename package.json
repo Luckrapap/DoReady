@@ -12,6 +12,7 @@
     "@ai-sdk/openai": "^0.0.60",
     "@ai-sdk/react": "^0.0.59",
     "@capacitor/haptics": "^8.0.2",
+    "@capacitor/status-bar": "^8.0.2",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.98.0",
     "@tailwindcss/typography": "^0.5.19",

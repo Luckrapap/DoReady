@@ -6,7 +6,11 @@ const config: CapacitorConfig = {
   webDir: 'out',
   server: {
     url: 'https://do-ready.vercel.app/',
+    allowNavigation: ['do-ready.vercel.app'],
     cleartext: true
+  },
+  android: {
+    backgroundColor: "#ffffff"
   }
 };
 
