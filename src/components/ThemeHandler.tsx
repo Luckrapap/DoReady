@@ -13,14 +13,8 @@ export default function ThemeHandler() {
         const doc = document.documentElement
 
         // Prevent redundant mutations
-        const currentIsDark = doc.classList.contains('dark')
-        const currentIsLight = doc.classList.contains('light')
-        const currentColorScheme = doc.style.getPropertyValue('color-scheme')
-
-        if (currentIsDark === isDark && currentIsLight === !isDark && currentColorScheme === (isDark ? 'dark' : 'light')) {
-            return
-        }
-
+        doc.classList.toggle('dark', isDark)
+        doc.classList.toggle('light', !isDark)
         doc.style.setProperty('color-scheme', isDark ? 'dark' : 'light')
 
         // Update native bars (Android) - Only on actual change
