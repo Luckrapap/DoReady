@@ -146,27 +146,19 @@ export default function ThemeSwitcher() {
                 </div>
 
                 <div className="relative flex p-1.5 bg-zinc-100 dark:bg-zinc-800/50 rounded-2xl md:rounded-full overflow-hidden border border-zinc-200/50 dark:border-zinc-700/50">
-                    <motion.div
-                        className="absolute inset-y-1.5 left-1.5 bg-white dark:bg-zinc-700 shadow-sm rounded-xl md:rounded-full z-0 border border-zinc-200 dark:border-zinc-600"
-                        initial={false}
-                        animate={{
-                            x: theme === 'light' ? 0 : theme === 'dark' ? '100%' : '200%',
-                            width: 'calc((100% - 0.75rem) / 3)'
-                        }}
-                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                    />
-
                     <ThemeButton
                         active={theme === 'light'}
                         onClick={() => applyTheme('light', preset)}
                         icon={<Sun size={18} />}
                         label="Claro"
+                        id="light"
                     />
                     <ThemeButton
                         active={theme === 'dark'}
                         onClick={() => applyTheme('dark', preset)}
                         icon={<Moon size={18} />}
                         label="Oscuro"
+                        id="dark"
                     />
                     <ThemeButton
                         active={theme === 'system'}
@@ -176,8 +168,10 @@ export default function ThemeSwitcher() {
                         }}
                         icon={<Monitor size={18} />}
                         label="Dispositivo"
+                        id="system"
                     />
                 </div>
+
             </div>
 
             {/* Color Presets */}
@@ -313,7 +307,7 @@ export default function ThemeSwitcher() {
     )
 }
 
-function ThemeButton({ active, onClick, icon, label }: { active: boolean, onClick: () => void, icon: React.ReactNode, label: string }) {
+function ThemeButton({ active, onClick, icon, label, id }: { active: boolean, onClick: () => void, icon: React.ReactNode, label: string, id: string }) {
     return (
         <button
             onClick={onClick}
@@ -322,6 +316,13 @@ function ThemeButton({ active, onClick, icon, label }: { active: boolean, onClic
                 active ? "text-zinc-950 dark:text-white font-bold" : "text-zinc-500 font-medium hover:text-zinc-700 dark:hover:text-zinc-300"
             )}
         >
+            {active && (
+                <motion.div
+                    layoutId="theme-switcher-highlight"
+                    className="absolute inset-0 bg-white dark:bg-zinc-700 shadow-sm rounded-xl md:rounded-full z-[-1] border border-zinc-200 dark:border-zinc-600"
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                />
+            )}
             <AnimatePresence mode="wait">
                 {active ? (
                     <motion.div key="check" initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0, opacity: 0 }}>
