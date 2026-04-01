@@ -1,8 +1,6 @@
-'use client'
-
 import { Monitor, Moon, Sun, Palette, Check, Sparkles, Pipette, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { isDarkModeRequested } from '@/utils/theme'
+import { isDarkModeRequested, addNativeThemeListener } from '@/utils/theme'
 import { useEffect, useState } from 'react'
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
@@ -20,6 +18,9 @@ export default function ThemeSwitcher() {
     const [mounted, setMounted] = useState(false)
     const [customHue, setCustomHue] = useState(220)
     const [showPicker, setShowPicker] = useState(false)
+
+    // Used to force re-render on system theme changes for the status text
+    const [, setTick] = useState(0)
 
     useEffect(() => {
         setMounted(true)
@@ -51,37 +52,48 @@ export default function ThemeSwitcher() {
             if (savedPreset !== 'slate') {
                 doc.classList.add(`theme-${savedPreset}`)
             }
+
+            // Force re-render for status text
+            setTick(t => t + 1)
         }
 
         applyInitialTheme()
 
-        // Listen for system theme changes
+        // 1. Listen for system theme changes (Web API)
         const handleSystemThemeChange = () => {
             if (localStorage.getItem('theme') === 'system') {
-                applyInitialTheme() // Re-apply theme based on new system preference
+                applyInitialTheme()
             }
         }
         mediaQuery.addEventListener('change', handleSystemThemeChange)
+
+        // 2. Native Bridge Listener (Real-time updates in APK)
+        const nativeHandlePromise = addNativeThemeListener(() => {
+            if (localStorage.getItem('theme') === 'system') {
+                applyInitialTheme()
+            }
+        })
 
         // Sincronizar cambios desde otras pestañas
         const handleStorageChange = (e: StorageEvent) => {
             if (e.key === 'theme') {
                 setTheme(e.newValue as Theme || 'system')
-                applyInitialTheme() // Re-apply theme if theme setting changes
+                applyInitialTheme()
             }
             if (e.key === 'theme-preset') {
                 setPreset(e.newValue as Preset || 'slate')
-                applyInitialTheme() // Re-apply theme if preset changes
+                applyInitialTheme()
             }
             if (e.key === 'theme-custom-hue') {
                 setCustomHue(Number(e.newValue) || 220)
-                applyInitialTheme() // Re-apply theme if custom hue changes
+                applyInitialTheme()
             }
         }
         window.addEventListener('storage', handleStorageChange)
 
         return () => {
             mediaQuery.removeEventListener('change', handleSystemThemeChange)
+            nativeHandlePromise?.then(h => h.remove())
             window.removeEventListener('storage', handleStorageChange)
         }
     }, [])

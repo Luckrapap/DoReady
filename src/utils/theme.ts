@@ -1,13 +1,27 @@
-import { Capacitor, registerPlugin } from '@capacitor/core'
+import { Capacitor, registerPlugin, type PluginListenerHandle } from '@capacitor/core'
 
 /**
  * System Theme Plugin Definition (Bridge to MainActivity.java)
  */
 interface SystemThemePlugin {
   getTheme(): Promise<{ value: string }>;
+  addListener(eventName: 'systemThemeChange', listenerFunc: (data: { value: string }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
 }
 
 const SystemTheme = registerPlugin<SystemThemePlugin>('SystemTheme');
+
+export const addNativeThemeListener = (callback: (isDark: boolean) => void) => {
+  if (Capacitor.getPlatform() === 'android') {
+    const handle = SystemTheme.addListener('systemThemeChange', (data) => {
+      if (data.value === 'dark' || data.value === 'light') {
+        nativeThemeCache = data.value as 'dark' | 'light'
+        callback(data.value === 'dark')
+      }
+    });
+    return handle;
+  }
+  return null;
+}
 
 /**
  * Theme Detection Utility v3.0 (Capacitor Native Bridge)
@@ -52,17 +66,17 @@ export const isDarkModeRequested = () => {
  * Stores the result in nativeThemeCache for synchronous consumption
  */
 export const syncNativeTheme = async () => {
-    if (Capacitor.getPlatform() === 'android') {
-        try {
-            // Use the registered plugin
-            const { value } = await SystemTheme.getTheme()
-            if (value === 'dark' || value === 'light') {
-                nativeThemeCache = value as 'dark' | 'light'
-                return value === 'dark'
-            }
-        } catch (e) {
-            console.error('Capacitor Native Theme Error:', e)
-        }
+  if (Capacitor.getPlatform() === 'android') {
+    try {
+      // Use the registered plugin
+      const { value } = await SystemTheme.getTheme()
+      if (value === 'dark' || value === 'light') {
+        nativeThemeCache = value as 'dark' | 'light'
+        return value === 'dark'
+      }
+    } catch (e) {
+      console.error('Capacitor Native Theme Error:', e)
     }
-    return isDarkModeRequested()
+  }
+  return isDarkModeRequested()
 }
