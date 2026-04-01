@@ -39,7 +39,6 @@ export const metadata: Metadata = {
       { url: "/Icon.png?v=7", sizes: "180x180", type: "image/png" },
     ],
   },
-  themeColor: "#0a0a0a",
   appleWebApp: {
     title: "DoReady",
     statusBarStyle: "black-translucent",
@@ -52,6 +51,10 @@ export const viewport: Viewport = {
   userScalable: false,
   viewportFit: "cover",
   colorScheme: "light dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fafafa" },
+    { media: "(prefers-color-scheme: dark)", color: "#020617" },
+  ],
 };
 
 
