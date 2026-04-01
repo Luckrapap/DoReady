@@ -70,11 +70,15 @@ export default function ThemeSwitcher() {
         mediaQuery.addEventListener('change', handleSystemThemeChange)
 
         // 2. Native Bridge Listener (Real-time updates in APK)
-        const nativeHandlePromise = addNativeThemeListener(() => {
-            if (localStorage.getItem('theme') === 'system') {
-                applyInitialTheme()
-            }
-        })
+        const setupNative = async () => {
+            const handle = await addNativeThemeListener(() => {
+                if (localStorage.getItem('theme') === 'system') {
+                    applyInitialTheme()
+                }
+            })
+            return handle
+        }
+        const nativeSyncPromise = setupNative()
 
         // Sincronizar cambios desde otras pestañas
         const handleStorageChange = (e: StorageEvent) => {
@@ -95,7 +99,9 @@ export default function ThemeSwitcher() {
 
         return () => {
             mediaQuery.removeEventListener('change', handleSystemThemeChange)
-            nativeHandlePromise?.then(h => h.remove())
+            nativeSyncPromise.then(h => {
+                if (h && typeof h.remove === 'function') h.remove()
+            })
             window.removeEventListener('storage', handleStorageChange)
         }
     }, [])

@@ -39,11 +39,15 @@ export default function ThemeHandler() {
         checkAndApply()
 
         // 2. Native Bridge Listener (Real-time updates in APK)
-        const nativeHandlePromise = addNativeThemeListener((isDark) => {
-            if (localStorage.getItem('theme') === 'system') {
-                applyThemeStyles(isDark)
-            }
-        })
+        const setupNative = async () => {
+            const handle = await addNativeThemeListener((isDark) => {
+                if (localStorage.getItem('theme') === 'system') {
+                    applyThemeStyles(isDark)
+                }
+            })
+            return handle
+        }
+        const nativeSyncPromise = setupNative()
 
         // 3. Listen for system changes (standard Web API)
         const handleSystemChange = () => {
@@ -83,7 +87,9 @@ export default function ThemeHandler() {
             } else if ((mediaQuery as any).removeListener) {
                 (mediaQuery as any).removeListener(handleSystemChange)
             }
-            nativeHandlePromise?.then(h => h.remove())
+            nativeSyncPromise.then(h => {
+                if (h && typeof h.remove === 'function') h.remove()
+            })
             clearInterval(heartbeat)
             window.removeEventListener('focus', checkAndApply)
             window.removeEventListener('storage', handleStorageChange)
