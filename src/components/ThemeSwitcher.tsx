@@ -18,24 +18,27 @@ export default function ThemeSwitcher() {
     const [theme, setTheme] = useState<Theme>('system')
     const [preset, setPreset] = useState<Preset>('slate')
     const [mounted, setMounted] = useState(false)
-    const [customHue, setCustomHue] = useState(220)
+    const [tick, setTick] = useState(0)
+    const [customHue, setCustomHue] = useState<number>(220)
     const [showPicker, setShowPicker] = useState(false)
-
-    // Used to force re-render on system theme changes for the status text
-    const [, setTick] = useState(0)
 
     useEffect(() => {
         setMounted(true)
-        const savedTheme = localStorage.getItem('theme') as Theme || 'system'
-        const savedPreset = localStorage.getItem('theme-preset') as Preset || 'slate'
-        const savedHue = Number(localStorage.getItem('theme-custom-hue')) || 220
 
-        setTheme(savedTheme)
+        let savedPreset: Preset = 'slate'
+        let savedHue = 220
+        let currentTheme: Theme = 'system'
+
+        try {
+            savedPreset = (localStorage.getItem('theme-preset') as Preset) || 'slate'
+            savedHue = Number(localStorage.getItem('theme-custom-hue')) || 220
+            currentTheme = (localStorage.getItem('theme') as Theme) || 'system'
+        } catch (e) { }
+
         setPreset(savedPreset)
         setCustomHue(savedHue)
+        setTheme(currentTheme)
 
-        // Apply initial theme and preset
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
         const applyInitialTheme = () => {
             const isDark = isDarkModeRequested()
 
@@ -44,7 +47,6 @@ export default function ThemeSwitcher() {
             doc.classList.toggle('light', !isDark)
             doc.style.setProperty('color-scheme', isDark ? 'dark' : 'light')
 
-            // Apply custom hue if needed
             if (savedPreset === 'custom') {
                 doc.style.setProperty('--custom-hue', savedHue.toString())
             }
@@ -55,7 +57,6 @@ export default function ThemeSwitcher() {
                 doc.classList.add(`theme-${savedPreset}`)
             }
 
-            // Force re-render for status text
             setTick(t => t + 1)
         }
 
@@ -63,16 +64,12 @@ export default function ThemeSwitcher() {
 
         // Sincronizar cambios desde otras pestañas
         const handleStorageChange = (e: StorageEvent) => {
-            if (e.key === 'theme') {
-                setTheme(e.newValue as Theme || 'system')
-                applyInitialTheme()
-            }
-            if (e.key === 'theme-preset') {
-                setPreset(e.newValue as Preset || 'slate')
-                applyInitialTheme()
-            }
-            if (e.key === 'theme-custom-hue') {
-                setCustomHue(Number(e.newValue) || 220)
+            if (e.key === 'theme' || e.key === 'theme-preset' || e.key === 'theme-custom-hue') {
+                try {
+                    setTheme((localStorage.getItem('theme') as Theme) || 'system')
+                    setPreset((localStorage.getItem('theme-preset') as Preset) || 'slate')
+                    setCustomHue(Number(localStorage.getItem('theme-custom-hue')) || 220)
+                } catch (err) { }
                 applyInitialTheme()
             }
         }
@@ -89,9 +86,11 @@ export default function ThemeSwitcher() {
         setPreset(newPreset)
         if (newHue !== undefined) setCustomHue(newHue)
 
-        localStorage.setItem('theme', newTheme)
-        localStorage.setItem('theme-preset', newPreset)
-        localStorage.setItem('theme-custom-hue', finalHue.toString())
+        try {
+            localStorage.setItem('theme', newTheme)
+            localStorage.setItem('theme-preset', newPreset)
+            localStorage.setItem('theme-custom-hue', finalHue.toString())
+        } catch (e) { }
 
         if (newTheme === 'system') {
             await syncNativeTheme()
@@ -116,54 +115,62 @@ export default function ThemeSwitcher() {
         }
     }
 
-    if (!mounted) return null
+    if (!mounted) return (
+        <div className="space-y-6 animate-pulse">
+            <div className="h-40 bg-zinc-200 dark:bg-zinc-800 rounded-3xl" />
+        </div>
+    )
+
+    // Calculate active index for the slider pill
+    const getActiveIndex = () => {
+        if (theme === 'light') return 0;
+        if (theme === 'system') return 1;
+        return 2; // dark
+    }
+    const idx = getActiveIndex()
 
     return (
-        <div className="rounded-3xl p-4 sm:p-6 shadow-sm space-y-6 sm:space-y-8 border transition-colors" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
-            {/* Theme Toggle */}
-            <div className="flex flex-col gap-6">
-                <div>
-                    <h3 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-50">Modo de Visualización</h3>
-                    <p className="text-xs sm:text-sm text-zinc-500">Elige la apariencia que mejor se adapte a tu entorno.</p>
-                </div>
-
+        <div className="space-y-8">
+            <div className="space-y-3">
+                <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50 uppercase tracking-wider px-1">
+                    Apariencia del Sistema
+                </h3>
                 <div className="relative flex p-1.5 bg-zinc-100 dark:bg-zinc-800/50 rounded-2xl md:rounded-full overflow-hidden border border-zinc-200/50 dark:border-zinc-700/50">
+                    <motion.div
+                        className="absolute top-1.5 bottom-1.5 w-[calc(33.333%-4px)] bg-white dark:bg-zinc-700 shadow-md rounded-xl md:rounded-full border border-zinc-200 dark:border-zinc-600 z-0"
+                        animate={{ left: `calc(${idx * 33.333}% + 6px)` }}
+                        transition={{ type: "spring", stiffness: 350, damping: 25, bounce: 0.2 }}
+                    />
+
                     <ThemeButton
                         active={theme === 'light'}
                         onClick={() => applyTheme('light', preset)}
                         icon={<Sun size={18} />}
                         label="Claro"
-                        id="light"
+                    />
+                    <ThemeButton
+                        active={theme === 'system'}
+                        onClick={() => applyTheme('system', preset)}
+                        icon={<Monitor size={18} />}
+                        label="Dispositivo"
                     />
                     <ThemeButton
                         active={theme === 'dark'}
                         onClick={() => applyTheme('dark', preset)}
                         icon={<Moon size={18} />}
                         label="Oscuro"
-                        id="dark"
-                    />
-                    <ThemeButton
-                        active={theme === 'system'}
-                        onClick={() => {
-                            console.log('DoReady Hydration v1.7 - Definitive Fix');
-                            applyTheme('system', preset)
-                        }}
-                        icon={<Monitor size={18} />}
-                        label="Dispositivo"
-                        id="system"
                     />
                 </div>
-
             </div>
 
-            {/* Color Presets */}
-            <div className="flex flex-col gap-6 pt-2 border-t border-zinc-100 dark:border-zinc-800">
-                <div>
-                    <h3 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-50">Color de Acentuación</h3>
-                    <p className="text-xs sm:text-sm text-zinc-500">Personaliza los tonos principales de la aplicación.</p>
-                </div>
-
-                <div className="flex flex-wrap gap-4">
+            <div className="space-y-3">
+                <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50 uppercase tracking-wider px-1 flex items-center justify-between">
+                    <span>Acento Cromático</span>
+                    <span className="text-[10px] font-mono text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full">
+                        {preset === 'custom' ? `HSL(${customHue})` : preset}
+                    </span>
+                </h3>
+                <div className="flex flex-wrap gap-2 sm:gap-3 p-4 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-[2rem] shadow-sm items-center">
                     <PresetCircle
                         active={preset === 'slate'}
                         onClick={() => applyTheme(theme, 'slate')}
@@ -205,7 +212,6 @@ export default function ThemeSwitcher() {
                         name="green"
                     />
 
-                    {/* Custom Color Button */}
                     <button
                         onClick={() => setShowPicker(!showPicker)}
                         className={cn(
@@ -219,15 +225,6 @@ export default function ThemeSwitcher() {
                             style={{ background: `linear-gradient(135deg, hsl(${customHue}, 85%, 65%), hsl(${customHue}, 85%, 45%))` }}
                         >
                             <Pipette className="text-white drop-shadow-md" size={18} />
-                            {preset === 'custom' && (
-                                <motion.div
-                                    initial={{ scale: 0 }}
-                                    animate={{ scale: 1 }}
-                                    className="absolute -top-1 -right-1 bg-white text-black rounded-full p-1.5 shadow-lg border border-black/10"
-                                >
-                                    <Check size={12} strokeWidth={4} />
-                                </motion.div>
-                            )}
                         </div>
                     </button>
                 </div>
@@ -262,7 +259,7 @@ export default function ThemeSwitcher() {
                                     <motion.div
                                         className="absolute top-1/2 -translate-y-1/2 w-6 h-6 bg-white rounded-full shadow-lg border-4 border-zinc-900 pointer-events-none"
                                         animate={{ left: `${(customHue / 360) * 100}%` }}
-                                        style={{ translateX: '-50%' }}
+                                        style={{ x: '-50%' }}
                                     />
                                 </div>
                                 <div className="flex justify-center">
@@ -280,16 +277,16 @@ export default function ThemeSwitcher() {
             </div>
             {/* Version indicator for troubleshooting */}
             <div className="flex flex-col items-center pt-2 opacity-20 hover:opacity-100 transition-opacity gap-1">
-                <span className="text-[10px] font-mono text-zinc-500">v3.0-native-bridge</span>
+                <span className="text-[10px] font-mono text-zinc-500">v4.0-robust</span>
                 <span className="text-[8px] font-bold text-zinc-400 uppercase tracking-tighter">
-                    Native Sensor: {mounted ? (isDarkModeRequested() ? 'Dark Mode' : 'Light Mode') : '...'}
+                    Sensor: {mounted ? (isDarkModeRequested() ? 'Dark' : 'Light') : '...'}
                 </span>
             </div>
         </div>
     )
 }
 
-function ThemeButton({ active, onClick, icon, label, id }: { active: boolean, onClick: () => void, icon: React.ReactNode, label: string, id: string }) {
+function ThemeButton({ active, onClick, icon, label }: { active: boolean, onClick: () => void, icon: React.ReactNode, label: string }) {
     return (
         <button
             onClick={onClick}
@@ -298,13 +295,6 @@ function ThemeButton({ active, onClick, icon, label, id }: { active: boolean, on
                 active ? "text-zinc-950 dark:text-white font-bold" : "text-zinc-500 font-medium hover:text-zinc-700 dark:hover:text-zinc-300"
             )}
         >
-            {active && (
-                <motion.div
-                    layoutId="theme-switcher-highlight"
-                    className="absolute inset-0 bg-white dark:bg-zinc-700 shadow-sm rounded-xl md:rounded-full z-[-1] border border-zinc-200 dark:border-zinc-600"
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                />
-            )}
             <AnimatePresence mode="wait">
                 {active ? (
                     <motion.div key="check" initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0, opacity: 0 }}>
