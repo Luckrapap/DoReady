@@ -22,6 +22,7 @@ public class SystemThemePlugin extends Plugin {
         boolean isDark = call.getBoolean("isDark", true);
         getActivity().runOnUiThread(() -> {
             try {
+                // Control icon contrast (Dark icons for Light theme, Light icons for Dark theme)
                 WindowInsetsControllerCompat controller = new WindowInsetsControllerCompat(getActivity().getWindow(), getActivity().getWindow().getDecorView());
                 controller.setAppearanceLightStatusBars(!isDark);
                 controller.setAppearanceLightNavigationBars(!isDark);
