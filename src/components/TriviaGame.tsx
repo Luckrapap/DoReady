@@ -24,7 +24,7 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
     const [customTopic, setCustomTopic] = useState('')
 
     const fetchTrivia = useCallback(async (
-        isMountedRef?: { current: boolean }, 
+        isMountedRef?: { current: boolean },
         forcedMode?: string,
         forcedTopic?: string
     ) => {
@@ -40,7 +40,7 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
             const res = await fetch('/api/trivia', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
+                body: JSON.stringify({
                     mode: forcedMode || gameMode || 'random',
                     topic: forcedTopic || customTopic || null
                 })
@@ -58,14 +58,16 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
             setCurrentTrivia({ ...data, options: shuffledOptions })
 
             setGameState('playing')
-        } catch (error: any) {
+        } catch (error: unknown) {
             if (!isMounted.current) return
             console.error(error)
-            setErrorMessage(error.message || 'Error al cargar la pregunta.')
+            const errorMsg = error instanceof Error ? error.message : 'Error al cargar la pregunta.'
+            setErrorMessage(errorMsg)
             setGameState('error')
         } finally {
             if (isMounted.current) setIsFetching(false)
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isFetching])
 
     // Pregunta inicial se carga a través de la selección de modo
@@ -133,7 +135,7 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                             whileHover={{ scale: 1.1, x: -2 }}
                             whileTap={{ scale: 0.9 }}
                             className="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300"
-                            style={{ 
+                            style={{
                                 backgroundColor: 'color-mix(in srgb, var(--surface) 80%, transparent)',
                                 borderColor: 'var(--border)',
                                 color: 'var(--accent)',
@@ -154,7 +156,7 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                     </div>
 
                     <div className="relative">
-                        <input 
+                        <input
                             autoFocus
                             type="text"
                             value={customTopic}
@@ -175,8 +177,8 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                         onClick={handleConfirmFocus}
                         className={cn(
                             "w-full p-6 rounded-[2rem] font-black text-lg transition-all shadow-xl shadow-blue-500/10",
-                            customTopic.trim() 
-                                ? "bg-blue-500 text-white hover:bg-blue-600" 
+                            customTopic.trim()
+                                ? "bg-blue-500 text-white hover:bg-blue-600"
                                 : "bg-zinc-100 dark:bg-zinc-800 text-zinc-400 cursor-not-allowed"
                         )}
                     >
@@ -197,7 +199,7 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                             whileHover={{ scale: 1.1, x: -2 }}
                             whileTap={{ scale: 0.9 }}
                             className="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300"
-                            style={{ 
+                            style={{
                                 backgroundColor: 'color-mix(in srgb, var(--surface) 80%, transparent)',
                                 borderColor: 'var(--border)',
                                 color: 'var(--accent)',
@@ -211,31 +213,31 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                 </div>
 
                 <div className="flex-1 flex flex-col justify-center px-4 gap-4">
-                    <ModeCard 
-                        title="Chill" 
-                        icon="🌿" 
-                        description="Preguntas fáciles y relajantes para pasar el rato." 
+                    <ModeCard
+                        title="Chill"
+                        icon="🌿"
+                        description="Preguntas fáciles y relajantes para pasar el rato."
                         onClick={() => handleStartMode('chill')}
                         color="bg-green-500/10 border-green-500/20 text-green-600"
                     />
-                    <ModeCard 
-                        title="Experto" 
-                        icon="🧠" 
-                        description="Retos difíciles solo para mentes maestras." 
+                    <ModeCard
+                        title="Experto"
+                        icon="🧠"
+                        description="Retos difíciles solo para mentes maestras."
                         onClick={() => handleStartMode('expert')}
                         color="bg-purple-500/10 border-purple-500/20 text-purple-600"
                     />
-                    <ModeCard 
-                        title="Random" 
-                        icon="🎲" 
-                        description="Una mezcla de todo; nunca sabes qué vendrá." 
+                    <ModeCard
+                        title="Random"
+                        icon="🎲"
+                        description="Una mezcla de todo; nunca sabes qué vendrá."
                         onClick={() => handleStartMode('random')}
                         color="bg-orange-500/10 border-orange-500/20 text-orange-600"
                     />
-                    <ModeCard 
-                        title="Enfoque" 
-                        icon="🎯" 
-                        description="Elige el tema que tú quieras y yo te pregunto." 
+                    <ModeCard
+                        title="Enfoque"
+                        icon="🎯"
+                        description="Elige el tema que tú quieras y yo te pregunto."
                         onClick={() => handleStartMode('focus')}
                         color="bg-blue-500/10 border-blue-500/20 text-blue-600"
                     />
@@ -244,11 +246,11 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
         )
     }
 
-    const currentModeSubtitle = 
-        gameMode === 'chill' ? 'Chill' : 
-        gameMode === 'expert' ? 'Experto' : 
-        gameMode === 'random' ? 'Random' : 
-        gameMode === 'focus' ? 'Enfoque' : 'General';
+    const currentModeSubtitle =
+        gameMode === 'chill' ? 'Chill' :
+            gameMode === 'expert' ? 'Experto' :
+                gameMode === 'random' ? 'Random' :
+                    gameMode === 'focus' ? 'Enfoque' : 'General';
 
     return (
         <div className="w-full max-w-2xl mx-auto h-full flex flex-col">
@@ -264,7 +266,7 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                             whileHover={{ scale: 1.1, x: -2 }}
                             whileTap={{ scale: 0.9 }}
                             className="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300"
-                            style={{ 
+                            style={{
                                 backgroundColor: 'color-mix(in srgb, var(--surface) 80%, transparent)',
                                 borderColor: 'var(--border)',
                                 color: 'var(--accent)',
@@ -298,9 +300,9 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                                         className="absolute left-[30px] top-0 w-[5px] h-[16px] rounded-full bg-zinc-400 dark:bg-zinc-500"
                                         style={{ transformOrigin: '2.5px 32px', rotate: i * 30 }}
                                         animate={{ opacity: [0.15, 1, 0.15] }}
-                                        transition={{ 
-                                            repeat: Infinity, 
-                                            duration: 1.2, 
+                                        transition={{
+                                            repeat: Infinity,
+                                            duration: 1.2,
                                             delay: i * 0.1,
                                             ease: "linear"
                                         }}
@@ -340,8 +342,8 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                                 <h3 className={cn(
                                     "font-bold text-zinc-900 dark:text-zinc-50 leading-tight transition-all text-center md:text-left",
                                     (currentTrivia?.question.length || 0) > 150 ? "text-lg md:text-xl" :
-                                    (currentTrivia?.question.length || 0) > 100 ? "text-xl md:text-2xl" :
-                                    "text-2xl md:text-3xl"
+                                        (currentTrivia?.question.length || 0) > 100 ? "text-xl md:text-2xl" :
+                                            "text-2xl md:text-3xl"
                                 )}>
                                     {currentTrivia?.question}
                                 </h3>
@@ -413,38 +415,38 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                     whileHover={{ scale: gameState === 'answered' ? 1.05 : 1 }}
                     whileTap={{ scale: gameState === 'answered' ? 0.95 : 1 }}
                     className="col-span-1 flex items-center justify-center py-4 rounded-2xl transition-all border-2 shadow-sm"
-                    style={{ 
-                        backgroundColor: 'color-mix(in srgb, var(--surface) 95%, var(--accent))', 
+                    style={{
+                        backgroundColor: 'color-mix(in srgb, var(--surface) 95%, var(--accent))',
                         borderColor: 'var(--border)',
                         color: 'var(--accent)'
                     }}
                 >
                     <Pin size={22} />
                 </motion.button>
-                
+
                 <motion.button
                     disabled={gameState !== 'answered'}
                     onClick={() => setShowFact(true)}
                     whileHover={{ scale: gameState === 'answered' ? 1.05 : 1 }}
                     whileTap={{ scale: gameState === 'answered' ? 0.95 : 1 }}
                     className="col-span-1 flex items-center justify-center py-4 rounded-2xl transition-all border-2 shadow-sm"
-                    style={{ 
-                        backgroundColor: 'color-mix(in srgb, var(--surface) 95%, var(--accent))', 
+                    style={{
+                        backgroundColor: 'color-mix(in srgb, var(--surface) 95%, var(--accent))',
                         borderColor: 'var(--border)',
                         color: 'var(--accent)'
                     }}
                 >
                     <Lightbulb size={22} />
                 </motion.button>
-                
+
                 <motion.button
                     disabled={gameState !== 'answered'}
                     onClick={() => fetchTrivia()}
                     whileHover={{ scale: gameState === 'answered' ? 1.02 : 1 }}
                     whileTap={{ scale: gameState === 'answered' ? 0.98 : 1 }}
                     className="col-span-2 flex items-center justify-center py-4 rounded-2xl transition-all border-2 shadow-sm"
-                    style={{ 
-                        backgroundColor: 'color-mix(in srgb, var(--surface) 95%, var(--accent))', 
+                    style={{
+                        backgroundColor: 'color-mix(in srgb, var(--surface) 95%, var(--accent))',
                         borderColor: 'var(--border)',
                         color: 'var(--accent)'
                     }}
@@ -476,14 +478,14 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
 // Sub-componente para la Racha (Fuego)
 function StreakBadge({ count }: { count: number }) {
     if (count === 0) return null;
-    
+
     return (
         <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             key={count}
             className="relative flex items-center justify-center w-14 h-14 rounded-full transition-transform active:scale-95"
-            style={{ 
+            style={{
                 backgroundColor: 'color-mix(in srgb, var(--accent) 10%, transparent)',
                 color: 'var(--accent)'
             }}
@@ -526,12 +528,12 @@ function ModeCard({ title, icon, description, onClick, color }: {
 }
 
 // Sub-componente para Modales de Información
-function GameModal({ isOpen, onClose, title, icon, content }: { 
-    isOpen: boolean, 
-    onClose: () => void, 
-    title: string, 
-    icon: React.ReactNode, 
-    content?: string 
+function GameModal({ isOpen, onClose, title, icon, content }: {
+    isOpen: boolean,
+    onClose: () => void,
+    title: string,
+    icon: React.ReactNode,
+    content?: string
 }) {
     return (
         <AnimatePresence>
@@ -568,7 +570,7 @@ function GameModal({ isOpen, onClose, title, icon, content }: {
                                 <X size={24} />
                             </button>
                         </div>
-                        
+
                         <div className="space-y-4">
                             <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed font-medium">
                                 {content || "Sin información disponible."}

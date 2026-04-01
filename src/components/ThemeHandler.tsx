@@ -56,11 +56,16 @@ export default function ThemeHandler() {
             }
         }
 
-        if (mediaQuery.addEventListener) {
-            mediaQuery.addEventListener('change', handleSystemChange)
-        } else if ((mediaQuery as any).addListener) {
-            (mediaQuery as any).addListener(handleSystemChange)
-        }
+        try {
+            if (window.matchMedia) {
+                const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+                if (mediaQuery.addEventListener) {
+                    mediaQuery.addEventListener('change', handleSystemChange)
+                } else if ((mediaQuery as any).addListener) {
+                    (mediaQuery as any).addListener(handleSystemChange)
+                }
+            }
+        } catch (e) { }
 
         // 4. Resiliency Heartbeat (Polling every 3s as safety net)
         const heartbeat = setInterval(() => {

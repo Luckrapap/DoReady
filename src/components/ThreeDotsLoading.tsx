@@ -15,6 +15,7 @@ export default function ThreeDotsLoading() {
                 <motion.div
                     key={i}
                     animate={{ y: [0, -15, 0] }}
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     transition={{
                         delay: i * 0.15,
                         duration: 0.6,

@@ -61,25 +61,6 @@ export default function ThemeSwitcher() {
 
         applyInitialTheme()
 
-        // 1. Listen for system theme changes (Web API)
-        const handleSystemThemeChange = () => {
-            if (localStorage.getItem('theme') === 'system') {
-                applyInitialTheme()
-            }
-        }
-        mediaQuery.addEventListener('change', handleSystemThemeChange)
-
-        // 2. Native Bridge Listener (Real-time updates in APK)
-        const setupNative = async () => {
-            const handle = await addNativeThemeListener(() => {
-                if (localStorage.getItem('theme') === 'system') {
-                    applyInitialTheme()
-                }
-            })
-            return handle
-        }
-        const nativeSyncPromise = setupNative()
-
         // Sincronizar cambios desde otras pestañas
         const handleStorageChange = (e: StorageEvent) => {
             if (e.key === 'theme') {
@@ -98,10 +79,6 @@ export default function ThemeSwitcher() {
         window.addEventListener('storage', handleStorageChange)
 
         return () => {
-            mediaQuery.removeEventListener('change', handleSystemThemeChange)
-            nativeSyncPromise.then(h => {
-                if (h && typeof h.remove === 'function') h.remove()
-            })
             window.removeEventListener('storage', handleStorageChange)
         }
     }, [])
