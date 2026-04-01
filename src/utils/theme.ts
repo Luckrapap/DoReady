@@ -35,6 +35,26 @@ export const addNativeThemeListener = (callback: (isDark: boolean) => void) => {
 // Native Cache to avoid async flickering on every call
 let nativeThemeCache: 'dark' | 'light' | null = null
 
+let isBridgeReady = false
+
+/**
+ * Polls for Capacitor bridge readiness on remote URLs (Vercel)
+ */
+const ensureBridge = async (timeout = 3000): Promise<boolean> => {
+  if (isBridgeReady) return true
+  if (typeof window === 'undefined') return false
+  
+  const start = Date.now()
+  while (Date.now() - start < timeout) {
+    if ((window as any).Capacitor?.isNativePlatform?.()) {
+      isBridgeReady = true
+      return true
+    }
+    await new Promise(r => setTimeout(r, 100))
+  }
+  return false
+}
+
 export const isDarkModeRequested = () => {
   if (typeof window === 'undefined') return false
 
@@ -56,15 +76,22 @@ export const isDarkModeRequested = () => {
  */
 export const syncNativeTheme = async () => {
   if (Capacitor.getPlatform() === 'android') {
+    const ready = await ensureBridge()
+    if (!ready) return isDarkModeRequested()
+
     try {
-      const { value } = await SystemTheme.getTheme()
-      
-      if (value === 'dark' || value === 'light') {
-        nativeThemeCache = value as 'dark' | 'light'
-        return value === 'dark'
+      // Use a race to prevent the app from hanging if the plugin is missing/broken
+      const result = await Promise.race([
+        SystemTheme.getTheme(),
+        new Promise((_, reject) => setTimeout(() => reject('Timeout'), 1000))
+      ]) as { value: string }
+
+      if (result.value === 'dark' || result.value === 'light') {
+        nativeThemeCache = result.value as 'dark' | 'light'
+        return result.value === 'dark'
       }
     } catch (e) {
-      console.warn('Capacitor Native Theme Sync skip/error:', e)
+      console.warn('Native Bridge Sync error (timed out or missing):', e)
     }
   }
   return isDarkModeRequested()

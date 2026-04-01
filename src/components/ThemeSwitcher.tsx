@@ -55,11 +55,12 @@ export default function ThemeSwitcher() {
             localStorage.setItem('theme', newTheme)
             localStorage.setItem('theme-preset', newPreset)
             localStorage.setItem('theme-custom-hue', finalHue.toString())
-            
+
             // Manually trigger a storage event so ThemeHandler catches it immediately on the same tab
-            window.dispatchEvent(new StorageEvent('storage', {
+            window.dispatchEvent(Object.assign(new Event('storage'), {
                 key: 'theme',
-                newValue: newTheme
+                newValue: newTheme,
+                skipReload: true // Prevent infinite loops
             }))
         } catch (e) { }
     }

@@ -47,13 +47,12 @@ export default function ThemeHandler() {
 
     useEffect(() => {
         const checkAndApply = async () => {
-            // Attempt Native Sync to get the actual system state
             await syncNativeTheme()
             applyThemeStyles(isDarkModeRequested())
         }
 
-        // 1. Initial execution (with small delay to ensure bridge is ready)
-        setTimeout(checkAndApply, 100)
+        // 1. Precise Sync on Mount (Bridge-Aware)
+        checkAndApply()
 
         // 2. Native Bridge Listener (Real-time APK updates)
         const setupNative = async () => {
@@ -66,32 +65,30 @@ export default function ThemeHandler() {
         }
         const nativeSyncPromise = setupNative()
 
-        // 3. Listen for system changes (Standard Web API fallback)
-        const handleSystemChange = () => {
-            if (localStorage.getItem('theme') === 'system') {
+        // 3. Reliability Triggers: Visibility & Focus
+        // Resync whenever the user returns to the app
+        const handleVisibility = () => {
+            if (document.visibilityState === 'visible') {
                 checkAndApply()
             }
         }
+        document.addEventListener('visibilitychange', handleVisibility)
+        window.addEventListener('focus', checkAndApply)
 
-        try {
-            if (window.matchMedia) {
-                const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-                mediaQuery.addEventListener('change', handleSystemChange)
-            }
-        } catch (e) { }
-
-        // 4. Watch for storage changes (Real-time updates from ThemeSwitcher)
-        const handleStorageChange = (e: StorageEvent) => {
+        // 4. Same-tab Synchronization (Settings update)
+        const handleThemeChange = (e: any) => {
             if (e.key === 'theme' || e.key === 'theme-preset' || e.key === 'theme-custom-hue') {
                 applyThemeStyles(isDarkModeRequested())
-                if (e.key === 'theme-preset') window.location.reload()
+                if (e.key === 'theme-preset' && !e.skipReload) window.location.reload()
             }
         }
-        window.addEventListener('storage', handleStorageChange)
+        window.addEventListener('storage', handleThemeChange)
 
         return () => {
+            document.removeEventListener('visibilitychange', handleVisibility)
+            window.removeEventListener('focus', checkAndApply)
+            window.removeEventListener('storage', handleThemeChange)
             nativeSyncPromise.then(h => h?.remove())
-            window.removeEventListener('storage', handleStorageChange)
         }
     }, [applyThemeStyles])
 
