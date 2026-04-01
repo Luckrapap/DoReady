@@ -46,22 +46,8 @@ export const isDarkModeRequested = () => {
   if (nativeThemeCache === 'dark') return true
   if (nativeThemeCache === 'light') return false
 
-  // Standard API Check (Wrapped safely to prevent WebView crashes)
-  try {
-    if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) return true
-  } catch (e) {}
-
-  // Sensor fallback (Web only)
-  try {
-    const temp = document.createElement('div')
-    temp.style.color = 'CanvasText'
-    document.body.appendChild(temp)
-    const color = getComputedStyle(temp).color
-    document.body.removeChild(temp)
-    return color.includes('255') || color === 'white'
-  } catch (e) {
-    return false
-  }
+  // Fallback to standard matchMedia
+  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
 }
 
 /**

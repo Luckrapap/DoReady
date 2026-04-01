@@ -4,35 +4,58 @@ import { useEffect, useCallback } from 'react'
 import { isDarkModeRequested, syncNativeTheme, addNativeThemeListener, setNativeSystemBars } from '@/utils/theme'
 
 /**
- * ThemeHandler v4.0 [Definitive Sync]
- * Uses Native Bridge Events + standard media queries + 
- * Resiliency Heartbeat for guaranteed synchronization.
+ * ThemeHandler v5.0 [Unified Source of Truth]
+ * - Centralizes Class Toggling (dark/light/theme-*)
+ * - Manages Browser Meta (theme-color) for address bars
+ * - Handlers Native Bridge & Synchronization
  */
 export default function ThemeHandler() {
     const applyThemeStyles = useCallback((isDark: boolean) => {
+        if (typeof window === 'undefined') return
         const doc = document.documentElement
 
-        // Prevent redundant mutations
+        // 1. Toggling Classes (Core Theme)
         doc.classList.toggle('dark', isDark)
         doc.classList.toggle('light', !isDark)
         doc.style.setProperty('color-scheme', isDark ? 'dark' : 'light')
 
-        // Update native bars (Android) - Only on actual change
+        // 2. Toggling Presets (Accents)
+        const preset = (localStorage.getItem('theme-preset') || 'slate') as string
+        const hue = localStorage.getItem('theme-custom-hue') || '220'
+        
+        doc.classList.remove('theme-blue', 'theme-slate', 'theme-purple', 'theme-green', 'theme-red', 'theme-orange', 'theme-yellow', 'theme-pink', 'theme-custom')
+        if (preset !== 'slate') {
+            doc.classList.add(`theme-${preset}`)
+        }
+        if (preset === 'custom') {
+            doc.style.setProperty('--custom-hue', hue)
+        }
+
+        // 3. Update Browser Meta (Fixes 'Black Bar' in phone browsers)
+        const bgColor = isDark 
+            ? (preset === 'slate' ? '#020617' : getComputedStyle(doc).getPropertyValue('--background').trim())
+            : (preset === 'slate' ? '#fafafa' : getComputedStyle(doc).getPropertyValue('--background').trim())
+        
+        const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+        if (metaThemeColor) {
+            metaThemeColor.setAttribute('content', bgColor || (isDark ? '#020617' : '#fafafa'))
+        }
+
+        // 4. Update Native Bars (APK only)
         setNativeSystemBars(isDark)
     }, [])
 
     useEffect(() => {
-
         const checkAndApply = async () => {
-            // Priority: Attempt Native Sync first (100% reliable in APK)
+            // Priority: Attempt Native Sync first
             await syncNativeTheme()
             applyThemeStyles(isDarkModeRequested())
         }
 
-        // 1. Initial sync
+        // 1. Initial execution
         checkAndApply()
 
-        // 2. Native Bridge Listener (Real-time updates in APK)
+        // 2. Native Bridge Listener (Real-time APK updates)
         const setupNative = async () => {
             const handle = await addNativeThemeListener((isDark) => {
                 if (localStorage.getItem('theme') === 'system') {
@@ -43,7 +66,7 @@ export default function ThemeHandler() {
         }
         const nativeSyncPromise = setupNative()
 
-        // 3. Listen for system changes (standard Web API)
+        // 3. Listen for system changes (Standard Web API)
         const handleSystemChange = () => {
             if (localStorage.getItem('theme') === 'system') {
                 checkAndApply()
@@ -53,39 +76,29 @@ export default function ThemeHandler() {
         try {
             if (window.matchMedia) {
                 const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-                if (mediaQuery.addEventListener) {
-                    mediaQuery.addEventListener('change', handleSystemChange)
-                } else if ((mediaQuery as any).addListener) {
-                    (mediaQuery as any).addListener(handleSystemChange)
-                }
+                mediaQuery.addEventListener('change', handleSystemChange)
             }
         } catch (e) { }
 
-        // 4. Resiliency Heartbeat (Polling every 3s as safety net)
-        const heartbeat = setInterval(() => {
-            if (localStorage.getItem('theme') === 'system') {
-                applyThemeStyles(isDarkModeRequested())
-            }
-        }, 3000)
-
-        // Resiliency sync on focus
-        window.addEventListener('focus', checkAndApply)
-
-        // Storage sync (tabs/settings)
+        // 4. Watch for storage changes (Real-time updates from ThemeSwitcher)
         const handleStorageChange = (e: StorageEvent) => {
-            if (e.key === 'theme' || e.key === 'theme-preset') {
+            if (e.key === 'theme' || e.key === 'theme-preset' || e.key === 'theme-custom-hue') {
                 checkAndApply()
                 if (e.key === 'theme-preset') window.location.reload()
             }
         }
         window.addEventListener('storage', handleStorageChange)
 
+        // 5. Heartbeat for absolute resiliency (APK & Web fallback)
+        const heartbeat = setInterval(() => {
+            if (localStorage.getItem('theme') === 'system') {
+                applyThemeStyles(isDarkModeRequested())
+            }
+        }, 3000)
+
         return () => {
-            nativeSyncPromise.then(h => {
-                if (h && typeof h.remove === 'function') h.remove()
-            })
+            nativeSyncPromise.then(h => h?.remove())
             clearInterval(heartbeat)
-            window.removeEventListener('focus', checkAndApply)
             window.removeEventListener('storage', handleStorageChange)
         }
     }, [applyThemeStyles])

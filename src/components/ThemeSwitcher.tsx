@@ -25,42 +25,11 @@ export default function ThemeSwitcher() {
     useEffect(() => {
         setMounted(true)
 
-        let savedPreset: Preset = 'slate'
-        let savedHue = 220
-        let currentTheme: Theme = 'system'
-
         try {
-            savedPreset = (localStorage.getItem('theme-preset') as Preset) || 'slate'
-            savedHue = Number(localStorage.getItem('theme-custom-hue')) || 220
-            currentTheme = (localStorage.getItem('theme') as Theme) || 'system'
+            setPreset((localStorage.getItem('theme-preset') as Preset) || 'slate')
+            setCustomHue(Number(localStorage.getItem('theme-custom-hue')) || 220)
+            setTheme((localStorage.getItem('theme') as Theme) || 'system')
         } catch (e) { }
-
-        setPreset(savedPreset)
-        setCustomHue(savedHue)
-        setTheme(currentTheme)
-
-        const applyInitialTheme = () => {
-            const isDark = isDarkModeRequested()
-
-            const doc = document.documentElement
-            doc.classList.toggle('dark', isDark)
-            doc.classList.toggle('light', !isDark)
-            doc.style.setProperty('color-scheme', isDark ? 'dark' : 'light')
-
-            if (savedPreset === 'custom') {
-                doc.style.setProperty('--custom-hue', savedHue.toString())
-            }
-
-            // Apply preset class
-            doc.classList.remove('theme-blue', 'theme-slate', 'theme-purple', 'theme-green', 'theme-red', 'theme-orange', 'theme-yellow', 'theme-pink', 'theme-custom')
-            if (savedPreset !== 'slate') {
-                doc.classList.add(`theme-${savedPreset}`)
-            }
-
-            setTick(t => t + 1)
-        }
-
-        applyInitialTheme()
 
         // Sincronizar cambios desde otras pestañas
         const handleStorageChange = (e: StorageEvent) => {
@@ -70,14 +39,10 @@ export default function ThemeSwitcher() {
                     setPreset((localStorage.getItem('theme-preset') as Preset) || 'slate')
                     setCustomHue(Number(localStorage.getItem('theme-custom-hue')) || 220)
                 } catch (err) { }
-                applyInitialTheme()
             }
         }
         window.addEventListener('storage', handleStorageChange)
-
-        return () => {
-            window.removeEventListener('storage', handleStorageChange)
-        }
+        return () => window.removeEventListener('storage', handleStorageChange)
     }, [])
 
     const applyTheme = async (newTheme: Theme, newPreset: Preset, newHue?: number) => {
@@ -90,29 +55,13 @@ export default function ThemeSwitcher() {
             localStorage.setItem('theme', newTheme)
             localStorage.setItem('theme-preset', newPreset)
             localStorage.setItem('theme-custom-hue', finalHue.toString())
+            
+            // Manually trigger a storage event so ThemeHandler catches it immediately on the same tab
+            window.dispatchEvent(new StorageEvent('storage', {
+                key: 'theme',
+                newValue: newTheme
+            }))
         } catch (e) { }
-
-        if (newTheme === 'system') {
-            await syncNativeTheme()
-        }
-
-        const isDark = isDarkModeRequested()
-
-        const doc = document.documentElement
-        doc.classList.toggle('dark', isDark)
-        doc.classList.toggle('light', !isDark)
-        doc.style.setProperty('color-scheme', isDark ? 'dark' : 'light')
-
-        // Apply custom hue if needed
-        if (newPreset === 'custom') {
-            doc.style.setProperty('--custom-hue', finalHue.toString())
-        }
-
-        // Apply preset class
-        doc.classList.remove('theme-blue', 'theme-slate', 'theme-purple', 'theme-green', 'theme-red', 'theme-orange', 'theme-yellow', 'theme-pink', 'theme-custom')
-        if (newPreset !== 'slate') {
-            doc.classList.add(`theme-${newPreset}`)
-        }
     }
 
     if (!mounted) return (
