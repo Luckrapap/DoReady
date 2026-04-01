@@ -47,13 +47,13 @@ export default function ThemeHandler() {
 
     useEffect(() => {
         const checkAndApply = async () => {
-            // Priority: Attempt Native Sync first
+            // Attempt Native Sync to get the actual system state
             await syncNativeTheme()
             applyThemeStyles(isDarkModeRequested())
         }
 
-        // 1. Initial execution
-        checkAndApply()
+        // 1. Initial execution (with small delay to ensure bridge is ready)
+        setTimeout(checkAndApply, 100)
 
         // 2. Native Bridge Listener (Real-time APK updates)
         const setupNative = async () => {
@@ -66,7 +66,7 @@ export default function ThemeHandler() {
         }
         const nativeSyncPromise = setupNative()
 
-        // 3. Listen for system changes (Standard Web API)
+        // 3. Listen for system changes (Standard Web API fallback)
         const handleSystemChange = () => {
             if (localStorage.getItem('theme') === 'system') {
                 checkAndApply()
@@ -83,22 +83,14 @@ export default function ThemeHandler() {
         // 4. Watch for storage changes (Real-time updates from ThemeSwitcher)
         const handleStorageChange = (e: StorageEvent) => {
             if (e.key === 'theme' || e.key === 'theme-preset' || e.key === 'theme-custom-hue') {
-                checkAndApply()
+                applyThemeStyles(isDarkModeRequested())
                 if (e.key === 'theme-preset') window.location.reload()
             }
         }
         window.addEventListener('storage', handleStorageChange)
 
-        // 5. Heartbeat for absolute resiliency (APK & Web fallback)
-        const heartbeat = setInterval(() => {
-            if (localStorage.getItem('theme') === 'system') {
-                applyThemeStyles(isDarkModeRequested())
-            }
-        }, 3000)
-
         return () => {
             nativeSyncPromise.then(h => h?.remove())
-            clearInterval(heartbeat)
             window.removeEventListener('storage', handleStorageChange)
         }
     }, [applyThemeStyles])

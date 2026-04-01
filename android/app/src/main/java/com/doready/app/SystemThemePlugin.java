@@ -17,6 +17,20 @@ public class SystemThemePlugin extends Plugin {
         call.resolve(ret);
     }
 
+    @PluginMethod
+    public void setStatusBarTheme(PluginCall call) {
+        boolean isDark = call.getBoolean("isDark", true);
+        getActivity().runOnUiThread(() -> {
+            try {
+                // Manage status and navigation bar icons
+                WindowInsetsControllerCompat controller = new WindowInsetsControllerCompat(getActivity().getWindow(), getActivity().getWindow().getDecorView());
+                controller.setAppearanceLightStatusBars(!isDark);
+                controller.setAppearanceLightNavigationBars(!isDark);
+            } catch (Exception e) {}
+            call.resolve();
+        });
+    }
+
     private String getCurrentTheme() {
         int nightModeFlags = getContext().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         switch (nightModeFlags) {
@@ -28,7 +42,7 @@ public class SystemThemePlugin extends Plugin {
                 return "undefined";
         }
     }
-}
+
     @Override
     protected void handleOnConfigurationChanged(Configuration newConfig) {
         super.handleOnConfigurationChanged(newConfig);
