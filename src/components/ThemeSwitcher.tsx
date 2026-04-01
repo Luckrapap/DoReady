@@ -2,7 +2,7 @@
 
 import { Monitor, Moon, Sun, Palette, Check, Sparkles, Pipette, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { isDarkModeRequested, addNativeThemeListener } from '@/utils/theme'
+import { isDarkModeRequested, addNativeThemeListener, syncNativeTheme } from '@/utils/theme'
 import { useEffect, useState } from 'react'
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
@@ -117,7 +117,6 @@ export default function ThemeSwitcher() {
         localStorage.setItem('theme-custom-hue', finalHue.toString())
 
         if (newTheme === 'system') {
-            const { syncNativeTheme } = await import('@/utils/theme')
             await syncNativeTheme()
         }
 
