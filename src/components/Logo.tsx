@@ -19,11 +19,11 @@ export default function Logo({ className, size, style }: LogoProps) {
             style={{ 
                 width: logoWidth,
                 height: logoHeight,
-                WebkitMaskImage: 'url(Logo.png)',
+                WebkitMaskImage: 'url(/logo.png)',
                 WebkitMaskSize: 'contain',
                 WebkitMaskRepeat: 'no-repeat',
                 WebkitMaskPosition: 'center',
-                maskImage: 'url(Logo.png)',
+                maskImage: 'url(/logo.png)',
                 maskSize: 'contain',
                 maskRepeat: 'no-repeat',
                 maskPosition: 'center',
