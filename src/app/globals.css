@@ -18,42 +18,43 @@
 }
 
 :root {
-  /* Next.js Layout Foundation Colors */
+  /* Next.js Layout Foundation Colors - ChatGPT Style Contrast */
   --theme-background: #ffffff;
   --theme-foreground: #09090b;
   --theme-primary: #09090b;
   --theme-secondary: #71717a;
-  --theme-surface: #ffffff;
-  --theme-surface-hover: #f4f4f5;
-  --theme-border: #e4e4e7;
+  --theme-surface: #f4f4f7;
+  /* Distinct gray for sidebar/drawers */
+  --theme-surface-hover: #e9e9ee;
+  --theme-border: #e2e2e7;
   --theme-accent: #0f172a;
   --theme-on-accent: #f8fafc;
 
-  /* Legacy Aliases (Prevents current inline styles from breaking) */
+  /* Legacy Aliases */
   --background: var(--theme-background);
   --foreground: var(--theme-foreground);
-  --card: var(--theme-surface);
   --surface: var(--theme-surface);
   --border: var(--theme-border);
   --accent: var(--theme-accent);
 }
 
 .dark {
-  /* Next.js Layout Foundation Colors */
-  --theme-background: #09090b;
+  /* Next.js Layout Foundation Colors - Pure Black Contrast */
+  --theme-background: #000000;
+  /* Pure black background */
   --theme-foreground: #f8fafc;
   --theme-primary: #f8fafc;
   --theme-secondary: #a1a1aa;
-  --theme-surface: #0f172a;
-  --theme-surface-hover: #1e293b;
-  --theme-border: #1e293b;
+  --theme-surface: #0f0f10;
+  /* Very dark zinc for sidebar */
+  --theme-surface-hover: #18181b;
+  --theme-border: #1e1e20;
   --theme-accent: #334155;
   --theme-on-accent: #ffffff;
 
   /* Legacy Aliases */
   --background: var(--theme-background);
   --foreground: var(--theme-foreground);
-  --card: var(--theme-surface);
   --surface: var(--theme-surface);
   --border: var(--theme-border);
   --accent: var(--theme-accent);

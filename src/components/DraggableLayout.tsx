@@ -155,7 +155,7 @@ export default function DraggableLayout({ children }: { children: React.ReactNod
         <div className="relative flex-1 flex overflow-hidden">
             {/* Background Parallax Layer (Mobile Menu) */}
             <motion.div
-                className="absolute inset-0 z-0 bg-zinc-50 dark:bg-[#0d0d0d] md:hidden"
+                className="absolute inset-0 z-0 bg-[var(--surface)] md:hidden"
                 style={{
                     x: bgX,
                 }}
@@ -171,7 +171,7 @@ export default function DraggableLayout({ children }: { children: React.ReactNod
 
             {/* Foreground Main Layer */}
             <motion.div
-                className="flex-1 w-full bg-[var(--background)] flex relative z-10 md:shadow-none overflow-hidden border-l"
+                className="flex-1 w-full bg-[var(--background)] flex relative z-10 shadow-none md:shadow-none overflow-hidden border-l"
                 style={{
                     x,
                     borderLeftColor: foregroundBorderColor
