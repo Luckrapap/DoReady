@@ -18,12 +18,13 @@ export default function DraggableLayout({ children }: { children: React.ReactNod
 
     const DRAWER_WIDTH = drawerWidth
     const x = useMotionValue(0)
-    
+
     // Background Parallax Effects (ChatGPT style puro)
     // Para que ninguno "domine" al otro, el menú inferior no se queda casi estático. 
     // Ahora arranca al 50% de su propia pantalla, dándole mucha más velocidad para lograr un equilibrio 2:1.
     const bgX = useTransform(x, [0, DRAWER_WIDTH], [-drawerWidth * 0.5, 0])
-    
+    const foregroundShadow = useTransform(x, [0, DRAWER_WIDTH], ['-1px 0 15px rgba(0,0,0,0)', '-1px 0 15px rgba(0,0,0,0.04)'])
+
     // Un overlay negro sobre el menú de fondo que se aclara conforme se abre
     const bgOverlayOpacity = useTransform(x, [0, DRAWER_WIDTH], [0.6, 0])
 
@@ -57,8 +58,8 @@ export default function DraggableLayout({ children }: { children: React.ReactNod
 
         const handleTouchStart = (e: TouchEvent) => {
             if (e.touches.length > 1) return;
-            
-            if (window.innerWidth >= 768) return; 
+
+            if (window.innerWidth >= 768) return;
 
             startX = e.touches[0].clientX;
             startY = e.touches[0].clientY;
@@ -72,7 +73,7 @@ export default function DraggableLayout({ children }: { children: React.ReactNod
 
         const handleTouchMove = (e: TouchEvent) => {
             if (!isTracking) return;
-            
+
             const currentX = e.touches[0].clientX;
             const currentY = e.touches[0].clientY;
             const dx = currentX - startX;
@@ -84,7 +85,7 @@ export default function DraggableLayout({ children }: { children: React.ReactNod
 
             if (isHorizontalSwipe) {
                 if (e.cancelable) e.preventDefault();
-                
+
                 const newX = Math.max(0, Math.min(DRAWER_WIDTH, swipeStartx + dx));
                 x.set(newX);
 
@@ -106,13 +107,13 @@ export default function DraggableLayout({ children }: { children: React.ReactNod
                 return;
             }
             isTracking = false;
-            
+
             const dx = e.changedTouches[0].clientX - startX;
             let nextOpen = isMenuOpen;
-            
+
             const isIntentionalSwipeRight = dx > 50 || velocityX > 300;
             const isIntentionalSwipeLeft = dx < -50 || velocityX < -300;
-            
+
             if (isMenuOpen && isIntentionalSwipeLeft) {
                 nextOpen = false;
             } else if (!isMenuOpen && isIntentionalSwipeRight) {
@@ -126,9 +127,9 @@ export default function DraggableLayout({ children }: { children: React.ReactNod
             }
 
             setIsMenuOpen(nextOpen);
-            
+
             if (nextOpen !== isMenuOpen) {
-                Haptics.impact({ style: ImpactStyle.Light }).catch(() => {});
+                Haptics.impact({ style: ImpactStyle.Light }).catch(() => { });
             } else {
                 animate(x, nextOpen ? DRAWER_WIDTH : 0, {
                     type: "spring",
@@ -152,40 +153,40 @@ export default function DraggableLayout({ children }: { children: React.ReactNod
     return (
         <div className="relative flex-1 flex overflow-hidden">
             {/* Background Parallax Layer (Mobile Menu) */}
-            <motion.div 
+            <motion.div
                 className="absolute inset-0 z-0 bg-white dark:bg-[#0a0a0a] md:hidden"
                 style={{
                     x: bgX,
                 }}
             >
                 <MobileNavigationMenu />
-                
+
                 {/* Overlay oscuro para darle profundidad inicial, se va aclarando */}
-                <motion.div 
-                    className="absolute inset-0 bg-black pointer-events-none" 
+                <motion.div
+                    className="absolute inset-0 bg-black pointer-events-none"
                     style={{ opacity: bgOverlayOpacity }}
                 />
             </motion.div>
 
             {/* Foreground Main Layer */}
-            <motion.div 
+            <motion.div
                 className="flex-1 w-full bg-[var(--background)] flex relative z-10 md:shadow-none overflow-hidden"
-                style={{ 
-                    x, 
-                    boxShadow: x.get() > 0 ? '-1px 0 20px rgba(0,0,0,0.15)' : 'none',
+                style={{
+                    x,
+                    boxShadow: foregroundShadow,
                 }}
             >
                 {/* Capa de intercepción: Si está abierto, no puedes usar la App, un tap lo cierra */}
-                 {isMenuOpen && (
-                    <div 
-                       className="absolute inset-0 z-50 md:hidden bg-transparent" 
-                       onClick={() => {
+                {isMenuOpen && (
+                    <div
+                        className="absolute inset-0 z-50 md:hidden bg-transparent"
+                        onClick={() => {
                             setIsMenuOpen(false);
-                            Haptics.impact({ style: ImpactStyle.Light }).catch(() => {});
-                       }} 
+                            Haptics.impact({ style: ImpactStyle.Light }).catch(() => { });
+                        }}
                     />
                 )}
-                
+
                 {children}
             </motion.div>
         </div>
