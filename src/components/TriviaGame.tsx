@@ -527,27 +527,23 @@ function ModeCard({ title, icon, description, onClick, colorTheme }: {
 }) {
     const themeStyles = {
         green: { 
-            accent: "text-emerald-500", 
-            border: "border-emerald-500/50",
-            glow: "bg-emerald-500/20",
+            accent: "text-emerald-400", 
+            glow: "bg-emerald-500/10",
             leftBorder: "border-l-emerald-500"
         },
         purple: { 
-            accent: "text-violet-500", 
-            border: "border-violet-500/50",
-            glow: "bg-violet-500/20",
+            accent: "text-violet-400", 
+            glow: "bg-violet-500/10",
             leftBorder: "border-l-violet-500"
         },
         orange: { 
-            accent: "text-amber-500", 
-            border: "border-amber-500/50",
-            glow: "bg-orange-500/20",
+            accent: "text-amber-400", 
+            glow: "bg-orange-500/10",
             leftBorder: "border-l-orange-500"
         },
         blue: { 
-            accent: "text-sky-500", 
-            border: "border-sky-500/50",
-            glow: "bg-sky-500/20",
+            accent: "text-sky-400", 
+            glow: "bg-sky-500/10",
             leftBorder: "border-l-sky-500"
         }
     }
@@ -557,45 +553,39 @@ function ModeCard({ title, icon, description, onClick, colorTheme }: {
         <motion.button
             variants={{
                 hidden: { opacity: 0, y: 20 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } }
+                visible: { opacity: 1, y: 0, transition: { duration: 0.3 } }
             }}
-            whileHover={{ scale: 1.01, x: 5 }}
-            whileTap={{ scale: 0.97 }}
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.98 }}
             onClick={onClick}
             className={cn(
-                "group relative w-full p-5 rounded-[1.5rem] bg-zinc-800/80 dark:bg-zinc-800/90 transition-all duration-300 text-left flex items-center gap-5 overflow-hidden",
-                "border border-white/30 border-t-white/40 shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-md",
-                "border-l-[6px]",
+                "group relative w-full p-6 rounded-[1.5rem] bg-zinc-900 transition-all duration-200 text-left flex items-center gap-6 overflow-hidden",
+                "border border-zinc-700 shadow-2xl",
+                "border-l-[8px]",
                 theme.leftBorder,
-                "hover:bg-zinc-700/90 hover:border-white/50"
+                "active:bg-zinc-800 hover:border-zinc-500"
             )}
         >
-            {/* High Definition Ambient Glow (Only on hover) */}
-            <div className={cn(
-                "absolute -right-20 -top-20 w-40 h-40 rounded-full blur-[80px] opacity-0 group-hover:opacity-40 transition-opacity duration-700",
-                theme.glow
-            )} />
-
-            {/* Left Icon (Clearly defined container) */}
-            <div className="relative shrink-0 flex items-center justify-center w-12 h-12 bg-white/5 rounded-2xl border border-white/10 group-hover:bg-white/10 group-hover:border-white/20 transition-all">
-                <span className="relative z-10 text-3xl drop-shadow-2xl transition-transform duration-300 group-hover:scale-110">
+            {/* Left Icon (Solid container) */}
+            <div className="relative shrink-0 flex items-center justify-center w-14 h-14 bg-zinc-800 rounded-2xl border border-zinc-700 group-hover:border-zinc-500 transition-all">
+                <span className="relative z-10 text-4xl drop-shadow-lg scale-100 group-hover:scale-110 transition-transform">
                     {icon}
                 </span>
             </div>
 
-            {/* Bold Text Hierarchy */}
-            <div className="relative z-10 flex flex-col items-start gap-0.5 flex-1">
-                <h3 className={cn("text-xl font-black tracking-tight drop-shadow-sm transition-colors", theme.accent)}>
+            {/* Solid Text Hierarchy */}
+            <div className="relative z-10 flex flex-col items-start gap-1 flex-1">
+                <h3 className={cn("text-xl font-black uppercase tracking-wider transition-colors", theme.accent)}>
                     {title}
                 </h3>
-                <p className="text-sm font-bold text-zinc-300 dark:text-zinc-400 leading-tight tracking-wide max-w-[95%]">
+                <p className="text-sm font-bold text-zinc-400 leading-tight tracking-wide max-w-[95%]">
                     {description}
                 </p>
             </div>
 
-            {/* Solid Action Indicator */}
-            <div className="relative z-10 w-9 h-9 rounded-full flex items-center justify-center bg-white/10 border border-white/20 text-white transition-all duration-300 group-hover:scale-110">
-                <ArrowRight size={18} strokeWidth={3} />
+            {/* Permanent Action Indicator */}
+            <div className="relative z-10 w-10 h-10 rounded-full flex items-center justify-center bg-zinc-800 border border-zinc-700 text-zinc-400 group-hover:text-white group-hover:border-zinc-500 transition-all">
+                <ArrowRight size={20} strokeWidth={3} />
             </div>
         </motion.button>
     )
