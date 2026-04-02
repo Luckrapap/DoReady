@@ -6,13 +6,13 @@ import { Capacitor, registerPlugin, type PluginListenerHandle } from '@capacitor
  */
 export const THEME_CONFIG = {
   slate: { light: '#fafafa', dark: '#020617' },
-  blue: { light: '#f4f9ff', dark: '#030712' },
-  purple: { light: '#fdfaff', dark: '#04020a' },
-  green: { light: '#f2fff5', dark: '#020a02' },
-  red: { light: '#fff2f2', dark: '#0a0202' },
-  orange: { light: '#fffaf2', dark: '#0a0502' },
-  yellow: { light: '#fffff2', dark: '#050502' },
-  pink: { light: '#fff2f9', dark: '#0a0205' },
+  blue: { light: '#f4f9ff', dark: '#060914' },
+  purple: { light: '#fdfaff', dark: '#0a0914' },
+  green: { light: '#f2fff5', dark: '#050a08' },
+  red: { light: '#fff2f2', dark: '#0f0505' },
+  orange: { light: '#fffaf2', dark: '#0f0a05' },
+  yellow: { light: '#fffff2', dark: '#0c0b05' },
+  pink: { light: '#fff0f6', dark: '#0f0508' },
 } as const
 
 export type Preset = keyof typeof THEME_CONFIG | 'custom'

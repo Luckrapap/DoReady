@@ -1,11 +1,11 @@
 'use client'
 
-import { useEffect, useCallback } from 'react'
+import { useLayoutEffect, useCallback } from 'react'
 import { usePathname } from 'next/navigation'
 import { isDarkModeRequested, syncNativeTheme, addNativeThemeListener, setNativeSystemBars, getThemeBackground } from '@/utils/theme'
 
 /**
- * ThemeHandler v7.0 [Engineering Final Fix]
+ * ThemeHandler v8.0 [The Nucleus - Definitive Fix]
  */
 export default function ThemeHandler() {
     const pathname = usePathname()
@@ -14,12 +14,12 @@ export default function ThemeHandler() {
         if (typeof window === 'undefined') return
         const doc = document.documentElement
 
-        // 1. Core Classes & System Mode
+        // 1. Core Classes & System Contrast
         doc.classList.toggle('dark', isDark)
         doc.classList.toggle('light', !isDark)
         doc.style.setProperty('color-scheme', isDark ? 'dark' : 'light')
 
-        // 2. Preset & Hex Sync (Zero-Latency Config)
+        // 2. Preset & Static Hex Sync (Zero-Latency)
         const preset = (localStorage.getItem('theme-preset') || 'slate') as string
         const hue = localStorage.getItem('theme-custom-hue') || '220'
         
@@ -31,7 +31,7 @@ export default function ThemeHandler() {
             doc.style.setProperty('--custom-hue', hue)
         }
 
-        // 3. Update Browser Meta (Instant from Config)
+        // 3. Update Browser Meta (Instant)
         const bgColor = getThemeBackground(isDark, preset)
         const metaThemeColor = document.querySelector('meta[name="theme-color"]')
         if (metaThemeColor) {
@@ -42,17 +42,20 @@ export default function ThemeHandler() {
         setNativeSystemBars(isDark)
     }, [])
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const checkAndApply = async () => {
-            // Priority: Wait for bridge and sync
+            // First pass: Rapid check (Instant)
+            applyThemeStyles(isDarkModeRequested())
+
+            // Second pass: Wait for bridge sync (3s polling in theme.ts)
             await syncNativeTheme()
             applyThemeStyles(isDarkModeRequested())
         }
 
-        // 1. Initial Sync & Visibility
+        // 1. Initial Sync
         checkAndApply()
 
-        // 2. Native Bridge Listener
+        // 2. Continuous Synchronization Bridge
         const setupNative = async () => {
             const handle = await addNativeThemeListener((isDark) => {
                 if (localStorage.getItem('theme') === 'system') {
@@ -63,33 +66,33 @@ export default function ThemeHandler() {
         }
         const nativeSyncPromise = setupNative()
 
-        // 3. Reliability Triggers
-        const handleVisibility = () => {
-             if (document.visibilityState === 'visible') checkAndApply()
+        // 3. Reliability Re-syncs (Opening app or changing tab)
+        const handleSync = () => {
+            if (document.visibilityState === 'visible') checkAndApply()
         }
-        document.addEventListener('visibilitychange', handleVisibility)
-        window.addEventListener('focus', checkAndApply)
+        document.addEventListener('visibilitychange', handleSync)
+        window.addEventListener('focus', handleSync)
 
-        // 4. Same-tab Synchronization
-        const handleThemeChange = (e: any) => {
+        // 4. Settings change listener
+        const handleSettings = (e: any) => {
             if (e.key === 'theme' || e.key === 'theme-preset' || e.key === 'theme-custom-hue') {
                 applyThemeStyles(isDarkModeRequested())
                 if (e.key === 'theme-preset' && !e.skipReload) window.location.reload()
             }
         }
-        window.addEventListener('storage', handleThemeChange)
+        window.addEventListener('storage', handleSettings)
 
         return () => {
-            document.removeEventListener('visibilitychange', handleVisibility)
-            window.removeEventListener('focus', checkAndApply)
-            window.removeEventListener('storage', handleThemeChange)
+            document.removeEventListener('visibilitychange', handleSync)
+            window.removeEventListener('focus', handleSync)
+            window.removeEventListener('storage', handleSettings)
             nativeSyncPromise.then(h => h?.remove())
         }
     }, [applyThemeStyles])
 
-    // 5. Force Sync on Navigation (Fixes hydration issues between routes)
-    useEffect(() => {
-        applyThemeStyles(isDarkModeRequested())
+    // 5. Force React to re-apply classes on every route change (Nucleus Isolation)
+    useLayoutEffect(() => {
+       applyThemeStyles(isDarkModeRequested())
     }, [pathname, applyThemeStyles])
 
     return null

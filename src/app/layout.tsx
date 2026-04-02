@@ -71,44 +71,10 @@ export default function RootLayout({
             __html: `
                 (function() {
                   try {
-                    console.log('DoReady Hydration v1.9 - No Time');
-                    var path = window.location.pathname;
-                    var isPublic = path === '/' || path.startsWith('/login');
-                    
                     var t = localStorage.getItem('theme') || 'system';
-                    var p = isPublic ? 'slate' : (localStorage.getItem('theme-preset') || 'slate');
-                    var h = localStorage.getItem('theme-custom-hue') || '220';
-                    var isDark = t === 'dark';
-                    
-                    if (t === 'system') {
-                      try {
-                        isDark = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-                      } catch(e) {
-                        try {
-                          var s = document.createElement('div');
-                          s.style.color = 'CanvasText';
-                          document.documentElement.appendChild(s);
-                          var c = getComputedStyle(s).color;
-                          document.documentElement.removeChild(s);
-                          if (c.includes('255')) isDark = true;
-                        } catch(e2) {
-                          isDark = false;
-                        }
-                      }
-                    }
-                    
-                    var doc = document.documentElement;
-                    doc.classList.toggle('dark', isDark);
-                    doc.classList.toggle('light', !isDark);
-                    doc.style.setProperty('color-scheme', isDark ? 'dark' : 'light');
-                    
-                    if (!isPublic && p === 'custom') {
-                      doc.style.setProperty('--custom-hue', h);
-                    }
-
-                    // Clean and apply preset
-                    doc.classList.remove('theme-blue', 'theme-slate', 'theme-purple', 'theme-green', 'theme-red', 'theme-orange', 'theme-yellow', 'theme-pink', 'theme-custom');
-                    if (p !== 'slate') doc.classList.add('theme-' + p);
+                    var isDark = t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                    document.documentElement.classList.add(isDark ? 'dark' : 'light');
+                    document.documentElement.style.setProperty('color-scheme', isDark ? 'dark' : 'light');
                   } catch (e) {}
                 })();
             `,
