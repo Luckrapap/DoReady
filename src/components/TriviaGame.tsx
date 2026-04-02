@@ -582,8 +582,6 @@ function ModeCard({ title, icon, description, onClick, colorTheme, index }: {
                 )} />
                 <motion.span 
                     className="relative z-10 text-5xl drop-shadow-2xl transition-transform duration-300 group-hover:scale-105"
-                    animate={{ y: [-2, 2, -2] }}
-                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: index * 0.3 }}
                 >
                     {icon}
                 </motion.span>
