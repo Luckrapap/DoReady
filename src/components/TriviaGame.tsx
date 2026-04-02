@@ -191,13 +191,20 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
 
     if (gameMode === null) {
         return (
-            <div className="w-full max-w-lg mx-auto h-full flex flex-col pt-4">
-                <div className="flex items-center justify-between mb-6 px-4 relative shrink-0">
+            <div className="w-full max-w-2xl mx-auto h-full flex flex-col">
+                <div className="flex items-center justify-between mb-8 px-4 relative shrink-0">
                     <div className="flex items-center gap-4">
                         <motion.button
                             onClick={onBack}
-                            whileTap={{ scale: 0.95 }}
-                            className="w-10 h-10 rounded-full flex items-center justify-center border transition-colors duration-200 bg-zinc-100 dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400"
+                            whileHover={{ scale: 1.1, x: -2 }}
+                            whileTap={{ scale: 0.9 }}
+                            className="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300"
+                            style={{
+                                backgroundColor: 'color-mix(in srgb, var(--surface) 80%, transparent)',
+                                borderColor: 'var(--border)',
+                                color: 'var(--accent)',
+                                backdropFilter: 'blur(8px)'
+                            }}
                         >
                             <ChevronLeft size={24} strokeWidth={2.5} />
                         </motion.button>
@@ -213,17 +220,17 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                         visible: {
                             opacity: 1,
                             transition: {
-                                staggerChildren: 0.05,
-                                delayChildren: 0.05
+                                staggerChildren: 0.12,
+                                delayChildren: 0.2
                             }
                         }
                     }}
-                    className="flex flex-col px-4 gap-3 mt-6 md:mt-10 pb-20"
+                    className="flex flex-col px-4 gap-4 mt-12 md:mt-20 pb-20"
                 >
                     <ModeCard
                         title="Chill"
                         icon="🌿"
-                        description="Preguntas fáciles y relajantes."
+                        description="Preguntas fáciles y relajantes para pasar el rato."
                         onClick={() => handleStartMode('chill')}
                         colorTheme="green"
                         index={0}
@@ -231,7 +238,7 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                     <ModeCard
                         title="Random"
                         icon="🎲"
-                        description="Una mezcla de todo."
+                        description="Una mezcla de todo; nunca sabes qué vendrá."
                         onClick={() => handleStartMode('random')}
                         colorTheme="orange"
                         index={1}
@@ -239,7 +246,7 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                     <ModeCard
                         title="Experto"
                         icon="🧠"
-                        description="Retos para mentes maestras."
+                        description="Retos difíciles solo para mentes maestras."
                         onClick={() => handleStartMode('expert')}
                         colorTheme="purple"
                         index={2}
@@ -247,7 +254,7 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                     <ModeCard
                         title="Enfoque"
                         icon="🎯"
-                        description="Elige el tema que tú quieras."
+                        description="Elige el tema que tú quieras y yo te pregunto."
                         onClick={() => handleStartMode('focus')}
                         colorTheme="blue"
                         index={3}
@@ -264,44 +271,58 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                     gameMode === 'focus' ? 'Enfoque' : 'General';
 
     return (
-        <div className="w-full max-w-lg mx-auto h-full flex flex-col">
+        <div className="w-full max-w-2xl mx-auto h-full flex flex-col">
+            {/* Header & Streak */}
             <div className="flex items-center justify-between mb-8 px-4 relative shrink-0">
                 <div className="flex items-center gap-4">
                     {onBack && (
                         <motion.button
                             onClick={() => {
                                 setGameMode(null)
-                                setGameState('playing')
+                                setGameState('playing') // Reset gameState to ensure clean return
                             }}
-                            whileTap={{ scale: 0.95 }}
-                            className="w-10 h-10 rounded-full flex items-center justify-center border transition-colors duration-200 bg-zinc-100 dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400"
+                            whileHover={{ scale: 1.1, x: -2 }}
+                            whileTap={{ scale: 0.9 }}
+                            className="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300"
+                            style={{
+                                backgroundColor: 'color-mix(in srgb, var(--surface) 80%, transparent)',
+                                borderColor: 'var(--border)',
+                                color: 'var(--accent)',
+                                backdropFilter: 'blur(8px)'
+                            }}
                         >
                             <ChevronLeft size={24} strokeWidth={2.5} />
                         </motion.button>
                     )}
                     {renderHeaderContent(currentModeSubtitle)}
+
                     <div className="ml-auto">
                         <StreakBadge count={streak} />
                     </div>
                 </div>
+
             </div>
 
+            {/* Game Content Area */}
             <div className="flex-1 flex flex-col justify-start md:justify-center overflow-y-auto no-scrollbar">
                 <AnimatePresence mode="wait">
                     {gameState === 'loading' ? (
                         <motion.div
                             key="loading"
-                            className="flex-1 flex flex-col items-center justify-center gap-6 p-6 transition-all duration-300"
+                            className="flex-1 flex flex-col items-center justify-center gap-6 p-6 transition-all duration-500"
                         >
                             <div className="relative w-16 h-16">
                                 {[...Array(12)].map((_, i) => (
-                                    <div
+                                    <motion.div
                                         key={i}
-                                        className="absolute left-[30px] top-0 w-[5px] h-[16px] rounded-full bg-zinc-300 dark:bg-zinc-700 animate-pulse"
-                                        style={{ 
-                                            transformOrigin: '2.5px 32px', 
-                                            rotate: `${i * 30}deg`,
-                                            animationDelay: `${i * 0.1}s`
+                                        className="absolute left-[30px] top-0 w-[5px] h-[16px] rounded-full bg-zinc-400 dark:bg-zinc-500"
+                                        style={{ transformOrigin: '2.5px 32px', rotate: i * 30 }}
+                                        animate={{ opacity: [0.15, 1, 0.15] }}
+                                        transition={{
+                                            repeat: Infinity,
+                                            duration: 1.2,
+                                            delay: i * 0.1,
+                                            ease: "linear"
                                         }}
                                     />
                                 ))}
@@ -313,13 +334,14 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                     ) : gameState === 'error' ? (
                         <motion.div
                             key="error"
-                            className="p-12 border rounded-3xl bg-zinc-900 border-zinc-800"
+                            className="p-12 border rounded-[2.5rem] transition-colors duration-500"
+                            style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
                         >
                             <div className="flex flex-col items-center gap-4">
                                 <p className="text-red-500 font-medium">{errorMessage}</p>
                                 <button
                                     onClick={() => fetchTrivia()}
-                                    className="px-6 py-2 rounded-full font-bold text-sm bg-zinc-50 text-black"
+                                    className="px-6 py-2 rounded-full font-bold text-sm bg-zinc-900 dark:bg-zinc-50 text-white dark:text-black"
                                 >
                                     Reintentar
                                 </button>
@@ -328,11 +350,12 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                     ) : (
                         <motion.div
                             key="content"
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.25 }}
-                            className="flex flex-col w-full max-h-full p-4 md:p-8 border rounded-3xl bg-zinc-100 dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 shadow-xl overflow-hidden"
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="flex flex-col w-full max-h-full p-4 md:p-8 border rounded-[2rem] md:rounded-[2.5rem] shadow-xl md:shadow-2xl transition-colors duration-500 overflow-hidden"
+                            style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
                         >
+                            {/* Question with dynamic font size */}
                             <div className="flex-1 overflow-y-auto no-scrollbar min-h-0 mb-4 md:mb-6">
                                 <h3 className={cn(
                                     "font-bold text-zinc-900 dark:text-zinc-50 leading-tight transition-all text-center md:text-left",
@@ -346,8 +369,9 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
 
                             <div className="grid grid-cols-1 gap-2 md:gap-3 shrink-0">
                                 {currentTrivia?.options.map((option, idx) => {
+                                    const isSelected = selectedAnswer === option
                                     const isCorrect = gameState === 'answered' && option === currentTrivia?.correctAnswer
-                                    const isWrong = gameState === 'answered' && selectedAnswer === option && option !== currentTrivia?.correctAnswer
+                                    const isWrong = gameState === 'answered' && isSelected && option !== currentTrivia?.correctAnswer
 
                                     return (
                                         <button
@@ -356,17 +380,39 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                                             disabled={gameState === 'answered'}
                                             className={cn(
                                                 "group relative w-full p-4 md:p-5 text-left rounded-2xl font-bold transition-all border-2 overflow-hidden",
-                                                gameState === 'playing' ? "hover:border-zinc-900 dark:hover:border-zinc-50" : "cursor-default",
-                                                isCorrect ? "bg-green-500/10 border-green-500 text-green-600 dark:text-green-400" :
-                                                isWrong ? "bg-red-500/10 border-red-500 text-red-600 dark:text-red-400" :
-                                                "bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300"
+                                                gameState === 'playing'
+                                                    ? "hover:border-zinc-900 dark:hover:border-zinc-50 hover:scale-[1.01]"
+                                                    : "cursor-default"
                                             )}
+                                            style={{
+                                                backgroundColor: isCorrect
+                                                    ? 'rgba(34, 197, 94, 0.1)'
+                                                    : isWrong
+                                                        ? 'rgba(239, 68, 68, 0.1)'
+                                                        : 'color-mix(in srgb, var(--surface) 95%, var(--accent))',
+                                                borderColor: isCorrect
+                                                    ? '#22c55e'
+                                                    : isWrong
+                                                        ? '#ef4444'
+                                                        : 'var(--border)'
+                                            }}
                                         >
                                             <div className="flex items-center justify-between">
-                                                <span className="text-sm tracking-tight">{option}</span>
-                                                {gameState === 'playing' && (
-                                                    <ArrowRight size={16} className="opacity-0 group-hover:opacity-100 group-hover:translate-x-1" />
-                                                )}
+                                                <span className={cn(
+                                                    "text-sm tracking-tight transition-colors",
+                                                    isCorrect ? "text-green-600 dark:text-green-400" :
+                                                        isWrong ? "text-red-600 dark:text-red-400" :
+                                                            "text-zinc-700 dark:text-zinc-300"
+                                                )}>
+                                                    {option}
+                                                </span>
+                                                <ArrowRight
+                                                    size={16}
+                                                    className={cn(
+                                                        "transition-all",
+                                                        gameState === 'playing' ? "opacity-0 group-hover:opacity-100 group-hover:translate-x-1" : "opacity-0"
+                                                    )}
+                                                />
                                             </div>
                                         </button>
                                     )
@@ -377,14 +423,21 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                 </AnimatePresence>
             </div>
 
-            <div className="mt-auto px-4 pt-4 pb-4 grid grid-cols-4 gap-3 shrink-0 w-full transition-opacity"
+            {/* Selector de Acción Inferior (Independiente y Permanente) */}
+            <div className="mt-auto px-4 pt-0 pb-4 grid grid-cols-4 gap-3 shrink-0 w-full transition-opacity"
                 style={{ opacity: gameState === 'answered' ? 1 : 0.5 }}
             >
                 <motion.button
                     disabled={gameState !== 'answered'}
                     onClick={() => setShowContext(true)}
-                    whileTap={{ scale: 0.95 }}
-                    className="col-span-1 flex items-center justify-center py-4 rounded-2xl border-2 bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400"
+                    whileHover={{ scale: gameState === 'answered' ? 1.05 : 1 }}
+                    whileTap={{ scale: gameState === 'answered' ? 0.95 : 1 }}
+                    className="col-span-1 flex items-center justify-center py-4 rounded-2xl transition-all border-2 shadow-sm"
+                    style={{
+                        backgroundColor: 'color-mix(in srgb, var(--surface) 95%, var(--accent))',
+                        borderColor: 'var(--border)',
+                        color: 'var(--accent)'
+                    }}
                 >
                     <Pin size={22} />
                 </motion.button>
@@ -392,8 +445,14 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                 <motion.button
                     disabled={gameState !== 'answered'}
                     onClick={() => setShowFact(true)}
-                    whileTap={{ scale: 0.95 }}
-                    className="col-span-1 flex items-center justify-center py-4 rounded-2xl border-2 bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400"
+                    whileHover={{ scale: gameState === 'answered' ? 1.05 : 1 }}
+                    whileTap={{ scale: gameState === 'answered' ? 0.95 : 1 }}
+                    className="col-span-1 flex items-center justify-center py-4 rounded-2xl transition-all border-2 shadow-sm"
+                    style={{
+                        backgroundColor: 'color-mix(in srgb, var(--surface) 95%, var(--accent))',
+                        borderColor: 'var(--border)',
+                        color: 'var(--accent)'
+                    }}
                 >
                     <Lightbulb size={22} />
                 </motion.button>
@@ -401,13 +460,20 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                 <motion.button
                     disabled={gameState !== 'answered'}
                     onClick={() => fetchTrivia()}
-                    whileTap={{ scale: 0.95 }}
-                    className="col-span-2 flex items-center justify-center py-4 rounded-2xl bg-zinc-900 dark:bg-zinc-50 text-white dark:text-black font-bold border-2 border-zinc-900 dark:border-zinc-50"
+                    whileHover={{ scale: gameState === 'answered' ? 1.02 : 1 }}
+                    whileTap={{ scale: gameState === 'answered' ? 0.98 : 1 }}
+                    className="col-span-2 flex items-center justify-center py-4 rounded-2xl transition-all border-2 shadow-sm"
+                    style={{
+                        backgroundColor: 'color-mix(in srgb, var(--surface) 95%, var(--accent))',
+                        borderColor: 'var(--border)',
+                        color: 'var(--accent)'
+                    }}
                 >
                     <ArrowRight size={22} />
                 </motion.button>
             </div>
 
+            {/* Modales de Información */}
             <GameModal
                 isOpen={showContext}
                 onClose={() => setShowContext(false)}
@@ -427,6 +493,7 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
     )
 }
 
+// Sub-componente para la Racha (Fuego)
 function StreakBadge({ count }: { count: number }) {
     if (count === 0) return null;
 
@@ -435,14 +502,21 @@ function StreakBadge({ count }: { count: number }) {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             key={count}
-            className="relative flex items-center justify-center w-14 h-14 rounded-full bg-orange-500/10 text-orange-500"
+            className="relative flex items-center justify-center w-14 h-14 rounded-full transition-transform active:scale-95"
+            style={{
+                backgroundColor: 'color-mix(in srgb, var(--accent) 10%, transparent)',
+                color: 'var(--accent)'
+            }}
         >
             <Flame size={28} fill="currentColor" className="opacity-20 absolute" />
-            <span className="relative z-10 text-lg font-black tracking-tighter mt-1">{count}</span>
+            <span className="relative z-10 text-lg font-black tracking-tighter leading-none mt-1">
+                {count}
+            </span>
         </motion.div>
     )
 }
 
+// Sub-componente para las tarjetas de modo (Optimizado para 60 FPS)
 function ModeCard({ title, icon, description, onClick, colorTheme, index }: {
     title: string,
     icon: React.ReactNode | string,
@@ -452,10 +526,10 @@ function ModeCard({ title, icon, description, onClick, colorTheme, index }: {
     index: number
 }) {
     const themeStyles = {
-        green: { accent: "text-emerald-500", border: "group-hover:border-emerald-500/40" },
-        purple: { accent: "text-violet-500", border: "group-hover:border-violet-500/40" },
-        orange: { accent: "text-amber-500", border: "group-hover:border-amber-500/40" },
-        blue: { accent: "text-sky-500", border: "group-hover:border-sky-500/40" }
+        green: { accent: "from-emerald-400 to-green-500", border: "group-hover:border-emerald-500/30", bg: "bg-emerald-500/5" },
+        purple: { accent: "from-violet-400 to-purple-500", border: "group-hover:border-violet-500/30", bg: "bg-violet-500/5" },
+        orange: { accent: "from-amber-400 to-orange-500", border: "group-hover:border-orange-500/30", bg: "bg-orange-500/5" },
+        blue: { accent: "from-sky-400 to-blue-500", border: "group-hover:border-blue-500/30", bg: "bg-blue-500/5" }
     }
     const theme = themeStyles[colorTheme]
 
@@ -463,37 +537,46 @@ function ModeCard({ title, icon, description, onClick, colorTheme, index }: {
         <motion.button
             variants={{
                 hidden: { opacity: 0, y: 10 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.25, ease: "easeOut" } }
+                visible: { opacity: 1, y: 0, transition: { duration: 0.25, ease: "easeOut", delay: index * 0.05 } }
             }}
             whileTap={{ scale: 0.98 }}
             onClick={onClick}
-            style={{ willChange: 'transform' }}
             className={cn(
-                "group relative w-full p-4 sm:p-5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-colors duration-200 text-left flex items-center gap-4",
-                "shadow-md active:shadow-sm",
+                "group relative w-full p-5 rounded-[1.5rem] transition-all duration-300 text-left flex items-center gap-5 overflow-hidden",
+                "bg-[#121214] dark:bg-[#0a0a0c] border border-white/5",
                 theme.border
             )}
         >
-            <div className="shrink-0 w-12 h-12 flex items-center justify-center rounded-xl bg-zinc-50 dark:bg-zinc-800/50 text-3xl">
+            {/* Background Tint (Static) */}
+            <div className={cn("absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300", theme.bg)} />
+
+            {/* Left Icon (Static & Solid) */}
+            <div className="relative shrink-0 w-12 h-12 flex items-center justify-center text-4xl drop-shadow-md">
                 {icon}
             </div>
 
-            <div className="flex flex-col gap-0.5 flex-1">
-                <h3 className={cn("text-lg font-bold tracking-tight", theme.accent)}>
+            {/* Vibrant Title & Description */}
+            <div className="relative z-10 flex flex-col gap-0.5 flex-1">
+                <h3 className={cn(
+                    "text-xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r",
+                    theme.accent
+                )}>
                     {title}
                 </h3>
-                <p className="text-[11px] font-medium text-zinc-500 dark:text-zinc-400 leading-tight">
+                <p className="text-xs font-bold text-zinc-500 dark:text-zinc-600 leading-tight tracking-wide">
                     {description}
                 </p>
             </div>
 
-            <div className="w-8 h-8 rounded-full bg-zinc-50 dark:bg-zinc-800/80 flex items-center justify-center text-zinc-400 group-hover:text-zinc-200 transition-colors">
-                <ArrowRight size={16} strokeWidth={2.5} />
+            {/* ArrowIndicator */}
+            <div className="w-8 h-8 rounded-full flex items-center justify-center text-zinc-700 bg-white/5 border border-white/5 group-hover:text-white transition-colors">
+                <ArrowRight size={16} strokeWidth={3} />
             </div>
         </motion.button>
     )
 }
 
+// Sub-componente para Modales de Información
 function GameModal({ isOpen, onClose, title, icon, content }: {
     isOpen: boolean,
     onClose: () => void,
