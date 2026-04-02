@@ -8,9 +8,9 @@ interface LogoProps {
 
 export default function Logo({ className, size, style }: LogoProps) {
     // Bold Harmony Calibration:
-    // 1. Bold Scale (1.15x sizing to match typography weight)
+    // 1. Bold Scale (1.2x sizing to match typography weight)
     // 2. Exact Ratio (1.328)
-    const logoHeight = size ? size * 1.15 : 36;
+    const logoHeight = size ? size * 1.2 : 40;
     const logoWidth = logoHeight;
 
     return (
