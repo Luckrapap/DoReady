@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import TriviaGame from '@/components/TriviaGame'
+import GameInterface from '@/components/GameInterface'
 import GameSelector from '@/components/GameSelector'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/utils/utils'
@@ -37,7 +37,7 @@ export default function ProcastivePage() {
                             className="h-full w-full"
                         >
                             {activeGame === 'trivia' && (
-                                <TriviaGame onBack={() => setActiveGame(null)} />
+                                <GameInterface onBack={() => setActiveGame(null)} />
                             )}
                         </motion.div>
                     )}

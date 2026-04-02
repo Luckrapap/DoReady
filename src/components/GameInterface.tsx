@@ -11,7 +11,7 @@ interface TriviaGameProps {
     onBack?: () => void
 }
 
-export default function TriviaGame({ onBack }: TriviaGameProps) {
+export default function GameInterface({ onBack }: TriviaGameProps) {
     const [gameState, setGameState] = useState<'loading' | 'playing' | 'answered' | 'error'>('loading')
     const [currentTrivia, setCurrentTrivia] = useState<TriviaResponse | null>(null)
     const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
