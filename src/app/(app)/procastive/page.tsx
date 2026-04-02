@@ -10,10 +10,13 @@ export default function ProcastivePage() {
     const [activeGame, setActiveGame] = useState<string | null>(null)
 
     return (
-        <main className="w-full h-full overflow-hidden px-2 md:px-4 flex flex-col items-center selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black relative pt-6 justify-start">
+        <main className={cn(
+            "w-full h-full px-2 md:px-4 flex flex-col items-center selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black relative justify-start",
+            !activeGame ? "overflow-y-auto pt-20 pb-24" : "overflow-hidden pt-16 pt-safe"
+        )}>
             <div className={cn(
                 "w-full max-w-5xl flex flex-col transition-all duration-500 h-full mb-0",
-                !activeGame ? "mt-2 md:mt-12" : ""
+                !activeGame ? "mt-4" : ""
             )}>
                 <AnimatePresence mode="wait">
                     {!activeGame ? (
