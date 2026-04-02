@@ -525,15 +525,6 @@ function ModeCard({ title, icon, description, onClick, colorTheme }: {
     onClick: () => void,
     colorTheme: 'green' | 'purple' | 'orange' | 'blue'
 }) {
-    // Definición de resplandores suaves por tema
-    const themeStyles = {
-        green: "bg-emerald-500/10",
-        purple: "bg-purple-500/10",
-        orange: "bg-orange-500/10",
-        blue: "bg-blue-500/10"
-    }
-    const accentBg = themeStyles[colorTheme]
-
     return (
         <motion.button
             whileHover={{ y: -5, scale: 1.01 }}
@@ -541,13 +532,16 @@ function ModeCard({ title, icon, description, onClick, colorTheme }: {
             onClick={onClick}
             className={cn(
                 "relative group w-full text-left p-6 transition-all duration-300",
-                "rounded-[2rem] border-2",
-                "bg-[#0f172a] border-[#1e293b] hover:border-blue-500/30"
+                "rounded-[2rem] border-2 shadow-sm hover:shadow-xl"
             )}
+            style={{
+                backgroundColor: '#0f172a',
+                borderColor: '#1e293b'
+            }}
         >
             <div className="relative z-10 flex items-center gap-6">
                 {/* Icon Container (Crystal Look) */}
-                <div className="w-12 h-12 shrink-0 rounded-2xl flex items-center justify-center text-white shadow-lg"
+                <div className="w-12 h-12 shrink-0 rounded-2xl flex items-center justify-center text-white shadow-sm"
                      style={{ backgroundColor: 'var(--accent)' }}>
                     <span className="text-2xl drop-shadow-md">
                         {icon}
