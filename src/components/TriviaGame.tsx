@@ -212,34 +212,34 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                     </div>
                 </div>
 
-                <div className="flex-1 flex flex-col justify-center px-4 gap-4">
+                <div className="flex-1 flex flex-col justify-center px-4 gap-3 sm:gap-4 pb-8 md:pb-12">
                     <ModeCard
                         title="Chill"
                         icon="🌿"
                         description="Preguntas fáciles y relajantes para pasar el rato."
                         onClick={() => handleStartMode('chill')}
-                        color="bg-green-500/10 border-green-500/20 text-green-600"
+                        colorTheme="green"
                     />
                     <ModeCard
                         title="Experto"
                         icon="🧠"
                         description="Retos difíciles solo para mentes maestras."
                         onClick={() => handleStartMode('expert')}
-                        color="bg-purple-500/10 border-purple-500/20 text-purple-600"
+                        colorTheme="purple"
                     />
                     <ModeCard
                         title="Random"
                         icon="🎲"
                         description="Una mezcla de todo; nunca sabes qué vendrá."
                         onClick={() => handleStartMode('random')}
-                        color="bg-orange-500/10 border-orange-500/20 text-orange-600"
+                        colorTheme="orange"
                     />
                     <ModeCard
                         title="Enfoque"
                         icon="🎯"
                         description="Elige el tema que tú quieras y yo te pregunto."
                         onClick={() => handleStartMode('focus')}
-                        color="bg-blue-500/10 border-blue-500/20 text-blue-600"
+                        colorTheme="blue"
                     />
                 </div>
             </div>
@@ -499,30 +499,90 @@ function StreakBadge({ count }: { count: number }) {
 }
 
 // Sub-componente para las tarjetas de modo
-function ModeCard({ title, icon, description, onClick, color }: {
+function ModeCard({ title, icon, description, onClick, colorTheme }: {
     title: string,
-    icon: string,
+    icon: React.ReactNode | string,
     description: string,
     onClick: () => void,
-    color: string
+    colorTheme: 'green' | 'purple' | 'orange' | 'blue'
 }) {
+    const themeStyles = {
+        green: {
+            bg: "from-green-500/10 to-emerald-500/5",
+            border: "border-zinc-200 dark:border-zinc-800 group-hover:border-green-500/30",
+            iconBg: "bg-green-100 dark:bg-green-500/10 text-green-600 dark:text-green-400",
+            glow: "group-hover:shadow-[0_0_30px_-5px_rgba(34,197,94,0.3)]",
+            chevron: "group-hover:text-green-600 dark:group-hover:text-green-400 group-hover:bg-green-50 dark:group-hover:bg-green-500/10"
+        },
+        purple: {
+            bg: "from-purple-500/10 to-fuchsia-500/5",
+            border: "border-zinc-200 dark:border-zinc-800 group-hover:border-purple-500/30",
+            iconBg: "bg-purple-100 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400",
+            glow: "group-hover:shadow-[0_0_30px_-5px_rgba(168,85,247,0.3)]",
+            chevron: "group-hover:text-purple-600 dark:group-hover:text-purple-400 group-hover:bg-purple-50 dark:group-hover:bg-purple-500/10"
+        },
+        orange: {
+            bg: "from-orange-500/10 to-rose-500/5",
+            border: "border-zinc-200 dark:border-zinc-800 group-hover:border-orange-500/30",
+            iconBg: "bg-orange-100 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400",
+            glow: "group-hover:shadow-[0_0_30px_-5px_rgba(249,115,22,0.3)]",
+            chevron: "group-hover:text-orange-600 dark:group-hover:text-orange-400 group-hover:bg-orange-50 dark:group-hover:bg-orange-500/10"
+        },
+        blue: {
+            bg: "from-blue-500/10 to-cyan-500/5",
+            border: "border-zinc-200 dark:border-zinc-800 group-hover:border-blue-500/30",
+            iconBg: "bg-blue-100 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400",
+            glow: "group-hover:shadow-[0_0_30px_-5px_rgba(59,130,246,0.3)]",
+            chevron: "group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:bg-blue-50 dark:group-hover:bg-blue-500/10"
+        }
+    }
+
+    const currentTheme = themeStyles[colorTheme]
+
     return (
         <motion.button
-            whileHover={{ scale: 1.02, x: 5 }}
+            whileHover={{ scale: 1.02, y: -2 }}
             whileTap={{ scale: 0.98 }}
             onClick={onClick}
             className={cn(
-                "w-full p-5 rounded-[2rem] border-2 flex items-center gap-5 transition-all text-left",
-                color,
-                "hover:shadow-lg dark:hover:shadow-none"
+                "group relative w-full p-4 sm:p-5 rounded-[2rem] border transition-all duration-500 overflow-hidden text-left flex items-center gap-4 sm:gap-5",
+                "bg-white dark:bg-zinc-900 shadow-sm",
+                currentTheme.border,
             )}
         >
-            <span className="text-4xl">{icon}</span>
-            <div className="flex flex-col gap-1">
-                <h3 className="text-xl font-bold tracking-tight">{title}</h3>
-                <p className="text-xs opacity-80 font-medium leading-relaxed">{description}</p>
+            {/* Background Glow */}
+            <div className={cn(
+                "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br",
+                currentTheme.bg
+            )} />
+            
+            {/* Icon Container */}
+            <div className={cn(
+                "relative z-10 w-14 h-14 sm:w-16 sm:h-16 shrink-0 flex items-center justify-center rounded-2xl sm:rounded-[1.5rem] text-3xl sm:text-4xl transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6",
+                currentTheme.iconBg,
+                "group-hover:shadow-lg", 
+                currentTheme.glow
+            )}>
+                {icon}
             </div>
-            <ArrowRight className="ml-auto opacity-40" size={20} />
+
+            {/* Text Content */}
+            <div className="relative z-10 flex flex-col gap-1 flex-1">
+                <h3 className="text-lg sm:text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-zinc-900 group-hover:to-zinc-600 dark:group-hover:from-zinc-50 dark:group-hover:to-zinc-300 transition-all duration-300">
+                    {title}
+                </h3>
+                <p className="text-[11px] sm:text-xs text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed max-w-[90%]">
+                    {description}
+                </p>
+            </div>
+
+            {/* Chevron */}
+            <div className={cn(
+                "relative z-10 w-8 h-8 rounded-full flex items-center justify-center bg-zinc-100 dark:bg-zinc-800 text-zinc-400 transition-all duration-300 shrink-0 group-hover:translate-x-1",
+                currentTheme.chevron
+            )}>
+                <ArrowRight size={16} />
+            </div>
         </motion.button>
     )
 }
