@@ -518,12 +518,13 @@ function StreakBadge({ count }: { count: number }) {
 
 // Sub-componente para las tarjetas de modo
 // Sub-componente para las tarjetas de modo
-function ModeCard({ title, icon, description, onClick, colorTheme }: {
+function ModeCard({ title, icon, description, onClick, colorTheme, index }: {
     title: string,
     icon: React.ReactNode | string,
     description: string,
     onClick: () => void,
-    colorTheme: 'green' | 'purple' | 'orange' | 'blue'
+    colorTheme: 'green' | 'purple' | 'orange' | 'blue',
+    index?: number
 }) {
     return (
         <motion.button
