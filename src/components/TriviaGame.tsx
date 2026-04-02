@@ -212,7 +212,7 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                     </div>
                 </div>
 
-                <motion.div 
+                <motion.div
                     initial="hidden"
                     animate="visible"
                     variants={{
@@ -233,7 +233,6 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                         description="Preguntas fáciles y relajantes para pasar el rato."
                         onClick={() => handleStartMode('chill')}
                         colorTheme="green"
-                        index={0}
                     />
                     <ModeCard
                         title="Random"
@@ -241,7 +240,6 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                         description="Una mezcla de todo; nunca sabes qué vendrá."
                         onClick={() => handleStartMode('random')}
                         colorTheme="orange"
-                        index={1}
                     />
                     <ModeCard
                         title="Experto"
@@ -249,7 +247,6 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                         description="Retos difíciles solo para mentes maestras."
                         onClick={() => handleStartMode('expert')}
                         colorTheme="purple"
-                        index={2}
                     />
                     <ModeCard
                         title="Enfoque"
@@ -257,7 +254,6 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                         description="Elige el tema que tú quieras y yo te pregunto."
                         onClick={() => handleStartMode('focus')}
                         colorTheme="blue"
-                        index={3}
                     />
                 </motion.div>
             </div>
@@ -518,13 +514,12 @@ function StreakBadge({ count }: { count: number }) {
 
 // Sub-componente para las tarjetas de modo
 // Sub-componente para las tarjetas de modo
-function ModeCard({ title, icon, description, onClick, colorTheme, index }: {
+function ModeCard({ title, icon, description, onClick, colorTheme }: {
     title: string,
     icon: React.ReactNode | string,
     description: string,
     onClick: () => void,
-    colorTheme: 'green' | 'purple' | 'orange' | 'blue',
-    index?: number
+    colorTheme: 'green' | 'purple' | 'orange' | 'blue'
 }) {
     return (
         <motion.button
@@ -543,7 +538,7 @@ function ModeCard({ title, icon, description, onClick, colorTheme, index }: {
             <div className="relative z-10 flex items-center gap-6">
                 {/* Icon Container (Crystal Look) */}
                 <div className="w-12 h-12 shrink-0 rounded-2xl flex items-center justify-center text-white shadow-sm"
-                     style={{ backgroundColor: 'var(--accent)' }}>
+                    style={{ backgroundColor: 'var(--accent)' }}>
                     <span className="text-2xl drop-shadow-md">
                         {icon}
                     </span>
@@ -554,8 +549,8 @@ function ModeCard({ title, icon, description, onClick, colorTheme, index }: {
                     <h3 className={cn(
                         "text-xl font-bold mb-1 transition-colors",
                         colorTheme === 'green' ? 'text-emerald-600 dark:text-emerald-400' :
-                        colorTheme === 'orange' ? 'text-orange-600 dark:text-orange-400' :
-                        colorTheme === 'purple' ? 'text-purple-600 dark:text-purple-400' : 'text-blue-600 dark:text-blue-400'
+                            colorTheme === 'orange' ? 'text-orange-600 dark:text-orange-400' :
+                                colorTheme === 'purple' ? 'text-purple-600 dark:text-purple-400' : 'text-blue-600 dark:text-blue-400'
                     )}>
                         {title}
                     </h3>

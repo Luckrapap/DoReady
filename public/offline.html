@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -7,17 +8,21 @@
     <style>
         :root {
             --bg-color: #ffffff;
-            --text-color: #111827;
-            --secondary-text: #6b7280;
-            --brand-color: #000000;
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --text-color: #09090b;
+            --secondary-text: #71717a;
+            --brand-color: #09090b;
+            --border-color: #e4e4e7;
         }
 
         @media (prefers-color-scheme: dark) {
             :root {
-                --bg-color: #000000;
-                --text-color: #f9fafb;
-                --secondary-text: #9ca3af;
-                --brand-color: #ffffff;
+                --bg-color: #09090b;
+                --card-bg: rgba(15, 23, 42, 0.8);
+                --text-color: #f8fafc;
+                --secondary-text: #a1a1aa;
+                --brand-color: #f8fafc;
+                --border-color: #1e293b;
             }
         }
 
@@ -35,28 +40,49 @@
             width: 100vw;
             overflow: hidden;
             text-align: center;
+            transition: background-color 0.3s ease;
         }
 
         .container {
-            width: 80%;
-            max-width: 400px;
-            animation: fadeIn 0.8s ease-out;
+            width: 90%;
+            max-width: 320px;
+            animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
 
         .icon-container {
-            margin-bottom: 2rem;
             display: flex;
             justify-content: center;
         }
 
         svg {
-            width: 120px;
-            height: 120px;
+            width: 64px;
+            height: 64px;
             fill: var(--text-color);
         }
 
@@ -65,12 +91,15 @@
             font-weight: 700;
             margin: 0;
             letter-spacing: -0.025em;
+            color: var(--text-color);
         }
 
-        .retry-hint {
-            margin-top: 1rem;
-            font-size: 0.875rem;
+        .description {
+            margin-top: 0.75rem;
+            font-size: 0.9375rem;
             color: var(--secondary-text);
+            line-height: 1.5;
+            font-weight: 500;
         }
 
         .retry-button {
@@ -78,12 +107,13 @@
             background-color: var(--brand-color);
             color: var(--bg-color);
             border: none;
-            padding: 0.75rem 2rem;
+            padding: 0.875rem 2.5rem;
             border-radius: 9999px;
             font-weight: 600;
             font-size: 1rem;
             cursor: pointer;
             transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -92,28 +122,27 @@
         }
     </style>
 </head>
-<body onclick="retry()">
+
+<body>
     <div class="container">
-        <div class="icon-container">
-            <!-- Icono de WiFi con exclamación (recreado según referencia) -->
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 21a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm.75-5.25h-1.5v-6h1.5v6ZM3.53 7.56a12 12 0 0 1 16.94 0l-1.06 1.06a10.5 10.5 0 0 0-14.82 0L3.53 7.56Zm3.18 3.18a7.5 7.5 0 0 1 10.58 0l-1.06 1.06a6 6 0 0 0-8.46 0l-1.06-1.06Z" />
-            </svg>
+        <div class="card">
+            <div class="icon-container">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M12 21a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm.75-5.25h-1.5v-6h1.5v6ZM3.53 7.56a12 12 0 0 1 16.94 0l-1.06 1.06a10.5 10.5 0 0 0-14.82 0L3.53 7.56Zm3.18 3.18a7.5 7.5 0 0 1 10.58 0l-1.06 1.06a6 6 0 0 0-8.46 0l-1.06-1.06Z" />
+                </svg>
+            </div>
         </div>
         <h1>Ups, algo salió mal</h1>
-        <p class="retry-hint">Pulsa para volver a intentar</p>
+        <p class="description">No pudimos conectar con el servidor.<br>Revisa tu conexión a internet.</p>
         <button class="retry-button" onclick="retry()">Reintentar</button>
     </div>
 
     <script>
         function retry() {
-            // Recargar la URL original (la BridgeActivity se encarga del resto)
-            try {
-                window.location.replace("https://do-ready.vercel.app/");
-            } catch (e) {
-                window.location.reload();
-            }
+            window.location.reload();
         }
     </script>
 </body>
+
 </html>
