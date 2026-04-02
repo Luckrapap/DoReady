@@ -51,25 +51,7 @@ export default function ThemeHandler() {
         // 1. Initial Sync
         checkAndApply()
 
-        // 2. High-Frequency Polling (First 2 seconds for Bridge readiness)
-        let pollCount = 0
-        const poll = setInterval(() => {
-            checkAndApply()
-            if (++pollCount > 40) clearInterval(poll)
-        }, 50)
-
-        // 3. MutationObserver (The Vigilante)
-        // Prevents Next.js/Vercel from 'undoing' our classes during hydration
-        const observer = new MutationObserver(() => {
-            const isDark = isDarkModeRequested()
-            const doc = document.documentElement
-            if (doc.classList.contains('dark') !== isDark || doc.classList.contains('light') === isDark) {
-                applyThemeStyles(isDark)
-            }
-        })
-        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
-
-        // 4. Native Bridge Listener (Real-time updates)
+        // 2. Native Bridge Listener (Real-time updates)
         const setupNative = async () => {
             const handle = await addNativeThemeListener((isDark) => {
                 if (localStorage.getItem('theme') === 'system') {
@@ -86,23 +68,20 @@ export default function ThemeHandler() {
         }
         const nativeSyncPromise = setupNative()
 
-        // 5. Reliability Re-syncs (Visibility/Focus)
+        // 3. Reliability Re-syncs (Visibility/Focus)
         const handleSync = () => { if (document.visibilityState === 'visible') checkAndApply() }
         document.addEventListener('visibilitychange', handleSync)
         window.addEventListener('focus', handleSync)
 
-        // 6. Settings change listener
+        // 4. Settings change listener
         const handleSettings = (e: any) => {
             if (e.key === 'theme' || e.key === 'theme-preset' || e.key === 'theme-custom-hue') {
                 applyThemeStyles(isDarkModeRequested())
-                if (e.key === 'theme-preset' && !e.skipReload) window.location.reload()
             }
         }
         window.addEventListener('storage', handleSettings)
 
         return () => {
-            clearInterval(poll)
-            observer.disconnect()
             document.removeEventListener('visibilitychange', handleSync)
             window.removeEventListener('focus', handleSync)
             window.removeEventListener('storage', handleSettings)

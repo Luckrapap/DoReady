@@ -18,7 +18,6 @@ export default function ThemeSwitcher() {
     const [theme, setTheme] = useState<Theme>('system')
     const [preset, setPreset] = useState<Preset>('slate')
     const [mounted, setMounted] = useState(false)
-    const [tick, setTick] = useState(0)
     const [customHue, setCustomHue] = useState<number>(220)
     const [showPicker, setShowPicker] = useState(false)
 
@@ -66,8 +65,7 @@ export default function ThemeSwitcher() {
             // Manually trigger a storage event for immediate UI response
             window.dispatchEvent(Object.assign(new Event('storage'), {
                 key: 'theme',
-                newValue: newTheme,
-                skipReload: true
+                newValue: newTheme
             }))
         } catch (e) { }
     }
@@ -238,9 +236,8 @@ export default function ThemeSwitcher() {
                     )}
                 </AnimatePresence>
             </div>
-            {/* Version indicator for troubleshooting */}
+            {/* Diagnostic indicator for troubleshooting */}
             <div className="flex flex-col items-center pt-2 opacity-20 hover:opacity-100 transition-opacity gap-1">
-                <span className="text-[10px] font-mono text-zinc-500">v6.1-PERFECT</span>
                 <span className="text-[8px] font-bold text-zinc-400 uppercase tracking-tighter">
                     Sensor: {mounted ? (isDarkModeRequested() ? 'Dark' : 'Light') : '...'}
                 </span>
