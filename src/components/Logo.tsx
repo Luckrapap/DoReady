@@ -11,7 +11,7 @@ export default function Logo({ className, size, style }: LogoProps) {
     // 1. Bold Scale (1.15x sizing to match typography weight)
     // 2. Exact Ratio (1.328)
     const logoHeight = size ? size * 1.15 : 36;
-    const logoWidth = logoHeight * 1.328;
+    const logoWidth = logoHeight;
 
     return (
         <div 
