@@ -112,7 +112,7 @@ export default function ThemeSwitcher() {
             {/* Diagnostic indicator for troubleshooting */}
             <div className="flex flex-col items-center pt-2 opacity-20 hover:opacity-100 transition-opacity gap-1">
                 <span className="text-[8px] font-bold text-zinc-400 uppercase tracking-tighter">
-                    Slate Unified Build • v2.2-MacroLogo
+                    Slate Unified Build • v2.3-Harmonized
                 </span>
                 <span className="text-[8px] font-bold text-zinc-400 uppercase tracking-tighter">
                     Sensor: {mounted ? (isDarkModeRequested() ? 'Dark' : 'Light') : '...'}
