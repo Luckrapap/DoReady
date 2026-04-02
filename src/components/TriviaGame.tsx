@@ -212,13 +212,28 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                     </div>
                 </div>
 
-                <div className="flex flex-col px-4 gap-4 mt-12 md:mt-20 pb-20">
+                <motion.div 
+                    initial="hidden"
+                    animate="visible"
+                    variants={{
+                        hidden: { opacity: 0 },
+                        visible: {
+                            opacity: 1,
+                            transition: {
+                                staggerChildren: 0.12,
+                                delayChildren: 0.2
+                            }
+                        }
+                    }}
+                    className="flex flex-col px-4 gap-4 mt-12 md:mt-20 pb-20"
+                >
                     <ModeCard
                         title="Chill"
                         icon="🌿"
                         description="Preguntas fáciles y relajantes para pasar el rato."
                         onClick={() => handleStartMode('chill')}
                         colorTheme="green"
+                        index={0}
                     />
                     <ModeCard
                         title="Random"
@@ -226,6 +241,7 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                         description="Una mezcla de todo; nunca sabes qué vendrá."
                         onClick={() => handleStartMode('random')}
                         colorTheme="orange"
+                        index={1}
                     />
                     <ModeCard
                         title="Experto"
@@ -233,6 +249,7 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                         description="Retos difíciles solo para mentes maestras."
                         onClick={() => handleStartMode('expert')}
                         colorTheme="purple"
+                        index={2}
                     />
                     <ModeCard
                         title="Enfoque"
@@ -240,8 +257,9 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                         description="Elige el tema que tú quieras y yo te pregunto."
                         onClick={() => handleStartMode('focus')}
                         colorTheme="blue"
+                        index={3}
                     />
-                </div>
+                </motion.div>
             </div>
         )
     }
@@ -499,24 +517,49 @@ function StreakBadge({ count }: { count: number }) {
 }
 
 // Sub-componente para las tarjetas de modo
-function ModeCard({ title, icon, description, onClick, colorTheme }: {
+function ModeCard({ title, icon, description, onClick, colorTheme, index }: {
     title: string,
     icon: React.ReactNode | string,
     description: string,
     onClick: () => void,
-    colorTheme: 'green' | 'purple' | 'orange' | 'blue'
+    colorTheme: 'green' | 'purple' | 'orange' | 'blue',
+    index: number
 }) {
     const themeStyles = {
-        green: { accent: "text-emerald-400", bg: "from-emerald-500/20", shadow: "shadow-emerald-500/20", border: "group-hover:border-emerald-500/50" },
-        purple: { accent: "text-violet-400", bg: "from-violet-500/20", shadow: "shadow-violet-500/20", border: "group-hover:border-violet-500/50" },
-        orange: { accent: "text-amber-400", bg: "from-amber-500/20", shadow: "shadow-amber-500/20", border: "group-hover:border-amber-500/50" },
-        blue: { accent: "text-sky-400", bg: "from-sky-500/20", shadow: "shadow-sky-500/20", border: "group-hover:border-sky-500/50" }
+        green: { 
+            accent: "from-emerald-400 to-green-600", 
+            glow: "bg-emerald-500/20", 
+            border: "group-hover:border-emerald-500/50",
+            aura: "bg-emerald-500/10"
+        },
+        purple: { 
+            accent: "from-violet-400 to-purple-600", 
+            glow: "bg-violet-500/20", 
+            border: "group-hover:border-violet-500/50",
+            aura: "bg-violet-500/10"
+        },
+        orange: { 
+            accent: "from-amber-400 to-orange-600", 
+            glow: "bg-orange-500/20", 
+            border: "group-hover:border-orange-500/50",
+            aura: "bg-orange-500/10"
+        },
+        blue: { 
+            accent: "from-sky-400 to-blue-600", 
+            glow: "bg-sky-500/20", 
+            border: "group-hover:border-blue-500/50",
+            aura: "bg-blue-500/10"
+        }
     }
     const theme = themeStyles[colorTheme]
 
     return (
         <motion.button
-            whileHover={{ scale: 1.02 }}
+            variants={{
+                hidden: { opacity: 0, y: 30, scale: 0.95 },
+                visible: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 300, damping: 25 } }
+            }}
+            whileHover={{ scale: 1.02, y: -2 }}
             whileTap={{ scale: 0.98 }}
             onClick={onClick}
             className={cn(
@@ -525,41 +568,65 @@ function ModeCard({ title, icon, description, onClick, colorTheme }: {
                 theme.border
             )}
         >
-            {/* Ambient Background Glow */}
-            <div className={cn(
-                "absolute -right-20 -top-20 w-40 h-40 rounded-full blur-[80px] opacity-0 group-hover:opacity-30 transition-opacity duration-700 bg-gradient-to-br",
-                theme.bg
-            )} />
+            {/* 1. Animated Shimmer Effect */}
+            <motion.div 
+                className="absolute inset-0 w-full h-full pointer-events-none"
+                initial={{ x: "-100%" }}
+                animate={{ x: "200%" }}
+                transition={{ duration: 3, repeat: Infinity, repeatDelay: 4, ease: "linear" }}
+            >
+                <div className="w-[50%] h-full bg-gradient-to-r from-transparent via-white/5 to-transparent skew-x-[-20deg]" />
+            </motion.div>
 
-            {/* Left Decorator (Icon Aura) */}
+            {/* 2. Living Ambient Background Glow (Slightly pulsing) */}
+            <motion.div 
+                className={cn(
+                    "absolute -right-10 -top-10 w-40 h-40 rounded-full blur-[80px] opacity-10 group-hover:opacity-40 transition-opacity duration-700",
+                    theme.glow
+                )}
+                animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.15, 0.1] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            />
+
+            {/* 3. Floating Emoji Icon */}
             <div className="relative shrink-0 flex items-center justify-center">
                 <div className={cn(
-                    "absolute inset-0 blur-2xl opacity-20 scale-150 transition-transform duration-500 group-hover:scale-[2]",
-                    theme.bg.replace("from-", "bg-")
+                    "absolute inset-0 blur-2xl opacity-20 scale-150 transition-transform duration-500 group-hover:scale-[2.5]",
+                    theme.aura
                 )} />
-                <span className="relative z-10 text-5xl drop-shadow-2xl transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
+                <motion.span 
+                    className="relative z-10 text-5xl drop-shadow-2xl transition-transform duration-500 group-hover:scale-110"
+                    animate={{ y: [-3, 3, -3], rotate: [-2, 2, -2] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: index * 0.2 }}
+                >
                     {icon}
-                </span>
+                </motion.span>
             </div>
 
-            {/* Text Hierarchy */}
+            {/* 4. Vibrant Text Hierarchy */}
             <div className="relative z-10 flex flex-col items-start gap-1 flex-1">
                 <div className="flex items-center gap-2">
-                    <h3 className="text-2xl font-black tracking-tight text-white dark:text-zinc-50 drop-shadow-sm">
+                    <h3 className={cn(
+                        "text-2xl font-black tracking-tight drop-shadow-sm bg-clip-text text-transparent bg-gradient-to-r",
+                        theme.accent
+                    )}>
                         {title}
                     </h3>
-                    <div className={cn("w-1 h-1 rounded-full animate-pulse", theme.bg.replace("from-", "bg-"))} />
+                    <motion.div 
+                        className={cn("w-1.5 h-1.5 rounded-full", theme.aura.replace("/10", ""))}
+                        animate={{ opacity: [0.3, 1, 0.3], scale: [1, 1.3, 1] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                    />
                 </div>
                 <p className="text-sm font-bold text-zinc-400 dark:text-zinc-500 leading-tight tracking-wide max-w-[90%] opacity-80 group-hover:opacity-100 transition-opacity">
                     {description}
                 </p>
             </div>
 
-            {/* Studio Arrow (Floating) */}
+            {/* 5. Minimalist Arrow Indicator */}
             <div className={cn(
-                "relative z-10 w-10 h-10 rounded-full flex items-center justify-center bg-white/5 border border-white/10 text-zinc-500 transition-all duration-500",
-                "group-hover:translate-x-1 group-hover:text-white group-hover:bg-white/10 group-hover:border-white/20 shadow-inner",
-                theme.shadow ? `group-hover:shadow-[0_0_20px_-2px_rgba(255,255,255,0.1)]` : ""
+                "relative z-10 w-10 h-10 rounded-full flex items-center justify-center bg-white/5 border border-white/10 text-zinc-500 transition-all duration-500 shadow-inner",
+                "group-hover:translate-x-1 group-hover:text-white group-hover:bg-white/10 group-hover:border-white/20"
             )}>
                 <ArrowRight size={20} strokeWidth={3} />
             </div>
