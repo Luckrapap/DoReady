@@ -8,21 +8,21 @@ interface LogoProps {
 
 export default function Logo({ className, size, style }: LogoProps) {
     // Bold Harmony Calibration:
-    // 1. Harmony Scale (2.2x to match bold typography weight and compensate padding)
-    const logoHeight = size ? size * 2.2 : 72;
+    // 1. Anchor Scale (2.8x to make the icon distinctively larger than the typography)
+    const logoHeight = size ? size * 2.8 : 86;
     const logoWidth = logoHeight * 1.1; // Balanced width vs text weight
 
     return (
         <div 
-            className={cn("shrink-0 bg-zinc-950 dark:bg-zinc-50 -mr-7 -translate-y-1", className)}
+            className={cn("shrink-0 bg-zinc-950 dark:bg-zinc-50 -mr-6 -translate-y-2", className)}
             style={{ 
                 width: logoWidth,
                 height: logoHeight,
-                WebkitMaskImage: 'url(/logo.png?v=2.5-Tight)',
+                WebkitMaskImage: 'url(/logo.png?v=2.6-Anchor)',
                 WebkitMaskSize: 'contain',
                 WebkitMaskRepeat: 'no-repeat',
                 WebkitMaskPosition: 'center',
-                maskImage: 'url(/logo.png?v=2.5-Tight)',
+                maskImage: 'url(/logo.png?v=2.6-Anchor)',
                 maskSize: 'contain',
                 maskRepeat: 'no-repeat',
                 maskPosition: 'center',
