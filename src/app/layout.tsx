@@ -77,11 +77,16 @@ export default function RootLayout({
                     var isDark = t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
                     
                     var doc = document.documentElement;
-                    doc.classList.add(isDark ? 'dark' : 'light');
-                    doc.style.setProperty('color-scheme', isDark ? 'dark' : 'light');
-                    
-                    if (p !== 'slate') doc.classList.add('theme-' + p);
-                    if (p === 'custom') doc.style.setProperty('--custom-hue', h);
+                    var apply = function(d, p, h) {
+                      var isDark = t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                      doc.classList.remove('light', 'dark');
+                      doc.classList.add(isDark ? 'dark' : 'light');
+                      doc.style.setProperty('color-scheme', isDark ? 'dark' : 'light');
+                      if (p !== 'slate') doc.classList.add('theme-' + p);
+                      if (p === 'custom') doc.style.setProperty('--custom-hue', h);
+                    };
+                    apply(t, p, h);
+                    setTimeout(function() { apply(t, p, h); }, 0);
                   } catch (e) {}
                 })();
             `,

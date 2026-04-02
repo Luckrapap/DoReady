@@ -92,34 +92,36 @@ export default function ThemeSwitcher() {
                 <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50 uppercase tracking-wider px-1">
                     Apariencia del Sistema
                 </h3>
-                <div className="relative flex p-1.5 bg-zinc-100 dark:bg-zinc-800/50 rounded-2xl md:rounded-full overflow-hidden border border-zinc-200/50 dark:border-zinc-700/50">
-                    {/* The Infallible Pill */}
-                    <div className="absolute inset-1.5 z-0 pointer-events-none">
+                <div className="bg-zinc-100 dark:bg-zinc-800/50 rounded-2xl md:rounded-full border border-zinc-200/50 dark:border-zinc-700/50 p-1.5 relative overflow-hidden">
+                    {/* The Zero-Math Grid Indicator */}
+                    <div className="absolute inset-1.5 grid grid-cols-3 pointer-events-none">
                         <motion.div
-                            className="h-full w-1/3 bg-white dark:bg-zinc-700 shadow-md rounded-xl md:rounded-full border border-zinc-200 dark:border-zinc-600"
+                            className="bg-white dark:bg-zinc-700 shadow-md rounded-xl md:rounded-full border border-zinc-200 dark:border-zinc-600"
                             animate={{ x: `${idx * 100}%` }}
                             transition={{ type: "spring", stiffness: 400, damping: 30 }}
                         />
                     </div>
 
-                    <ThemeButton
-                        active={theme === 'light'}
-                        onClick={() => applyTheme('light', preset)}
-                        icon={<Sun size={18} />}
-                        label="Claro"
-                    />
-                    <ThemeButton
-                        active={theme === 'dark'}
-                        onClick={() => applyTheme('dark', preset)}
-                        icon={<Moon size={18} />}
-                        label="Oscuro"
-                    />
-                    <ThemeButton
-                        active={theme === 'system'}
-                        onClick={() => applyTheme('system', preset)}
-                        icon={<Monitor size={18} />}
-                        label="Dispositivo"
-                    />
+                    <div className="relative z-10 grid grid-cols-3">
+                        <ThemeButton
+                            active={theme === 'light'}
+                            onClick={() => applyTheme('light', preset)}
+                            icon={<Sun size={18} />}
+                            label="Claro"
+                        />
+                        <ThemeButton
+                            active={theme === 'dark'}
+                            onClick={() => applyTheme('dark', preset)}
+                            icon={<Moon size={18} />}
+                            label="Oscuro"
+                        />
+                        <ThemeButton
+                            active={theme === 'system'}
+                            onClick={() => applyTheme('system', preset)}
+                            icon={<Monitor size={18} />}
+                            label="Dispositivo"
+                        />
+                    </div>
                 </div>
             </div>
 
@@ -237,7 +239,7 @@ export default function ThemeSwitcher() {
             </div>
             {/* Version indicator for troubleshooting */}
             <div className="flex flex-col items-center pt-2 opacity-20 hover:opacity-100 transition-opacity gap-1">
-                <span className="text-[10px] font-mono text-zinc-500">v4.2-final</span>
+                <span className="text-[10px] font-mono text-zinc-500">v5.0-ULTIMATE</span>
                 <span className="text-[8px] font-bold text-zinc-400 uppercase tracking-tighter">
                     Sensor: {mounted ? (isDarkModeRequested() ? 'Dark' : 'Light') : '...'}
                 </span>

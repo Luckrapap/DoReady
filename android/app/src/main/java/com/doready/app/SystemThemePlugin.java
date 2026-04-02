@@ -6,6 +6,7 @@ import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
+import android.widget.Toast;
 import com.getcapacitor.annotation.CapacitorPlugin;
 
 @CapacitorPlugin(name = "SystemTheme")
@@ -56,6 +57,13 @@ public class SystemThemePlugin extends Plugin {
         
         JSObject ret = new JSObject();
         ret.put("value", theme);
+        
+        // FINAL DIAGNOSTIC: Show a white bubble on the phone screen
+        final String status = "DoReady v5.0 Bridge: " + theme;
+        getActivity().runOnUiThread(() -> {
+            Toast.makeText(getActivity(), status, Toast.LENGTH_SHORT).show();
+        });
+
         notifyListeners("systemThemeChange", ret);
     }
 }
