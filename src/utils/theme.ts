@@ -1,6 +1,34 @@
 import { Capacitor, registerPlugin, type PluginListenerHandle } from '@capacitor/core'
 
 /**
+ * Static Theme Configuration
+ * Ensures we don't have to 'read the DOM' which is slow/fragile on boot.
+ */
+export const THEME_CONFIG = {
+  slate: { light: '#fafafa', dark: '#020617' },
+  blue: { light: '#f4f9ff', dark: '#030712' },
+  purple: { light: '#fdfaff', dark: '#04020a' },
+  green: { light: '#f2fff5', dark: '#020a02' },
+  red: { light: '#fff2f2', dark: '#0a0202' },
+  orange: { light: '#fffaf2', dark: '#0a0502' },
+  yellow: { light: '#fffff2', dark: '#050502' },
+  pink: { light: '#fff2f9', dark: '#0a0205' },
+} as const
+
+export type Preset = keyof typeof THEME_CONFIG | 'custom'
+
+/**
+ * Returns the exact background hex for a given state
+ */
+export const getThemeBackground = (isDark: boolean, preset: string): string => {
+  if (preset in THEME_CONFIG) {
+    return THEME_CONFIG[preset as keyof typeof THEME_CONFIG][isDark ? 'dark' : 'light']
+  }
+  // Fallback for custom or unknown
+  return isDark ? '#020617' : '#fafafa'
+}
+
+/**
  * System Theme Plugin Definition (Bridge to MainActivity.java)
  */
 interface SystemThemePlugin {

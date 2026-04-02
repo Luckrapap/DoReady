@@ -1,25 +1,25 @@
 'use client'
 
 import { useEffect, useCallback } from 'react'
-import { isDarkModeRequested, syncNativeTheme, addNativeThemeListener, setNativeSystemBars } from '@/utils/theme'
+import { usePathname } from 'next/navigation'
+import { isDarkModeRequested, syncNativeTheme, addNativeThemeListener, setNativeSystemBars, getThemeBackground } from '@/utils/theme'
 
 /**
- * ThemeHandler v5.0 [Unified Source of Truth]
- * - Centralizes Class Toggling (dark/light/theme-*)
- * - Manages Browser Meta (theme-color) for address bars
- * - Handlers Native Bridge & Synchronization
+ * ThemeHandler v7.0 [Engineering Final Fix]
  */
 export default function ThemeHandler() {
+    const pathname = usePathname()
+
     const applyThemeStyles = useCallback((isDark: boolean) => {
         if (typeof window === 'undefined') return
         const doc = document.documentElement
 
-        // 1. Toggling Classes (Core Theme)
+        // 1. Core Classes & System Mode
         doc.classList.toggle('dark', isDark)
         doc.classList.toggle('light', !isDark)
         doc.style.setProperty('color-scheme', isDark ? 'dark' : 'light')
 
-        // 2. Toggling Presets (Accents)
+        // 2. Preset & Hex Sync (Zero-Latency Config)
         const preset = (localStorage.getItem('theme-preset') || 'slate') as string
         const hue = localStorage.getItem('theme-custom-hue') || '220'
         
@@ -31,30 +31,28 @@ export default function ThemeHandler() {
             doc.style.setProperty('--custom-hue', hue)
         }
 
-        // 3. Update Browser Meta (Fixes 'Black Bar' in phone browsers)
-        const bgColor = isDark 
-            ? (preset === 'slate' ? '#020617' : getComputedStyle(doc).getPropertyValue('--background').trim())
-            : (preset === 'slate' ? '#fafafa' : getComputedStyle(doc).getPropertyValue('--background').trim())
-        
+        // 3. Update Browser Meta (Instant from Config)
+        const bgColor = getThemeBackground(isDark, preset)
         const metaThemeColor = document.querySelector('meta[name="theme-color"]')
         if (metaThemeColor) {
-            metaThemeColor.setAttribute('content', bgColor || (isDark ? '#020617' : '#fafafa'))
+            metaThemeColor.setAttribute('content', bgColor)
         }
 
-        // 4. Update Native Bars (APK only)
+        // 4. Native Bars (APK only)
         setNativeSystemBars(isDark)
     }, [])
 
     useEffect(() => {
         const checkAndApply = async () => {
+            // Priority: Wait for bridge and sync
             await syncNativeTheme()
             applyThemeStyles(isDarkModeRequested())
         }
 
-        // 1. Precise Sync on Mount (Bridge-Aware)
+        // 1. Initial Sync & Visibility
         checkAndApply()
 
-        // 2. Native Bridge Listener (Real-time APK updates)
+        // 2. Native Bridge Listener
         const setupNative = async () => {
             const handle = await addNativeThemeListener((isDark) => {
                 if (localStorage.getItem('theme') === 'system') {
@@ -65,17 +63,14 @@ export default function ThemeHandler() {
         }
         const nativeSyncPromise = setupNative()
 
-        // 3. Reliability Triggers: Visibility & Focus
-        // Resync whenever the user returns to the app
+        // 3. Reliability Triggers
         const handleVisibility = () => {
-            if (document.visibilityState === 'visible') {
-                checkAndApply()
-            }
+             if (document.visibilityState === 'visible') checkAndApply()
         }
         document.addEventListener('visibilitychange', handleVisibility)
         window.addEventListener('focus', checkAndApply)
 
-        // 4. Same-tab Synchronization (Settings update)
+        // 4. Same-tab Synchronization
         const handleThemeChange = (e: any) => {
             if (e.key === 'theme' || e.key === 'theme-preset' || e.key === 'theme-custom-hue') {
                 applyThemeStyles(isDarkModeRequested())
@@ -91,6 +86,11 @@ export default function ThemeHandler() {
             nativeSyncPromise.then(h => h?.remove())
         }
     }, [applyThemeStyles])
+
+    // 5. Force Sync on Navigation (Fixes hydration issues between routes)
+    useEffect(() => {
+        applyThemeStyles(isDarkModeRequested())
+    }, [pathname, applyThemeStyles])
 
     return null
 }
