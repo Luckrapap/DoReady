@@ -60,9 +60,13 @@ let isBridgeReady = false
 /**
  * Polls for Capacitor bridge readiness on remote URLs (Vercel)
  */
-const ensureBridge = async (timeout = 3000): Promise<boolean> => {
+const ensureBridge = async (timeout = 1000): Promise<boolean> => {
   if (isBridgeReady) return true
   if (typeof window === 'undefined') return false
+  if ((window as any).Capacitor?.isNativePlatform?.()) {
+    isBridgeReady = true
+    return true
+  }
   
   const start = Date.now()
   while (Date.now() - start < timeout) {
@@ -70,7 +74,7 @@ const ensureBridge = async (timeout = 3000): Promise<boolean> => {
       isBridgeReady = true
       return true
     }
-    await new Promise(r => setTimeout(r, 100))
+    await new Promise(r => setTimeout(r, 50))
   }
   return false
 }

@@ -87,9 +87,9 @@ export default function ThemeSwitcher() {
                 </h3>
                 <div className="relative flex p-1.5 bg-zinc-100 dark:bg-zinc-800/50 rounded-2xl md:rounded-full overflow-hidden border border-zinc-200/50 dark:border-zinc-700/50">
                     <motion.div
-                        className="absolute top-1.5 bottom-1.5 w-[calc(33.333%-4px)] bg-white dark:bg-zinc-700 shadow-md rounded-xl md:rounded-full border border-zinc-200 dark:border-zinc-600 z-0"
-                        animate={{ left: `calc(${idx * 33.333}% + 6px)` }}
-                        transition={{ type: "spring", stiffness: 350, damping: 25, bounce: 0.2 }}
+                        className="absolute top-1.5 bottom-1.5 w-[calc((100%-12px)/3)] bg-white dark:bg-zinc-700 shadow-md rounded-xl md:rounded-full border border-zinc-200 dark:border-zinc-600 z-0"
+                        animate={{ left: `calc(${idx} * (100% - 12px) / 3 + 6px)` }}
+                        transition={{ type: "spring", stiffness: 400, damping: 30, bounce: 0.1 }}
                     />
 
                     <ThemeButton

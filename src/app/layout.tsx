@@ -72,9 +72,16 @@ export default function RootLayout({
                 (function() {
                   try {
                     var t = localStorage.getItem('theme') || 'system';
+                    var p = localStorage.getItem('theme-preset') || 'slate';
+                    var h = localStorage.getItem('theme-custom-hue') || '220';
                     var isDark = t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-                    document.documentElement.classList.add(isDark ? 'dark' : 'light');
-                    document.documentElement.style.setProperty('color-scheme', isDark ? 'dark' : 'light');
+                    
+                    var doc = document.documentElement;
+                    doc.classList.add(isDark ? 'dark' : 'light');
+                    doc.style.setProperty('color-scheme', isDark ? 'dark' : 'light');
+                    
+                    if (p !== 'slate') doc.classList.add('theme-' + p);
+                    if (p === 'custom') doc.style.setProperty('--custom-hue', h);
                   } catch (e) {}
                 })();
             `,

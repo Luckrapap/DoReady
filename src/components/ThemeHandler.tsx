@@ -55,8 +55,8 @@ export default function ThemeHandler() {
         let pollCount = 0
         const poll = setInterval(() => {
             checkAndApply()
-            if (++pollCount > 20) clearInterval(poll)
-        }, 100)
+            if (++pollCount > 40) clearInterval(poll)
+        }, 50)
 
         // 3. MutationObserver (The Vigilante)
         // Prevents Next.js/Vercel from 'undoing' our classes during hydration
