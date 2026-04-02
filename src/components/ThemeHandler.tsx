@@ -69,12 +69,23 @@ export default function ThemeHandler() {
         })
         observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
 
-        // 4. Native Event Listeners
+        // 4. Native Bridge Listener (Real-time updates)
+        const setupNative = async () => {
+            const handle = await addNativeThemeListener((isDark) => {
+                if (localStorage.getItem('theme') === 'system') {
+                    applyThemeStyles(isDark)
+                }
+            })
+            return handle as { remove: () => void }
+        }
+        const nativeSyncPromise = setupNative()
+
+        // 5. Reliability Re-syncs (Visibility/Focus)
         const handleSync = () => { if (document.visibilityState === 'visible') checkAndApply() }
         document.addEventListener('visibilitychange', handleSync)
         window.addEventListener('focus', handleSync)
 
-        // 5. Settings change listener
+        // 6. Settings change listener
         const handleSettings = (e: any) => {
             if (e.key === 'theme' || e.key === 'theme-preset' || e.key === 'theme-custom-hue') {
                 applyThemeStyles(isDarkModeRequested())
@@ -89,6 +100,7 @@ export default function ThemeHandler() {
             document.removeEventListener('visibilitychange', handleSync)
             window.removeEventListener('focus', handleSync)
             window.removeEventListener('storage', handleSettings)
+            nativeSyncPromise.then(h => h?.remove())
         }
     }, [applyThemeStyles])
 

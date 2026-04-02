@@ -28,35 +28,29 @@ export const getThemeBackground = (isDark: boolean, preset: string): string => {
   return isDark ? '#020617' : '#fafafa'
 }
 
-import { StatusBar, Style } from '@capacitor/status-bar'
-import { Device } from '@capacitor/device'
-
-interface ThemeResult {
-  value: 'dark' | 'light' | 'undefined';
+/**
+ * System Theme Plugin Definition (Bridge to MainActivity.java)
+ */
+interface SystemThemePlugin {
+  getTheme(): Promise<{ value: string }>;
+  setStatusBarTheme(options: { isDark: boolean }): Promise<void>;
+  addListener(eventName: 'systemThemeChange', listenerFunc: (data: { value: string }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
 }
+
+const SystemTheme = registerPlugin<SystemThemePlugin>('SystemTheme');
 
 export const addNativeThemeListener = (callback: (isDark: boolean) => void) => {
   if (Capacitor.getPlatform() === 'android') {
-    // Standard Media Query listener is usually enough when 
-    // WebSettings.setAlgorithmicDarkeningAllowed(true) is set in Java
-    const mq = window.matchMedia('(prefers-color-scheme: dark)')
-    const handler = (e: MediaQueryListEvent) => {
-      nativeThemeCache = e.matches ? 'dark' : 'light'
-      callback(e.matches)
-    }
-    mq.addEventListener('change', handler)
-    return { remove: () => mq.removeEventListener('change', handler) }
+    const handle = SystemTheme.addListener('systemThemeChange', (data) => {
+      if (data.value === 'dark' || data.value === 'light') {
+        nativeThemeCache = data.value as 'dark' | 'light'
+        callback(data.value === 'dark')
+      }
+    });
+    return handle;
   }
   return null;
 }
-
-/**
- * Theme Detection Utility v3.0 (Capacitor Native Bridge)
- * Hybrid approach:
- * 1. prefers-color-scheme (Standard API)
- * 2. Capacitor Native Plugin (SystemTheme) - Definitive for Android/APK
- * 3. CanvasText System Color (CSS Level 4 Sensor) - Fallback
- */
 
 // Native Cache to avoid async flickering on every call
 let nativeThemeCache: 'dark' | 'light' | null = null
@@ -96,16 +90,24 @@ export const isDarkModeRequested = () => {
   return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
 }
 
-/**
- * Triggers a native theme check (Async)
- * Stores the result in nativeThemeCache for synchronous consumption
- */
 export const syncNativeTheme = async () => {
   if (Capacitor.getPlatform() === 'android') {
-    // If AlgorithmicDarkening is set in Java, standard matchMedia is reliable
-    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    nativeThemeCache = isDark ? 'dark' : 'light'
-    return isDark
+    const ready = await ensureBridge()
+    if (!ready) return isDarkModeRequested()
+
+    try {
+      const result = await Promise.race([
+        SystemTheme.getTheme(),
+        new Promise((_, reject) => setTimeout(() => reject('Timeout'), 1000))
+      ]) as { value: string }
+
+      if (result.value === 'dark' || result.value === 'light') {
+        nativeThemeCache = result.value as 'dark' | 'light'
+        return result.value === 'dark'
+      }
+    } catch (e) {
+      console.warn('Native Bridge Sync error:', e)
+    }
   }
   return isDarkModeRequested()
 }
@@ -113,12 +115,8 @@ export const syncNativeTheme = async () => {
 export const setNativeSystemBars = async (isDark: boolean) => {
   if (Capacitor.getPlatform() === 'android') {
     try {
-      // Official Capacitor Status Bar usage
-      await StatusBar.setStyle({
-        style: isDark ? Style.Dark : Style.Light
-      });
-      // Navigation Bar is harder to control via official plugin, 
-      // but AlgorithmicDarkening in MainActivity handles most cases.
+      // Direct call to our custom, verified native bridge
+      await SystemTheme.setStatusBarTheme({ isDark });
     } catch (e) {
       console.warn('Native Bridge setStatusBarTheme error:', e);
     }
