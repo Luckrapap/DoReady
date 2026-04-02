@@ -22,11 +22,8 @@ export default function ThemeSwitcher() {
     const [customHue, setCustomHue] = useState<number>(220)
     const [showPicker, setShowPicker] = useState(false)
 
-    const [pinkFlash, setPinkFlash] = useState(true)
-
     useEffect(() => {
         setMounted(true)
-        setTimeout(() => setPinkFlash(false), 2000)
 
         try {
             setPreset((localStorage.getItem('theme-preset') as Preset) || 'slate')
@@ -91,26 +88,16 @@ export default function ThemeSwitcher() {
 
     return (
         <div className="space-y-8">
-            <AnimatePresence>
-                {pinkFlash && (
-                    <motion.div 
-                        initial={{ opacity: 1 }} 
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[9999] bg-pink-500 flex items-center justify-center text-white font-bold text-2xl"
-                    >
-                        DIAGNOSTIC v6.0 PINK
-                    </motion.div>
-                )}
-            </AnimatePresence>
             <div className="space-y-3">
                 <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50 uppercase tracking-wider px-1">
                     Apariencia del Sistema
                 </h3>
                 <div className="bg-zinc-100 dark:bg-zinc-800/50 rounded-2xl md:rounded-full border border-zinc-200/50 dark:border-zinc-700/50 p-1.5 relative overflow-hidden">
-                    {/* The Zero-Math Grid Indicator */}
-                    <div className="absolute inset-1.5 grid grid-cols-3 pointer-events-none">
+                    {/* The Infallible Slider */}
+                    <div className="absolute top-1.5 bottom-1.5 left-1.5 right-1.5 pointer-events-none">
                         <motion.div
-                            className="bg-white dark:bg-zinc-700 shadow-md rounded-xl md:rounded-full border border-zinc-200 dark:border-zinc-600"
+                            className="h-full bg-white dark:bg-zinc-700 shadow-md rounded-xl md:rounded-full border border-zinc-200 dark:border-zinc-600"
+                            style={{ width: "33.333333%" }}
                             animate={{ x: `${idx * 100}%` }}
                             transition={{ type: "spring", stiffness: 400, damping: 30 }}
                         />
@@ -253,7 +240,7 @@ export default function ThemeSwitcher() {
             </div>
             {/* Version indicator for troubleshooting */}
             <div className="flex flex-col items-center pt-2 opacity-20 hover:opacity-100 transition-opacity gap-1">
-                <span className="text-[10px] font-mono text-zinc-500">v6.0-PINK</span>
+                <span className="text-[10px] font-mono text-zinc-500">v6.1-PERFECT</span>
                 <span className="text-[8px] font-bold text-zinc-400 uppercase tracking-tighter">
                     Sensor: {mounted ? (isDarkModeRequested() ? 'Dark' : 'Light') : '...'}
                 </span>

@@ -74,6 +74,12 @@ export default function ThemeHandler() {
             const handle = await addNativeThemeListener((isDark) => {
                 if (localStorage.getItem('theme') === 'system') {
                     applyThemeStyles(isDark)
+                    // Disparar evento para que React (ThemeSwitcher) se actualice en tiempo real
+                    window.dispatchEvent(Object.assign(new Event('storage'), {
+                        key: 'theme',
+                        newValue: 'system',
+                        skipReload: true
+                    }))
                 }
             })
             return handle as { remove: () => void }
