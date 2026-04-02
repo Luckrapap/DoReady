@@ -525,7 +525,7 @@ function ModeCard({ title, icon, description, onClick, colorTheme }: {
     onClick: () => void,
     colorTheme: 'green' | 'purple' | 'orange' | 'blue'
 }) {
-    // Definimos el color de acento según el tema de Procastive (Slate/Blue)
+    // Definición de resplandores para cada modo
     const themeStyles = {
         green: "bg-emerald-500 shadow-emerald-500/20",
         purple: "bg-purple-500 shadow-purple-500/20",
@@ -540,44 +540,44 @@ function ModeCard({ title, icon, description, onClick, colorTheme }: {
             whileTap={{ scale: 0.98 }}
             onClick={onClick}
             className={cn(
-                "relative group w-full text-left p-6 transition-all duration-300 overflow-hidden",
+                "relative group w-full text-left p-6 transition-all duration-300",
                 "rounded-[2.2rem] border-2 shadow-2xl",
-                "bg-[#111827] border-blue-900/40 hover:border-blue-500/60 shadow-blue-950/50 hover:shadow-blue-900/30",
-                "border-t-[#3b82f6]/30 border-t-2" // Toque de relieve superior azulado
+                "bg-[#1e293b] border-[#3b82f6]/40 hover:border-[#3b82f6]/60 shadow-blue-950/50 hover:shadow-blue-900/30",
+                "border-t-white/30 border-t-2" // Relieve superior blanco para visibilidad máxima
             )}
         >
-            {/* Background Accent Gradient (Very visible) */}
+            {/* Background Accent (De-emphasized but visible) */}
             <div className={cn(
-                "absolute -right-10 -top-10 w-48 h-48 rounded-full blur-[100px] opacity-15 transition-opacity group-hover:opacity-25",
+                "absolute -right-10 -top-10 w-48 h-48 rounded-full blur-[100px] opacity-10 transition-opacity group-hover:opacity-20",
                 accentGlow
             )} />
 
             <div className="relative z-10 flex items-center gap-6">
-                {/* Icon Container (Crystal Bluish Look) */}
-                <div className="w-14 h-14 shrink-0 rounded-2xl flex items-center justify-center bg-[#1e293b] border border-blue-400/30 shadow-xl shadow-blue-950/50 text-white">
-                    <span className="text-3xl drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]">
+                {/* Icon Container (Solid Navy-Black for contrast) */}
+                <div className="w-14 h-14 shrink-0 rounded-2xl flex items-center justify-center bg-[#020617] border border-blue-400/30 shadow-xl shadow-blue-950/50 text-white">
+                    <span className="text-3xl drop-shadow-[0_0_10px_rgba(59,130,246,0.6)]">
                         {icon}
                     </span>
                 </div>
 
-                {/* Text Content (Highly Legible) */}
+                {/* Text Content (High Contrast Slate) */}
                 <div className="flex-1">
                     <h3 className={cn(
-                        "text-xl font-black tracking-tight mb-0.5 transition-colors",
+                        "text-xl font-extrabold tracking-tight mb-0.5 transition-colors",
                         colorTheme === 'green' ? 'text-emerald-400' :
                         colorTheme === 'orange' ? 'text-orange-400' :
                         colorTheme === 'purple' ? 'text-purple-400' : 'text-blue-400'
                     )}>
                         {title}
                     </h3>
-                    <p className="text-sm font-bold text-slate-400 leading-tight tracking-wide">
+                    <p className="text-sm font-bold text-slate-300 dark:text-slate-200 leading-tight tracking-wide">
                         {description}
                     </p>
                 </div>
 
-                {/* Bold Action Indicator */}
-                <div className="text-blue-900/50 group-hover:text-blue-400 transition-all group-hover:translate-x-1">
-                    <ArrowRight size={22} strokeWidth={3} />
+                {/* Clear Action Indicator */}
+                <div className="text-blue-500/50 group-hover:text-blue-400 transition-all group-hover:translate-x-1">
+                    <ArrowRight size={24} strokeWidth={3} />
                 </div>
             </div>
         </motion.button>
