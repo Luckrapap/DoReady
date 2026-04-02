@@ -19,7 +19,7 @@
 
 :root {
   /* Next.js Layout Foundation Colors */
-  --theme-background: #fafafa;
+  --theme-background: #ffffff;
   --theme-foreground: #09090b;
   --theme-primary: #09090b;
   --theme-secondary: #71717a;
@@ -40,7 +40,7 @@
 
 .dark {
   /* Next.js Layout Foundation Colors */
-  --theme-background: #020617;
+  --theme-background: #09090b;
   --theme-foreground: #f8fafc;
   --theme-primary: #f8fafc;
   --theme-secondary: #a1a1aa;
@@ -69,4 +69,3 @@ body {
     border-color: var(--theme-border);
   }
 }
-

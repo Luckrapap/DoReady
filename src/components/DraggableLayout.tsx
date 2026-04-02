@@ -24,10 +24,10 @@ export default function DraggableLayout({ children }: { children: React.ReactNod
     // Ahora arranca al 50% de su propia pantalla, dándole mucha más velocidad para lograr un equilibrio 2:1.
     const bgX = useTransform(x, [0, DRAWER_WIDTH], [-drawerWidth * 0.5, 0])
     // Separación limpia estilo ChatGPT (Sin sombras, solo contraste y borde sutil)
-    const foregroundBorderColor = useTransform(x, [0, DRAWER_WIDTH], ['rgba(150, 150, 150, 0)', 'rgba(150, 150, 150, 0.2)'])
+    const foregroundBorderColor = useTransform(x, [0, DRAWER_WIDTH], ['rgba(0,0,0,0)', 'rgba(0,0,0,0.06)'])
 
     // Un overlay negro sobre el menú de fondo que se aclara conforme se abre
-    const bgOverlayOpacity = useTransform(x, [0, DRAWER_WIDTH], [0.6, 0])
+    const bgOverlayOpacity = useTransform(x, [0, DRAWER_WIDTH], [0.4, 0])
 
     useEffect(() => {
         animate(x, isMenuOpen ? DRAWER_WIDTH : 0, {
@@ -155,7 +155,7 @@ export default function DraggableLayout({ children }: { children: React.ReactNod
         <div className="relative flex-1 flex overflow-hidden">
             {/* Background Parallax Layer (Mobile Menu) */}
             <motion.div
-                className="absolute inset-0 z-0 bg-white dark:bg-[#0a0a0a] md:hidden"
+                className="absolute inset-0 z-0 bg-zinc-50 dark:bg-[#0d0d0d] md:hidden"
                 style={{
                     x: bgX,
                 }}
@@ -174,7 +174,7 @@ export default function DraggableLayout({ children }: { children: React.ReactNod
                 className="flex-1 w-full bg-[var(--background)] flex relative z-10 md:shadow-none overflow-hidden border-l"
                 style={{
                     x,
-                    borderColor: foregroundBorderColor,
+                    borderLeftColor: foregroundBorderColor
                 }}
             >
                 {/* Capa de intercepción: Si está abierto, no puedes usar la App, un tap lo cierra */}
