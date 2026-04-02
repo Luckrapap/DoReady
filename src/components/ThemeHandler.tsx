@@ -43,19 +43,30 @@ export default function ThemeHandler() {
     }, [])
 
     useLayoutEffect(() => {
+        let pollCount = 0
+        const maxPolls = 30 // 3 seconds total (100ms * 30)
+        
         const checkAndApply = async () => {
-            // First pass: Rapid check (Instant)
+            // Priority: Wait for bridge sync (polling handled in theme.ts)
+            const wasSynced = await syncNativeTheme()
             applyThemeStyles(isDarkModeRequested())
-
-            // Second pass: Wait for bridge sync (3s polling in theme.ts)
-            await syncNativeTheme()
-            applyThemeStyles(isDarkModeRequested())
+            return wasSynced
         }
 
-        // 1. Initial Sync
+        // 1. Initial Sync Attempt
         checkAndApply()
 
-        // 2. Continuous Synchronization Bridge
+        // 2. Overdrive Polling Loop (Initial 3 seconds)
+        // This ensures that even if the bridge is slow, it captures the sync ASAP
+        const pollInterval = setInterval(async () => {
+            pollCount++
+            await checkAndApply()
+            if (pollCount >= maxPolls) {
+                clearInterval(pollInterval)
+            }
+        }, 100)
+
+        // 3. Continuous Synchronization Bridge (Real-time updates)
         const setupNative = async () => {
             const handle = await addNativeThemeListener((isDark) => {
                 if (localStorage.getItem('theme') === 'system') {
@@ -66,14 +77,14 @@ export default function ThemeHandler() {
         }
         const nativeSyncPromise = setupNative()
 
-        // 3. Reliability Re-syncs (Opening app or changing tab)
+        // 4. Reliability Re-syncs (Visibility/Focus)
         const handleSync = () => {
             if (document.visibilityState === 'visible') checkAndApply()
         }
         document.addEventListener('visibilitychange', handleSync)
         window.addEventListener('focus', handleSync)
 
-        // 4. Settings change listener
+        // 5. Settings change listener (Sync across tabs/components)
         const handleSettings = (e: any) => {
             if (e.key === 'theme' || e.key === 'theme-preset' || e.key === 'theme-custom-hue') {
                 applyThemeStyles(isDarkModeRequested())
@@ -83,6 +94,7 @@ export default function ThemeHandler() {
         window.addEventListener('storage', handleSettings)
 
         return () => {
+            clearInterval(pollInterval)
             document.removeEventListener('visibilitychange', handleSync)
             window.removeEventListener('focus', handleSync)
             window.removeEventListener('storage', handleSettings)
