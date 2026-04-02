@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:is(.dark *));
 
 @theme {
   --font-sans: var(--font-geist-sans);
@@ -46,7 +47,7 @@
   --theme-surface: #0f172a;
   --theme-surface-hover: #1e293b;
   --theme-border: #1e293b;
-  --theme-accent: #3b82f6;
+  --theme-accent: #334155;
   --theme-on-accent: #ffffff;
 
   /* Legacy Aliases */
@@ -68,3 +69,4 @@ body {
     border-color: var(--theme-border);
   }
 }
+
