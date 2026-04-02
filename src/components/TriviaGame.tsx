@@ -212,7 +212,7 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                     </div>
                 </div>
 
-                <div className="flex-1 flex flex-col justify-center px-4 gap-3 sm:gap-4 pb-16 md:pb-32">
+                <div className="flex flex-col px-4 gap-3 sm:gap-4 mt-8 md:mt-12 pb-16">
                     <ModeCard
                         title="Chill"
                         icon="🌿"
@@ -506,67 +506,42 @@ function ModeCard({ title, icon, description, onClick, colorTheme }: {
     onClick: () => void,
     colorTheme: 'green' | 'purple' | 'orange' | 'blue'
 }) {
-    const themeStyles = {
-        green: {
-            bg: "bg-[#051c0d]/80 dark:bg-[#051c0d] border-[#103b1e]",
-            hover: "hover:bg-[#0a2b16] dark:hover:bg-[#0a2b16]",
-            title: "text-green-500",
-            desc: "text-green-600/90",
-            arrow: "text-green-600/50 group-hover:text-green-500"
-        },
-        purple: {
-            bg: "bg-[#160524]/80 dark:bg-[#160524] border-[#31104e]",
-            hover: "hover:bg-[#230938] dark:hover:bg-[#230938]",
-            title: "text-purple-500",
-            desc: "text-purple-600/90",
-            arrow: "text-purple-600/50 group-hover:text-purple-500"
-        },
-        orange: {
-            bg: "bg-[#291004]/80 dark:bg-[#291004] border-[#4d210b]",
-            hover: "hover:bg-[#3d1806] dark:hover:bg-[#3d1806]",
-            title: "text-orange-500",
-            desc: "text-orange-600/90",
-            arrow: "text-orange-600/50 group-hover:text-orange-500"
-        },
-        blue: {
-            bg: "bg-[#06142e]/80 dark:bg-[#06142e] border-[#0f326e]",
-            hover: "hover:bg-[#091f4a] dark:hover:bg-[#091f4a]",
-            title: "text-blue-500",
-            desc: "text-blue-600/90",
-            arrow: "text-blue-600/50 group-hover:text-blue-500"
-        }
+    const classMap = {
+        green: { badge: "bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 border-emerald-500/20", glow: "group-hover:border-emerald-500/40" },
+        purple: { badge: "bg-violet-500/10 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400 border-violet-500/20", glow: "group-hover:border-violet-500/40" },
+        orange: { badge: "bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400 border-amber-500/20", glow: "group-hover:border-amber-500/40" },
+        blue: { badge: "bg-sky-500/10 text-sky-600 dark:bg-sky-500/20 dark:text-sky-400 border-sky-500/20", glow: "group-hover:border-sky-500/40" }
     }
-
-    const currentTheme = themeStyles[colorTheme]
+    const color = classMap[colorTheme]
 
     return (
         <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={{ scale: 1.01, y: -1 }}
+            whileTap={{ scale: 0.99 }}
             onClick={onClick}
             className={cn(
-                "group w-full p-5 sm:p-6 rounded-[2rem] border-2 transition-all duration-300 text-left flex items-center gap-4 sm:gap-5",
-                currentTheme.bg,
-                currentTheme.hover
+                "group relative w-full p-4 sm:p-5 rounded-[1.5rem] bg-white dark:bg-zinc-950/80 border border-zinc-200 dark:border-zinc-800",
+                "flex items-center gap-4 text-left transition-all duration-300 shadow-sm",
+                "hover:shadow-md dark:hover:shadow-none",
+                color.glow
             )}
         >
-            {/* Icon - Raw and huge */}
-            <div className="shrink-0 text-4xl sm:text-5xl drop-shadow-md transition-transform duration-300 group-hover:scale-110">
+            <div className={cn("w-14 h-14 shrink-0 flex items-center justify-center rounded-2xl border text-3xl transition-transform duration-300 group-hover:scale-105", color.badge)}>
                 {icon}
             </div>
-
-            {/* Text Content */}
+            
             <div className="flex flex-col gap-1 flex-1">
-                <h3 className={cn("text-xl sm:text-2xl font-black tracking-tight", currentTheme.title)}>
+                <h3 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
                     {title}
                 </h3>
-                <p className={cn("text-xs sm:text-sm font-bold leading-relaxed max-w-[95%]", currentTheme.desc)}>
+                <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400 leading-tight">
                     {description}
                 </p>
             </div>
-
-            {/* Subtle Chevron */}
-            <ArrowRight size={20} strokeWidth={3} className={cn("shrink-0 transition-all duration-300 group-hover:translate-x-1", currentTheme.arrow)} />
+            
+            <div className="w-8 h-8 rounded-full border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-zinc-400 transition-colors duration-300 group-hover:bg-zinc-100 dark:group-hover:bg-zinc-800">
+                <ArrowRight size={16} />
+            </div>
         </motion.button>
     )
 }
