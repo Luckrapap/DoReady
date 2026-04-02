@@ -109,8 +109,11 @@ export default function ThemeSwitcher() {
                 </div>
             </div>
 
-            {/* Indicador de diagnóstico bajo para mantenimiento */}
+            {/* Diagnostic indicator for troubleshooting */}
             <div className="flex flex-col items-center pt-2 opacity-20 hover:opacity-100 transition-opacity gap-1">
+                <span className="text-[8px] font-bold text-zinc-400 uppercase tracking-tighter">
+                    Slate Unified Build • v2.0-Fixed
+                </span>
                 <span className="text-[8px] font-bold text-zinc-400 uppercase tracking-tighter">
                     Sensor: {mounted ? (isDarkModeRequested() ? 'Dark' : 'Light') : '...'}
                 </span>
