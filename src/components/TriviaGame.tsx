@@ -221,18 +221,18 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                         colorTheme="green"
                     />
                     <ModeCard
-                        title="Experto"
-                        icon="🧠"
-                        description="Retos difíciles solo para mentes maestras."
-                        onClick={() => handleStartMode('expert')}
-                        colorTheme="purple"
-                    />
-                    <ModeCard
                         title="Random"
                         icon="🎲"
                         description="Una mezcla de todo; nunca sabes qué vendrá."
                         onClick={() => handleStartMode('random')}
                         colorTheme="orange"
+                    />
+                    <ModeCard
+                        title="Experto"
+                        icon="🧠"
+                        description="Retos difíciles solo para mentes maestras."
+                        onClick={() => handleStartMode('expert')}
+                        colorTheme="purple"
                     />
                     <ModeCard
                         title="Enfoque"
