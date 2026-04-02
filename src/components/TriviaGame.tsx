@@ -556,74 +556,53 @@ function ModeCard({ title, icon, description, onClick, colorTheme, index }: {
     return (
         <motion.button
             variants={{
-                hidden: { opacity: 0, y: 30, scale: 0.95 },
-                visible: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 300, damping: 25 } }
+                hidden: { opacity: 0, y: 20 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } }
             }}
-            whileHover={{ scale: 1.02, y: -2 }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={{ scale: 1.01, y: -1 }}
+            whileTap={{ scale: 0.99 }}
             onClick={onClick}
             className={cn(
-                "group relative w-full p-6 rounded-[2rem] bg-zinc-900/40 dark:bg-zinc-900/60 transition-all duration-500 text-left flex items-center gap-6 overflow-hidden",
-                "border border-white/5 border-t-white/10 border-l-white/10 shadow-2xl backdrop-blur-xl",
+                "group relative w-full p-6 rounded-[2rem] bg-zinc-900/40 dark:bg-zinc-900/60 transition-all duration-300 text-left flex items-center gap-6 overflow-hidden",
+                "border border-white/5 border-t-white/10 border-l-white/10 shadow-xl backdrop-blur-md",
                 theme.border
             )}
         >
-            {/* 1. Animated Shimmer Effect */}
-            <motion.div 
-                className="absolute inset-0 w-full h-full pointer-events-none"
-                initial={{ x: "-100%" }}
-                animate={{ x: "200%" }}
-                transition={{ duration: 3, repeat: Infinity, repeatDelay: 4, ease: "linear" }}
-            >
-                <div className="w-[50%] h-full bg-gradient-to-r from-transparent via-white/5 to-transparent skew-x-[-20deg]" />
-            </motion.div>
+            {/* 1. Static Ambient Background Glow (Only on Hover for performance) */}
+            <div className={cn(
+                "absolute -right-10 -top-10 w-40 h-40 rounded-full blur-[80px] opacity-0 group-hover:opacity-30 transition-all duration-700",
+                theme.glow
+            )} />
 
-            {/* 2. Living Ambient Background Glow (Slightly pulsing) */}
-            <motion.div 
-                className={cn(
-                    "absolute -right-10 -top-10 w-40 h-40 rounded-full blur-[80px] opacity-10 group-hover:opacity-40 transition-opacity duration-700",
-                    theme.glow
-                )}
-                animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.15, 0.1] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            />
-
-            {/* 3. Floating Emoji Icon */}
+            {/* 2. Floating Emoji Icon */}
             <div className="relative shrink-0 flex items-center justify-center">
                 <div className={cn(
-                    "absolute inset-0 blur-2xl opacity-20 scale-150 transition-transform duration-500 group-hover:scale-[2.5]",
+                    "absolute inset-0 blur-2xl opacity-10 scale-150 transition-transform duration-500 group-hover:scale-[2]",
                     theme.aura
                 )} />
                 <motion.span 
-                    className="relative z-10 text-5xl drop-shadow-2xl transition-transform duration-500 group-hover:scale-110"
-                    animate={{ y: [-3, 3, -3], rotate: [-2, 2, -2] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: index * 0.2 }}
+                    className="relative z-10 text-5xl drop-shadow-2xl transition-transform duration-300 group-hover:scale-105"
+                    animate={{ y: [-2, 2, -2] }}
+                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: index * 0.3 }}
                 >
                     {icon}
                 </motion.span>
             </div>
 
-            {/* 4. Vibrant Text Hierarchy */}
+            {/* 3. Text Hierarchy */}
             <div className="relative z-10 flex flex-col items-start gap-1 flex-1">
-                <div className="flex items-center gap-2">
-                    <h3 className={cn(
-                        "text-2xl font-black tracking-tight drop-shadow-sm bg-clip-text text-transparent bg-gradient-to-r",
-                        theme.accent
-                    )}>
-                        {title}
-                    </h3>
-                    <motion.div 
-                        className={cn("w-1.5 h-1.5 rounded-full", theme.aura.replace("/10", ""))}
-                        animate={{ opacity: [0.3, 1, 0.3], scale: [1, 1.3, 1] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                    />
-                </div>
+                <h3 className={cn(
+                    "text-2xl font-black tracking-tight drop-shadow-sm bg-clip-text text-transparent bg-gradient-to-r",
+                    theme.accent
+                )}>
+                    {title}
+                </h3>
                 <p className="text-sm font-bold text-zinc-400 dark:text-zinc-500 leading-tight tracking-wide max-w-[90%] opacity-80 group-hover:opacity-100 transition-opacity">
                     {description}
                 </p>
             </div>
 
-            {/* 5. Minimalist Arrow Indicator */}
+            {/* 4. Minimalist Arrow Indicator */}
             <div className={cn(
                 "relative z-10 w-10 h-10 rounded-full flex items-center justify-center bg-white/5 border border-white/10 text-zinc-500 transition-all duration-500 shadow-inner",
                 "group-hover:translate-x-1 group-hover:text-white group-hover:bg-white/10 group-hover:border-white/20"
