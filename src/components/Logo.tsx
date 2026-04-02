@@ -14,15 +14,15 @@ export default function Logo({ className, size, style }: LogoProps) {
 
     return (
         <div 
-            className={cn("shrink-0 bg-zinc-950 dark:bg-zinc-50 -mr-5 -translate-y-1", className)}
+            className={cn("shrink-0 bg-zinc-950 dark:bg-zinc-50 -mr-7 -translate-y-1", className)}
             style={{ 
                 width: logoWidth,
                 height: logoHeight,
-                WebkitMaskImage: 'url(/logo.png?v=2.4-Aligned)',
+                WebkitMaskImage: 'url(/logo.png?v=2.5-Tight)',
                 WebkitMaskSize: 'contain',
                 WebkitMaskRepeat: 'no-repeat',
                 WebkitMaskPosition: 'center',
-                maskImage: 'url(/logo.png?v=2.4-Aligned)',
+                maskImage: 'url(/logo.png?v=2.5-Tight)',
                 maskSize: 'contain',
                 maskRepeat: 'no-repeat',
                 maskPosition: 'center',
