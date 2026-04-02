@@ -525,67 +525,60 @@ function ModeCard({ title, icon, description, onClick, colorTheme }: {
     onClick: () => void,
     colorTheme: 'green' | 'purple' | 'orange' | 'blue'
 }) {
+    // Definimos el color de acento según el tema de Procastive (var--accent)
+    // Pero permitimos que cada tema use su propio matiz si es necesario (según GameCard logic)
     const themeStyles = {
-        green: { 
-            accent: "text-emerald-400", 
-            glow: "bg-emerald-500/10",
-            leftBorder: "border-l-emerald-500"
-        },
-        purple: { 
-            accent: "text-violet-400", 
-            glow: "bg-violet-500/10",
-            leftBorder: "border-l-violet-500"
-        },
-        orange: { 
-            accent: "text-amber-400", 
-            glow: "bg-orange-500/10",
-            leftBorder: "border-l-orange-500"
-        },
-        blue: { 
-            accent: "text-sky-400", 
-            glow: "bg-sky-500/10",
-            leftBorder: "border-l-sky-500"
-        }
+        green: "bg-emerald-500",
+        purple: "bg-purple-500",
+        orange: "bg-orange-500",
+        blue: "bg-blue-500"
     }
-    const theme = themeStyles[colorTheme]
+    const accentBg = themeStyles[colorTheme]
 
     return (
         <motion.button
-            variants={{
-                hidden: { opacity: 0, y: 20 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.3 } }
-            }}
-            whileHover={{ scale: 1.01 }}
+            whileHover={{ y: -5, scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={onClick}
             className={cn(
-                "group relative w-full p-6 rounded-[1.5rem] bg-zinc-900 transition-all duration-200 text-left flex items-center gap-6 overflow-hidden",
-                "border border-zinc-700 shadow-2xl",
-                "border-l-[8px]",
-                theme.leftBorder,
-                "active:bg-zinc-800 hover:border-zinc-500"
+                "relative group w-full text-left p-6 rounded-[2rem] border-2 transition-all duration-500 overflow-hidden shadow-sm",
+                "cursor-pointer hover:shadow-xl"
             )}
+            style={{
+                backgroundColor: 'var(--surface)',
+                borderColor: 'color-mix(in srgb, var(--border) 60%, transparent)'
+            }}
         >
-            {/* Left Icon (Solid container) */}
-            <div className="relative shrink-0 flex items-center justify-center w-14 h-14 bg-zinc-800 rounded-2xl border border-zinc-700 group-hover:border-zinc-500 transition-all">
-                <span className="relative z-10 text-4xl drop-shadow-lg scale-100 group-hover:scale-110 transition-transform">
-                    {icon}
-                </span>
-            </div>
+            {/* Background Accent Gradient (from GameCard) */}
+            <div className={cn(
+                "absolute -right-8 -top-8 w-32 h-32 rounded-full blur-3xl opacity-10 transition-opacity group-hover:opacity-20",
+                accentBg
+            )} />
 
-            {/* Solid Text Hierarchy */}
-            <div className="relative z-10 flex flex-col items-start gap-1 flex-1">
-                <h3 className={cn("text-xl font-black uppercase tracking-wider transition-colors", theme.accent)}>
-                    {title}
-                </h3>
-                <p className="text-sm font-bold text-zinc-400 leading-tight tracking-wide max-w-[95%]">
-                    {description}
-                </p>
-            </div>
+            <div className="relative z-10 flex items-center gap-6">
+                {/* Icon Container (matches GameCard style) */}
+                <div className="w-12 h-12 shrink-0 rounded-2xl flex items-center justify-center shadow-sm text-white"
+                    style={{ backgroundColor: 'var(--accent)' }}
+                >
+                    <span className="text-2xl drop-shadow-md">
+                        {icon}
+                    </span>
+                </div>
 
-            {/* Permanent Action Indicator */}
-            <div className="relative z-10 w-10 h-10 rounded-full flex items-center justify-center bg-zinc-800 border border-zinc-700 text-zinc-400 group-hover:text-white group-hover:border-zinc-500 transition-all">
-                <ArrowRight size={20} strokeWidth={3} />
+                {/* Text Content */}
+                <div className="flex-1">
+                    <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-50 mb-1">
+                        {title}
+                    </h3>
+                    <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-tight">
+                        {description}
+                    </p>
+                </div>
+
+                {/* Subtle Action Indicator */}
+                <div className="text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-zinc-50 transition-colors">
+                    <ArrowRight size={20} />
+                </div>
             </div>
         </motion.button>
     )
