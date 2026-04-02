@@ -525,8 +525,7 @@ function ModeCard({ title, icon, description, onClick, colorTheme }: {
     onClick: () => void,
     colorTheme: 'green' | 'purple' | 'orange' | 'blue'
 }) {
-    // Definimos el color de acento según el tema de Procastive (var--accent)
-    // Pero permitimos que cada tema use su propio matiz si es necesario (según GameCard logic)
+    // Tinte azulado para la base de todos los botones para mantener la armonía
     const themeStyles = {
         green: "bg-emerald-500",
         purple: "bg-purple-500",
@@ -541,43 +540,47 @@ function ModeCard({ title, icon, description, onClick, colorTheme }: {
             whileTap={{ scale: 0.98 }}
             onClick={onClick}
             className={cn(
-                "relative group w-full text-left p-6 rounded-[2rem] border-2 transition-all duration-500 overflow-hidden shadow-sm",
-                "cursor-pointer hover:shadow-xl"
+                "relative group w-full text-left p-6 rounded-[2rem] border-2 transition-all duration-500 overflow-hidden",
+                "cursor-pointer shadow-2xl",
+                "bg-[#0f172a] border-blue-900/30 hover:border-blue-700/50 hover:shadow-blue-950/20 shadow-blue-950/40"
             )}
-            style={{
-                backgroundColor: 'var(--surface)',
-                borderColor: 'color-mix(in srgb, var(--border) 60%, transparent)'
-            }}
         >
-            {/* Background Accent Gradient (from GameCard) */}
+            {/* 1. Dynamic Background Aura (Higher opacity for better definition) */}
             <div className={cn(
-                "absolute -right-8 -top-8 w-32 h-32 rounded-full blur-3xl opacity-10 transition-opacity group-hover:opacity-20",
+                "absolute -right-8 -top-8 w-40 h-40 rounded-full blur-3xl opacity-20 transition-opacity group-hover:opacity-30",
                 accentBg
             )} />
 
+            {/* 2. Top-down Light Highlight (for that 'working' button look) */}
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
+
             <div className="relative z-10 flex items-center gap-6">
-                {/* Icon Container (matches GameCard style) */}
-                <div className="w-12 h-12 shrink-0 rounded-2xl flex items-center justify-center shadow-sm text-white"
-                    style={{ backgroundColor: 'var(--accent)' }}
-                >
-                    <span className="text-2xl drop-shadow-md">
+                {/* 3. Icon Container (Solid and glowing) */}
+                <div className="w-14 h-14 shrink-0 rounded-2xl flex items-center justify-center bg-white/5 border border-white/10 shadow-lg text-white"
+                     style={{ backgroundColor: 'color-mix(in srgb, var(--accent) 15%, transparent)' }}>
+                    <span className="text-3xl drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]">
                         {icon}
                     </span>
                 </div>
 
-                {/* Text Content */}
+                {/* 4. Text Content (Clear and Bold) */}
                 <div className="flex-1">
-                    <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-50 mb-1">
+                    <h3 className={cn(
+                        "text-xl font-black tracking-tight mb-0.5",
+                        colorTheme === 'green' ? 'text-emerald-400' :
+                        colorTheme === 'orange' ? 'text-orange-400' :
+                        colorTheme === 'purple' ? 'text-purple-400' : 'text-blue-400'
+                    )}>
                         {title}
                     </h3>
-                    <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-tight">
+                    <p className="text-sm font-bold text-zinc-400 leading-tight tracking-wide">
                         {description}
                     </p>
                 </div>
 
-                {/* Subtle Action Indicator */}
-                <div className="text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-zinc-50 transition-colors">
-                    <ArrowRight size={20} />
+                {/* 5. Minimalist Action Indicator */}
+                <div className="text-zinc-500 group-hover:text-blue-400 transition-colors">
+                    <ArrowRight size={22} strokeWidth={2.5} />
                 </div>
             </div>
         </motion.button>
