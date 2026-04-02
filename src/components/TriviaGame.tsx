@@ -525,59 +525,53 @@ function ModeCard({ title, icon, description, onClick, colorTheme }: {
     onClick: () => void,
     colorTheme: 'green' | 'purple' | 'orange' | 'blue'
 }) {
-    // Definición de resplandores para cada modo
+    // Definición de resplandores suaves por tema
     const themeStyles = {
-        green: "bg-emerald-500 shadow-emerald-500/20",
-        purple: "bg-purple-500 shadow-purple-500/20",
-        orange: "bg-orange-500 shadow-orange-500/20",
-        blue: "bg-blue-500 shadow-blue-500/20"
+        green: "bg-emerald-500/10",
+        purple: "bg-purple-500/10",
+        orange: "bg-orange-500/10",
+        blue: "bg-blue-500/10"
     }
-    const accentGlow = themeStyles[colorTheme]
+    const accentBg = themeStyles[colorTheme]
 
     return (
         <motion.button
-            whileHover={{ y: -6, scale: 1.01 }}
+            whileHover={{ y: -5, scale: 1.01 }}
             whileTap={{ scale: 0.98 }}
             onClick={onClick}
             className={cn(
                 "relative group w-full text-left p-6 transition-all duration-300",
-                "rounded-[2.2rem] border-2 shadow-2xl",
-                "bg-[#1e293b] border-[#3b82f6]/40 hover:border-[#3b82f6]/60 shadow-blue-950/50 hover:shadow-blue-900/30",
-                "border-t-white/30 border-t-2" // Relieve superior blanco para visibilidad máxima
+                "rounded-[2rem] border-2",
+                "bg-[#0f172a] border-[#1e293b] hover:border-blue-500/30"
             )}
         >
-            {/* Background Accent (De-emphasized but visible) */}
-            <div className={cn(
-                "absolute -right-10 -top-10 w-48 h-48 rounded-full blur-[100px] opacity-10 transition-opacity group-hover:opacity-20",
-                accentGlow
-            )} />
-
             <div className="relative z-10 flex items-center gap-6">
-                {/* Icon Container (Solid Navy-Black for contrast) */}
-                <div className="w-14 h-14 shrink-0 rounded-2xl flex items-center justify-center bg-[#020617] border border-blue-400/30 shadow-xl shadow-blue-950/50 text-white">
-                    <span className="text-3xl drop-shadow-[0_0_10px_rgba(59,130,246,0.6)]">
+                {/* Icon Container (Crystal Look) */}
+                <div className="w-12 h-12 shrink-0 rounded-2xl flex items-center justify-center text-white shadow-lg"
+                     style={{ backgroundColor: 'var(--accent)' }}>
+                    <span className="text-2xl drop-shadow-md">
                         {icon}
                     </span>
                 </div>
 
-                {/* Text Content (High Contrast Slate) */}
+                {/* Text Content */}
                 <div className="flex-1">
                     <h3 className={cn(
-                        "text-xl font-extrabold tracking-tight mb-0.5 transition-colors",
+                        "text-xl font-bold mb-1 transition-colors",
                         colorTheme === 'green' ? 'text-emerald-400' :
                         colorTheme === 'orange' ? 'text-orange-400' :
                         colorTheme === 'purple' ? 'text-purple-400' : 'text-blue-400'
                     )}>
                         {title}
                     </h3>
-                    <p className="text-sm font-bold text-slate-300 dark:text-slate-200 leading-tight tracking-wide">
+                    <p className="text-sm text-zinc-400 leading-tight">
                         {description}
                     </p>
                 </div>
 
-                {/* Clear Action Indicator */}
-                <div className="text-blue-500/50 group-hover:text-blue-400 transition-all group-hover:translate-x-1">
-                    <ArrowRight size={24} strokeWidth={3} />
+                {/* Subtle Action Indicator */}
+                <div className="text-zinc-500 group-hover:text-blue-400 transition-colors">
+                    <ArrowRight size={22} />
                 </div>
             </div>
         </motion.button>
