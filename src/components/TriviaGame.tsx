@@ -517,38 +517,38 @@ function StreakBadge({ count }: { count: number }) {
 }
 
 // Sub-componente para las tarjetas de modo
-function ModeCard({ title, icon, description, onClick, colorTheme, index }: {
+// Sub-componente para las tarjetas de modo
+function ModeCard({ title, icon, description, onClick, colorTheme }: {
     title: string,
     icon: React.ReactNode | string,
     description: string,
     onClick: () => void,
-    colorTheme: 'green' | 'purple' | 'orange' | 'blue',
-    index: number
+    colorTheme: 'green' | 'purple' | 'orange' | 'blue'
 }) {
     const themeStyles = {
         green: { 
-            accent: "from-emerald-400 to-green-600", 
-            glow: "bg-emerald-500/20", 
-            border: "group-hover:border-emerald-500/50",
-            aura: "bg-emerald-500/10"
+            accent: "text-emerald-500", 
+            border: "border-emerald-500/50",
+            glow: "bg-emerald-500/20",
+            leftBorder: "border-l-emerald-500"
         },
         purple: { 
-            accent: "from-violet-400 to-purple-600", 
-            glow: "bg-violet-500/20", 
-            border: "group-hover:border-violet-500/50",
-            aura: "bg-violet-500/10"
+            accent: "text-violet-500", 
+            border: "border-violet-500/50",
+            glow: "bg-violet-500/20",
+            leftBorder: "border-l-violet-500"
         },
         orange: { 
-            accent: "from-amber-400 to-orange-600", 
-            glow: "bg-orange-500/20", 
-            border: "group-hover:border-orange-500/50",
-            aura: "bg-orange-500/10"
+            accent: "text-amber-500", 
+            border: "border-amber-500/50",
+            glow: "bg-orange-500/20",
+            leftBorder: "border-l-orange-500"
         },
         blue: { 
-            accent: "from-sky-400 to-blue-600", 
-            glow: "bg-sky-500/20", 
-            border: "group-hover:border-blue-500/50",
-            aura: "bg-blue-500/10"
+            accent: "text-sky-500", 
+            border: "border-sky-500/50",
+            glow: "bg-sky-500/20",
+            leftBorder: "border-l-sky-500"
         }
     }
     const theme = themeStyles[colorTheme]
@@ -559,55 +559,47 @@ function ModeCard({ title, icon, description, onClick, colorTheme, index }: {
                 hidden: { opacity: 0, y: 20 },
                 visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } }
             }}
-            whileHover={{ scale: 1.01, y: -1 }}
-            whileTap={{ scale: 0.99 }}
+            whileHover={{ scale: 1.01, x: 4 }}
+            whileTap={{ scale: 0.98 }}
             onClick={onClick}
             className={cn(
-                "group relative w-full p-6 rounded-[2rem] bg-zinc-900/40 dark:bg-zinc-900/60 transition-all duration-300 text-left flex items-center gap-6 overflow-hidden",
-                "border border-white/5 border-t-white/10 border-l-white/10 shadow-xl backdrop-blur-md",
-                theme.border
+                "group relative w-full p-5 rounded-[1.5rem] bg-zinc-900/80 dark:bg-zinc-900/90 transition-all duration-300 text-left flex items-center gap-5 overflow-hidden",
+                "border border-white/15 border-t-white/20 shadow-2xl backdrop-blur-md",
+                "border-l-4",
+                theme.leftBorder,
+                "hover:bg-zinc-800/90 hover:border-white/30"
             )}
         >
-            {/* 1. Static Ambient Background Glow (Only on Hover for performance) */}
+            {/* Ambient Background Glow (Only on hover, very subtle) */}
             <div className={cn(
-                "absolute -right-10 -top-10 w-40 h-40 rounded-full blur-[80px] opacity-0 group-hover:opacity-30 transition-all duration-700",
+                "absolute -right-20 -top-20 w-40 h-40 rounded-full blur-[80px] opacity-0 group-hover:opacity-20 transition-opacity duration-700",
                 theme.glow
             )} />
 
-            {/* 2. Floating Emoji Icon */}
-            <div className="relative shrink-0 flex items-center justify-center">
-                <div className={cn(
-                    "absolute inset-0 blur-2xl opacity-10 scale-150 transition-transform duration-500 group-hover:scale-[2]",
-                    theme.aura
-                )} />
-                <motion.span 
-                    className="relative z-10 text-5xl drop-shadow-2xl transition-transform duration-300 group-hover:scale-105"
-                >
+            {/* Left Icon (No aura for cleaner look as requested indirectly) */}
+            <div className="relative shrink-0 flex items-center justify-center w-12 h-12">
+                <span className="relative z-10 text-4xl drop-shadow-2xl transition-transform duration-300 group-hover:scale-110">
                     {icon}
-                </motion.span>
+                </span>
             </div>
 
-            {/* 3. Text Hierarchy */}
-            <div className="relative z-10 flex flex-col items-start gap-1 flex-1">
-                <h3 className={cn(
-                    "text-2xl font-black tracking-tight drop-shadow-sm bg-clip-text text-transparent bg-gradient-to-r",
-                    theme.accent
-                )}>
+            {/* Coherent Text Hierarchy */}
+            <div className="relative z-10 flex flex-col items-start gap-0.5 flex-1">
+                <h3 className={cn("text-xl font-black tracking-tight drop-shadow-sm transition-colors", theme.accent)}>
                     {title}
                 </h3>
-                <p className="text-sm font-bold text-zinc-400 dark:text-zinc-500 leading-tight tracking-wide max-w-[90%] opacity-80 group-hover:opacity-100 transition-opacity">
+                <p className="text-sm font-bold text-zinc-400 dark:text-zinc-500 leading-tight tracking-wide max-w-[95%]">
                     {description}
                 </p>
             </div>
 
-            {/* 4. Minimalist Arrow Indicator */}
-            <div className={cn(
-                "relative z-10 w-10 h-10 rounded-full flex items-center justify-center bg-white/5 border border-white/10 text-zinc-500 transition-all duration-500 shadow-inner",
-                "group-hover:translate-x-1 group-hover:text-white group-hover:bg-white/10 group-hover:border-white/20"
-            )}>
-                <ArrowRight size={20} strokeWidth={3} />
+            {/* Subtle Action Indicator */}
+            <div className="relative z-10 w-8 h-8 rounded-full flex items-center justify-center bg-white/5 border border-white/10 text-zinc-500 transition-all duration-300 group-hover:bg-white/10 group-hover:text-white">
+                <ArrowRight size={16} strokeWidth={2.5} />
             </div>
         </motion.button>
+    )
+}
     )
 }
 
