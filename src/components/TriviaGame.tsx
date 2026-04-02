@@ -559,47 +559,45 @@ function ModeCard({ title, icon, description, onClick, colorTheme }: {
                 hidden: { opacity: 0, y: 20 },
                 visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } }
             }}
-            whileHover={{ scale: 1.01, x: 4 }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={{ scale: 1.01, x: 5 }}
+            whileTap={{ scale: 0.97 }}
             onClick={onClick}
             className={cn(
-                "group relative w-full p-5 rounded-[1.5rem] bg-zinc-900/80 dark:bg-zinc-900/90 transition-all duration-300 text-left flex items-center gap-5 overflow-hidden",
-                "border border-white/15 border-t-white/20 shadow-2xl backdrop-blur-md",
-                "border-l-4",
+                "group relative w-full p-5 rounded-[1.5rem] bg-zinc-800/80 dark:bg-zinc-800/90 transition-all duration-300 text-left flex items-center gap-5 overflow-hidden",
+                "border border-white/30 border-t-white/40 shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-md",
+                "border-l-[6px]",
                 theme.leftBorder,
-                "hover:bg-zinc-800/90 hover:border-white/30"
+                "hover:bg-zinc-700/90 hover:border-white/50"
             )}
         >
-            {/* Ambient Background Glow (Only on hover, very subtle) */}
+            {/* High Definition Ambient Glow (Only on hover) */}
             <div className={cn(
-                "absolute -right-20 -top-20 w-40 h-40 rounded-full blur-[80px] opacity-0 group-hover:opacity-20 transition-opacity duration-700",
+                "absolute -right-20 -top-20 w-40 h-40 rounded-full blur-[80px] opacity-0 group-hover:opacity-40 transition-opacity duration-700",
                 theme.glow
             )} />
 
-            {/* Left Icon (No aura for cleaner look as requested indirectly) */}
-            <div className="relative shrink-0 flex items-center justify-center w-12 h-12">
-                <span className="relative z-10 text-4xl drop-shadow-2xl transition-transform duration-300 group-hover:scale-110">
+            {/* Left Icon (Clearly defined container) */}
+            <div className="relative shrink-0 flex items-center justify-center w-12 h-12 bg-white/5 rounded-2xl border border-white/10 group-hover:bg-white/10 group-hover:border-white/20 transition-all">
+                <span className="relative z-10 text-3xl drop-shadow-2xl transition-transform duration-300 group-hover:scale-110">
                     {icon}
                 </span>
             </div>
 
-            {/* Coherent Text Hierarchy */}
+            {/* Bold Text Hierarchy */}
             <div className="relative z-10 flex flex-col items-start gap-0.5 flex-1">
                 <h3 className={cn("text-xl font-black tracking-tight drop-shadow-sm transition-colors", theme.accent)}>
                     {title}
                 </h3>
-                <p className="text-sm font-bold text-zinc-400 dark:text-zinc-500 leading-tight tracking-wide max-w-[95%]">
+                <p className="text-sm font-bold text-zinc-300 dark:text-zinc-400 leading-tight tracking-wide max-w-[95%]">
                     {description}
                 </p>
             </div>
 
-            {/* Subtle Action Indicator */}
-            <div className="relative z-10 w-8 h-8 rounded-full flex items-center justify-center bg-white/5 border border-white/10 text-zinc-500 transition-all duration-300 group-hover:bg-white/10 group-hover:text-white">
-                <ArrowRight size={16} strokeWidth={2.5} />
+            {/* Solid Action Indicator */}
+            <div className="relative z-10 w-9 h-9 rounded-full flex items-center justify-center bg-white/10 border border-white/20 text-white transition-all duration-300 group-hover:scale-110">
+                <ArrowRight size={18} strokeWidth={3} />
             </div>
         </motion.button>
-    )
-}
     )
 }
 
