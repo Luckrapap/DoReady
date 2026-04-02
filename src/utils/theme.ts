@@ -2,30 +2,19 @@ import { Capacitor, registerPlugin, type PluginListenerHandle } from '@capacitor
 
 /**
  * Static Theme Configuration
- * Ensures we don't have to 'read the DOM' which is slow/fragile on boot.
+ * Simplified to only support Slate theme.
  */
 export const THEME_CONFIG = {
   slate: { light: '#fafafa', dark: '#020617' },
-  blue: { light: '#f4f9ff', dark: '#060914' },
-  purple: { light: '#fdfaff', dark: '#0a0914' },
-  green: { light: '#f2fff5', dark: '#050a08' },
-  red: { light: '#fff2f2', dark: '#0f0505' },
-  orange: { light: '#fffaf2', dark: '#0f0a05' },
-  yellow: { light: '#fffff2', dark: '#0c0b05' },
-  pink: { light: '#fff0f6', dark: '#0f0508' },
 } as const
 
-export type Preset = keyof typeof THEME_CONFIG | 'custom'
+export type Preset = 'slate'
 
 /**
  * Returns the exact background hex for a given state
  */
-export const getThemeBackground = (isDark: boolean, preset: string): string => {
-  if (preset in THEME_CONFIG) {
-    return THEME_CONFIG[preset as keyof typeof THEME_CONFIG][isDark ? 'dark' : 'light']
-  }
-  // Fallback for custom or unknown
-  return isDark ? '#020617' : '#fafafa'
+export const getThemeBackground = (isDark: boolean, _preset?: string): string => {
+  return THEME_CONFIG.slate[isDark ? 'dark' : 'light']
 }
 
 /**

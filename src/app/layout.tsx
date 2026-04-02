@@ -72,21 +72,16 @@ export default function RootLayout({
                 (function() {
                   try {
                     var t = localStorage.getItem('theme') || 'system';
-                    var p = localStorage.getItem('theme-preset') || 'slate';
-                    var h = localStorage.getItem('theme-custom-hue') || '220';
-                    var isDark = t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-                    
                     var doc = document.documentElement;
-                    var apply = function(d, p, h) {
+                    var apply = function() {
                       var isDark = t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
                       doc.classList.remove('light', 'dark');
                       doc.classList.add(isDark ? 'dark' : 'light');
                       doc.style.setProperty('color-scheme', isDark ? 'dark' : 'light');
-                      if (p !== 'slate') doc.classList.add('theme-' + p);
-                      if (p === 'custom') doc.style.setProperty('--custom-hue', h);
+                      // No longer using presets (chromatic accents)
                     };
-                    apply(t, p, h);
-                    setTimeout(function() { apply(t, p, h); }, 0);
+                    apply();
+                    setTimeout(apply, 0);
                   } catch (e) {}
                 })();
             `,
