@@ -31,7 +31,7 @@ export default function AppNavigation() {
 
     // Helper for haptic feedback
     const triggerHaptic = () => {
-        Haptics.impact({ style: ImpactStyle.Light }).catch(() => {})
+        Haptics.impact({ style: ImpactStyle.Light }).catch(() => { })
     }
 
     return (
@@ -47,15 +47,15 @@ export default function AppNavigation() {
                 </div>
 
                 <nav className="flex flex-col gap-2 flex-1 relative overflow-visible">
-                    <button 
+                    <button
                         onClick={() => {
                             setStartIndex(prev => Math.max(0, prev - 1))
                             triggerHaptic()
                         }}
                         className={cn(
                             "flex justify-center items-center py-2 transition-all z-10",
-                            startIndex > 0 
-                                ? "opacity-100 text-[var(--accent)] hover:scale-125 pointer-events-auto" 
+                            startIndex > 0
+                                ? "opacity-100 text-[var(--accent)] hover:scale-125 pointer-events-auto"
                                 : "opacity-0 pointer-events-none"
                         )}
                     >
@@ -63,7 +63,7 @@ export default function AppNavigation() {
                     </button>
 
                     <div className="relative overflow-hidden" style={{ height: 352 }}>
-                        <motion.div 
+                        <motion.div
                             className="flex flex-col gap-2"
                             initial={false}
                             animate={{ y: startIndex * -60 }}
@@ -89,29 +89,22 @@ export default function AppNavigation() {
                                     >
                                         <link.icon size={22} className={cn(isActive && "stroke-[2.5px]")} />
                                         {link.name}
-                                        {isActive && (
-                                            <motion.div
-                                                layoutId="nav-active-desktop"
-                                                className="absolute left-0 w-1.5 h-8 rounded-r-full shadow-[0_0_10px_var(--accent)]"
-                                                style={{ backgroundColor: 'var(--accent)' }}
-                                                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                                            />
-                                        )}
+
                                     </Link>
                                 )
                             })}
                         </motion.div>
                     </div>
 
-                    <button 
+                    <button
                         onClick={() => {
                             setStartIndex(prev => Math.min(mainLinks.length - MAX_VISIBLE, prev + 1))
                             triggerHaptic()
                         }}
                         className={cn(
                             "flex justify-center items-center py-2 transition-all z-10",
-                            startIndex + MAX_VISIBLE < mainLinks.length 
-                                ? "opacity-100 text-[var(--accent)] hover:scale-125 pointer-events-auto" 
+                            startIndex + MAX_VISIBLE < mainLinks.length
+                                ? "opacity-100 text-[var(--accent)] hover:scale-125 pointer-events-auto"
                                 : "opacity-0 pointer-events-none"
                         )}
                     >
@@ -140,14 +133,7 @@ export default function AppNavigation() {
                                 >
                                     <link.icon size={22} className={cn(isActive && "stroke-[2.5px]")} />
                                     {link.name}
-                                    {isActive && (
-                                        <motion.div
-                                            layoutId="nav-active-desktop-bottom"
-                                            className="absolute left-0 w-1.5 h-8 rounded-r-full shadow-[0_0_10px_var(--accent)]"
-                                            style={{ backgroundColor: 'var(--accent)' }}
-                                            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                                        />
-                                    )}
+
                                 </Link>
                             )
                         })}

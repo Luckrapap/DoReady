@@ -25,7 +25,7 @@ export default function MobileNavigationMenu() {
     const settingsLink = { name: 'Configuración', href: '/settings', icon: Settings }
 
     const triggerHaptic = () => {
-        Haptics.impact({ style: ImpactStyle.Light }).catch(() => {})
+        Haptics.impact({ style: ImpactStyle.Light }).catch(() => { })
     }
 
     return (
@@ -58,18 +58,11 @@ export default function MobileNavigationMenu() {
                         >
                             <link.icon size={28} className={cn(isActive && "stroke-[2.5px]", !isActive && "opacity-80")} />
                             {link.name}
-                            {isActive && (
-                                <motion.div
-                                    layoutId="nav-active-mobile"
-                                    className="absolute left-0 w-1.5 h-10 rounded-r-full shadow-[0_0_15px_var(--accent)]"
-                                    style={{ backgroundColor: 'var(--accent)' }}
-                                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                                />
-                            )}
+
                         </Link>
                     )
                 })}
-                
+
                 {/* Mobile Settings & Profile anchored at bottom */}
                 <div className="mt-auto flex flex-col gap-3 pt-6 border-t border-zinc-200 dark:border-white/5">
                     {[settingsLink, profileLink].map((link) => {
