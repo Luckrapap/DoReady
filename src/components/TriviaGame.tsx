@@ -212,7 +212,7 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                     </div>
                 </div>
 
-                <div className="flex flex-col px-4 gap-3 sm:gap-4 mt-8 md:mt-12 pb-16">
+                <div className="flex flex-col px-4 gap-4 mt-12 md:mt-20 pb-20">
                     <ModeCard
                         title="Chill"
                         icon="🌿"
@@ -506,41 +506,62 @@ function ModeCard({ title, icon, description, onClick, colorTheme }: {
     onClick: () => void,
     colorTheme: 'green' | 'purple' | 'orange' | 'blue'
 }) {
-    const classMap = {
-        green: { badge: "bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 border-emerald-500/20", glow: "group-hover:border-emerald-500/40" },
-        purple: { badge: "bg-violet-500/10 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400 border-violet-500/20", glow: "group-hover:border-violet-500/40" },
-        orange: { badge: "bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400 border-amber-500/20", glow: "group-hover:border-amber-500/40" },
-        blue: { badge: "bg-sky-500/10 text-sky-600 dark:bg-sky-500/20 dark:text-sky-400 border-sky-500/20", glow: "group-hover:border-sky-500/40" }
+    const themeStyles = {
+        green: { accent: "text-emerald-400", bg: "from-emerald-500/20", shadow: "shadow-emerald-500/20", border: "group-hover:border-emerald-500/50" },
+        purple: { accent: "text-violet-400", bg: "from-violet-500/20", shadow: "shadow-violet-500/20", border: "group-hover:border-violet-500/50" },
+        orange: { accent: "text-amber-400", bg: "from-amber-500/20", shadow: "shadow-amber-500/20", border: "group-hover:border-amber-500/50" },
+        blue: { accent: "text-sky-400", bg: "from-sky-500/20", shadow: "shadow-sky-500/20", border: "group-hover:border-sky-500/50" }
     }
-    const color = classMap[colorTheme]
+    const theme = themeStyles[colorTheme]
 
     return (
         <motion.button
-            whileHover={{ scale: 1.01, y: -1 }}
-            whileTap={{ scale: 0.99 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={onClick}
             className={cn(
-                "group relative w-full p-4 sm:p-5 rounded-[1.5rem] bg-white dark:bg-zinc-950/80 border border-zinc-200 dark:border-zinc-800",
-                "flex items-center gap-4 text-left transition-all duration-300 shadow-sm",
-                "hover:shadow-md dark:hover:shadow-none",
-                color.glow
+                "group relative w-full p-6 rounded-[2rem] bg-zinc-900/40 dark:bg-zinc-900/60 transition-all duration-500 text-left flex items-center gap-6 overflow-hidden",
+                "border border-white/5 border-t-white/10 border-l-white/10 shadow-2xl backdrop-blur-xl",
+                theme.border
             )}
         >
-            <div className={cn("w-14 h-14 shrink-0 flex items-center justify-center rounded-2xl border text-3xl transition-transform duration-300 group-hover:scale-105", color.badge)}>
-                {icon}
+            {/* Ambient Background Glow */}
+            <div className={cn(
+                "absolute -right-20 -top-20 w-40 h-40 rounded-full blur-[80px] opacity-0 group-hover:opacity-30 transition-opacity duration-700 bg-gradient-to-br",
+                theme.bg
+            )} />
+
+            {/* Left Decorator (Icon Aura) */}
+            <div className="relative shrink-0 flex items-center justify-center">
+                <div className={cn(
+                    "absolute inset-0 blur-2xl opacity-20 scale-150 transition-transform duration-500 group-hover:scale-[2]",
+                    theme.bg.replace("from-", "bg-")
+                )} />
+                <span className="relative z-10 text-5xl drop-shadow-2xl transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
+                    {icon}
+                </span>
             </div>
-            
-            <div className="flex flex-col gap-1 flex-1">
-                <h3 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-                    {title}
-                </h3>
-                <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400 leading-tight">
+
+            {/* Text Hierarchy */}
+            <div className="relative z-10 flex flex-col items-start gap-1 flex-1">
+                <div className="flex items-center gap-2">
+                    <h3 className="text-2xl font-black tracking-tight text-white dark:text-zinc-50 drop-shadow-sm">
+                        {title}
+                    </h3>
+                    <div className={cn("w-1 h-1 rounded-full animate-pulse", theme.bg.replace("from-", "bg-"))} />
+                </div>
+                <p className="text-sm font-bold text-zinc-400 dark:text-zinc-500 leading-tight tracking-wide max-w-[90%] opacity-80 group-hover:opacity-100 transition-opacity">
                     {description}
                 </p>
             </div>
-            
-            <div className="w-8 h-8 rounded-full border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-zinc-400 transition-colors duration-300 group-hover:bg-zinc-100 dark:group-hover:bg-zinc-800">
-                <ArrowRight size={16} />
+
+            {/* Studio Arrow (Floating) */}
+            <div className={cn(
+                "relative z-10 w-10 h-10 rounded-full flex items-center justify-center bg-white/5 border border-white/10 text-zinc-500 transition-all duration-500",
+                "group-hover:translate-x-1 group-hover:text-white group-hover:bg-white/10 group-hover:border-white/20 shadow-inner",
+                theme.shadow ? `group-hover:shadow-[0_0_20px_-2px_rgba(255,255,255,0.1)]` : ""
+            )}>
+                <ArrowRight size={20} strokeWidth={3} />
             </div>
         </motion.button>
     )
