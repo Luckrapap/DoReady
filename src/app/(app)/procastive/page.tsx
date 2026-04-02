@@ -10,13 +10,10 @@ export default function ProcastivePage() {
     const [activeGame, setActiveGame] = useState<string | null>(null)
 
     return (
-        <main className={cn(
-            "w-full px-2 md:px-4 flex flex-col items-center selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black relative",
-            activeGame ? "h-full overflow-hidden pt-6 justify-start" : "min-h-[60dvh] md:min-h-screen py-4 md:py-6 justify-center"
-        )}>
+        <main className="w-full h-full overflow-hidden px-2 md:px-4 flex flex-col items-center selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black relative pt-6 justify-start">
             <div className={cn(
-                "w-full max-w-5xl flex flex-col transition-all duration-500",
-                activeGame ? "h-full mb-0" : "mb-20 md:mb-24 mt-2 md:mt-12"
+                "w-full max-w-5xl flex flex-col transition-all duration-500 h-full mb-0",
+                !activeGame ? "mt-2 md:mt-12" : ""
             )}>
                 <AnimatePresence mode="wait">
                     {!activeGame ? (
