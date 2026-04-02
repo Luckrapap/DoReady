@@ -97,7 +97,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${outfit.variable} ${playfair.variable} antialiased select-none fixed inset-0 w-full h-[100dvh] overflow-hidden overscroll-none`}
       >
         <ThemeHandler />
-        <main className="h-full w-full relative">
+        <main className="h-full w-full relative pt-safe pb-safe">
           {children}
         </main>
         <Toaster richColors closeButton position="top-right" />

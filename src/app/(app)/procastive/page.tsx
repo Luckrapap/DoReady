@@ -12,7 +12,7 @@ export default function ProcastivePage() {
     return (
         <main className={cn(
             "w-full h-full px-2 md:px-4 flex flex-col items-center selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black relative justify-start",
-            !activeGame ? "overflow-y-auto pt-20 pb-24" : "overflow-hidden pt-16 pt-safe"
+            !activeGame ? "overflow-y-auto pt-6 md:pt-12 pb-24" : "overflow-hidden pt-6"
         )}>
             <div className={cn(
                 "w-full max-w-5xl flex flex-col transition-all duration-500 h-full mb-0",
