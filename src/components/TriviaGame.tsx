@@ -536,8 +536,8 @@ function ModeCard({ title, icon, description, onClick, colorTheme, index }: {
                 "rounded-[2rem] border-2 shadow-sm hover:shadow-xl"
             )}
             style={{
-                backgroundColor: '#0f172a',
-                borderColor: '#1e293b'
+                backgroundColor: 'var(--surface)',
+                borderColor: 'var(--border)'
             }}
         >
             <div className="relative z-10 flex items-center gap-6">
@@ -553,13 +553,13 @@ function ModeCard({ title, icon, description, onClick, colorTheme, index }: {
                 <div className="flex-1">
                     <h3 className={cn(
                         "text-xl font-bold mb-1 transition-colors",
-                        colorTheme === 'green' ? 'text-emerald-400' :
-                        colorTheme === 'orange' ? 'text-orange-400' :
-                        colorTheme === 'purple' ? 'text-purple-400' : 'text-blue-400'
+                        colorTheme === 'green' ? 'text-emerald-600 dark:text-emerald-400' :
+                        colorTheme === 'orange' ? 'text-orange-600 dark:text-orange-400' :
+                        colorTheme === 'purple' ? 'text-purple-600 dark:text-purple-400' : 'text-blue-600 dark:text-blue-400'
                     )}>
                         {title}
                     </h3>
-                    <p className="text-sm text-zinc-400 leading-tight">
+                    <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-tight">
                         {description}
                     </p>
                 </div>

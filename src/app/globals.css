@@ -9,6 +9,7 @@
   --background: #fafafa;
   --foreground: #09090b;
   --card: #ffffff;
+  --surface: #ffffff;
   --border: #e4e4e7;
   --accent: #0f172a;
 }
@@ -17,6 +18,7 @@
   --background: #020617;
   --foreground: #f8fafc;
   --card: #0f172a;
+  --surface: #0f172a;
   --border: #1e293b;
   --accent: #334155;
 }
