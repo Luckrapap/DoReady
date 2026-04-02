@@ -15,7 +15,7 @@ export default function Logo({ className, size, style }: LogoProps) {
 
     return (
         <div 
-            className={cn("shrink-0 bg-current", className)}
+            className={cn("shrink-0 bg-zinc-950 dark:bg-zinc-50", className)}
             style={{ 
                 width: logoWidth,
                 height: logoHeight,
