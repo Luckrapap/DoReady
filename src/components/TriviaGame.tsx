@@ -101,20 +101,21 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
         fetchTrivia(undefined, 'focus', customTopic)
     }
     const renderHeaderContent = (subtitle: string) => (
-        <div className="flex items-center gap-4">
-            <div className="relative group">
-                <div className="absolute -inset-2 bg-blue-500/10 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-                <div className="relative w-12 h-12 rounded-2xl flex items-center justify-center shadow-xl border border-white/10 overflow-hidden bg-zinc-900/80 backdrop-blur-sm text-zinc-100">
-                    <Gamepad2 size={24} strokeWidth={2.5} />
+        <div className="flex items-center gap-5">
+            <div className="relative">
+                {/* External soft blue glow behind the icon */}
+                <div className="absolute -inset-2 bg-blue-500/20 rounded-2xl blur-xl opacity-60 animate-pulse"></div>
+                <div className="relative w-14 h-14 rounded-2xl flex items-center justify-center border border-white/10 bg-[#e2e8f0] text-zinc-900 shadow-2xl">
+                    <Gamepad2 size={28} strokeWidth={2.5} />
                 </div>
             </div>
             <div className="flex flex-col items-start justify-center">
-                <h2 className="text-2xl font-black tracking-tight text-white leading-none">
+                <h2 className="text-3xl font-black tracking-tight text-white leading-none">
                     {gameMode === 'focus' ? 'Modo Enfoque' : 'Trivia General'}
                 </h2>
-                <div className="flex items-center gap-1.5 mt-2">
+                <div className="flex items-center gap-1.5 mt-2.5">
                     <div className="w-1.5 h-1.5 rounded-full bg-zinc-600"></div>
-                    <p className="text-[9px] font-black uppercase tracking-[0.25em] text-zinc-500 leading-none">
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500 leading-none">
                         {subtitle}
                     </p>
                 </div>
@@ -124,26 +125,26 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
 
     if (isEnteringTopic) {
         return (
-            <div className="w-full max-w-2xl mx-auto h-full flex flex-col pt-12">
-                <div className="flex items-center justify-between mb-10 px-6 relative shrink-0">
-                    <div className="flex items-center gap-4">
+            <div className="w-full max-w-2xl mx-auto h-full flex flex-col pt-16">
+                <div className="flex items-center justify-between mb-12 px-8 relative shrink-0">
+                    <div className="flex items-center gap-5">
                         <motion.button
                             onClick={() => setIsEnteringTopic(false)}
                             whileHover={{ scale: 1.1, x: -2 }}
                             whileTap={{ scale: 0.9 }}
-                            className="w-10 h-10 rounded-full flex items-center justify-center border-2 border-zinc-200 dark:border-zinc-800 bg-white/5 dark:bg-black/20 text-zinc-900 dark:text-zinc-50 backdrop-blur-md"
+                            className="w-12 h-12 rounded-full flex items-center justify-center border border-white/5 bg-[#18181b] text-zinc-400"
                         >
-                            <ChevronLeft size={24} strokeWidth={2.5} />
+                            <ChevronLeft size={28} strokeWidth={2.5} />
                         </motion.button>
                         {renderHeaderContent("Personalizado")}
                     </div>
                 </div>
 
-                <div className="flex-1 flex flex-col justify-center px-8 gap-8">
-                    <div className="text-center space-y-4">
-                        <span className="text-6xl drop-shadow-2xl flex justify-center">🎯</span>
-                        <h3 className="text-2xl font-black tracking-tight text-zinc-900 dark:text-zinc-50">Tú pones las reglas</h3>
-                        <p className="text-sm text-zinc-500 font-bold uppercase tracking-widest">¿Sobre qué desafío quieres hoy?</p>
+                <div className="flex-1 flex flex-col justify-center px-10 gap-10">
+                    <div className="text-center space-y-6">
+                        <span className="text-8xl flex justify-center">🎯</span>
+                        <h3 className="text-3xl font-black tracking-tight text-white">Tú pones las reglas</h3>
+                        <p className="text-sm text-zinc-500 font-black uppercase tracking-[0.4em]">¿Qué tema desafiamos hoy?</p>
                     </div>
 
                     <div className="relative">
@@ -154,10 +155,10 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                             onChange={(e) => setCustomTopic(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleConfirmFocus()}
                             placeholder="Ej: Mitología Griega, IA, Formula 1..."
-                            className="w-full p-8 rounded-[3rem] border-2 border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-xl font-bold focus:border-blue-500 outline-none transition-all placeholder:text-zinc-300 dark:placeholder:text-zinc-800 shadow-inner"
+                            className="w-full p-10 rounded-[3.5rem] border border-white/5 bg-[#111114] text-2xl font-bold focus:border-white/20 outline-none transition-all placeholder:text-zinc-800 text-white shadow-2xl"
                         />
-                        <div className="absolute right-8 top-1/2 -translate-y-1/2">
-                            <span className="text-[10px] font-black text-zinc-300 dark:text-zinc-700 uppercase tracking-[0.3em]">Tema</span>
+                        <div className="absolute right-10 top-1/2 -translate-y-1/2">
+                            <span className="text-xs font-black text-zinc-800 uppercase tracking-[0.4em]">Tema</span>
                         </div>
                     </div>
 
@@ -167,13 +168,13 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                         disabled={!customTopic.trim() || isFetching}
                         onClick={handleConfirmFocus}
                         className={cn(
-                            "w-full p-8 rounded-[3rem] font-black text-xl transition-all shadow-2xl overflow-hidden relative",
+                            "w-full p-8 rounded-[3.5rem] font-black text-xl transition-all",
                             customTopic.trim()
-                                ? "bg-zinc-950 text-white shadow-blue-500/20"
-                                : "bg-zinc-100 dark:bg-zinc-900 text-zinc-400 cursor-not-allowed"
+                                ? "bg-white text-zinc-950"
+                                : "bg-zinc-900 text-zinc-700 cursor-not-allowed"
                         )}
                     >
-                        {isFetching ? "Preparando..." : "COMENZAR"}
+                        {isFetching ? "PREPARANDO..." : "EMPEZAR"}
                     </motion.button>
                 </div>
             </div>
@@ -182,16 +183,16 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
 
     if (gameMode === null) {
         return (
-            <div className="w-full max-w-2xl mx-auto h-full flex flex-col pt-12 md:pt-16 pb-12">
-                <div className="flex items-center justify-between mb-10 px-6 relative shrink-0">
-                    <div className="flex items-center gap-4">
+            <div className="w-full max-w-2xl mx-auto h-full flex flex-col pt-16 pb-12 overflow-hidden">
+                <div className="flex items-center justify-between mb-12 px-8 relative shrink-0">
+                    <div className="flex items-center gap-5">
                         <motion.button
                             onClick={onBack}
                             whileHover={{ scale: 1.1, x: -2 }}
                             whileTap={{ scale: 0.9 }}
-                            className="w-10 h-10 rounded-full flex items-center justify-center border-2 border-zinc-200 dark:border-zinc-800 bg-white/5 dark:bg-black/20 text-zinc-900 dark:text-zinc-50 backdrop-blur-md"
+                            className="w-12 h-12 rounded-full flex items-center justify-center border border-white/5 bg-[#18181b] text-zinc-400 shadow-xl"
                         >
-                            <ChevronLeft size={24} strokeWidth={2.5} />
+                            <ChevronLeft size={28} strokeWidth={2.5} />
                         </motion.button>
                         {renderHeaderContent("Selecciona un modo")}
                     </div>
@@ -201,17 +202,16 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                     initial="hidden"
                     animate="visible"
                     variants={{
-                        hidden: { opacity: 0, y: 30 },
+                        hidden: { opacity: 0 },
                         visible: {
                             opacity: 1,
-                            y: 0,
                             transition: {
                                 staggerChildren: 0.1,
-                                delayChildren: 0.3
+                                delayChildren: 0.2
                             }
                         }
                     }}
-                    className="flex flex-col px-4 gap-4 overflow-y-auto no-scrollbar"
+                    className="flex-1 flex flex-col px-4 gap-5 overflow-hidden"
                 >
                     <ModeCard
                         title="Chill"
@@ -257,10 +257,10 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                     gameMode === 'focus' ? 'Enfoque' : 'General';
 
     return (
-        <div className="w-full max-w-2xl mx-auto h-full flex flex-col pt-12 md:pt-16">
+        <div className="w-full max-w-2xl mx-auto h-full flex flex-col pt-16">
             {/* Header & Streak */}
-            <div className="flex items-center justify-between mb-8 px-6 relative shrink-0">
-                <div className="flex items-center gap-4 w-full">
+            <div className="flex items-center justify-between mb-10 px-8 relative shrink-0">
+                <div className="flex items-center gap-5 w-full">
                     {onBack && (
                         <motion.button
                             onClick={() => {
@@ -269,9 +269,9 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                             }}
                             whileHover={{ scale: 1.1, x: -2 }}
                             whileTap={{ scale: 0.9 }}
-                            className="w-10 h-10 rounded-full flex items-center justify-center border-2 border-zinc-200 dark:border-zinc-800 bg-white/5 dark:bg-black/20 text-zinc-900 dark:text-zinc-50 backdrop-blur-md"
+                            className="w-12 h-12 rounded-full flex items-center justify-center border border-white/5 bg-[#18181b] text-zinc-400"
                         >
-                            <ChevronLeft size={24} strokeWidth={2.5} />
+                            <ChevronLeft size={28} strokeWidth={2.5} />
                         </motion.button>
                     )}
                     {renderHeaderContent(currentModeSubtitle)}
@@ -284,20 +284,20 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
             </div>
 
             {/* Game Content Area */}
-            <div className="flex-1 flex flex-col justify-start md:justify-center overflow-y-auto no-scrollbar px-4">
+            <div className="flex-1 flex flex-col justify-start md:justify-center overflow-y-auto no-scrollbar px-5">
                 <AnimatePresence mode="wait">
                     {gameState === 'loading' ? (
                         <motion.div
                             key="loading"
-                            className="flex-1 flex flex-col items-center justify-center gap-6 p-6 transition-all duration-500"
+                            className="flex-1 flex flex-col items-center justify-center gap-8 p-10 transition-all duration-500"
                         >
-                            <div className="relative w-16 h-16">
+                            <div className="relative w-20 h-20">
                                 {[...Array(12)].map((_, i) => (
                                     <motion.div
                                         key={i}
-                                        className="absolute left-[30px] top-0 w-[5px] h-[16px] rounded-full bg-zinc-400 dark:bg-zinc-600"
-                                        style={{ transformOrigin: '2.5px 32px', rotate: i * 30 }}
-                                        animate={{ opacity: [0.15, 1, 0.15] }}
+                                        className="absolute left-[38px] top-0 w-[4px] h-[20px] rounded-full bg-zinc-700"
+                                        style={{ transformOrigin: '2px 40px', rotate: i * 30 }}
+                                        animate={{ opacity: [0.1, 1, 0.1] }}
                                         transition={{
                                             repeat: Infinity,
                                             duration: 1.2,
@@ -307,21 +307,21 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                                     />
                                 ))}
                             </div>
-                            <p className="text-base font-bold text-zinc-400 dark:text-zinc-600 uppercase tracking-[0.25em] text-center">
+                            <p className="text-sm font-black text-zinc-600 uppercase tracking-[0.4em] text-center">
                                 Generando pregunta
                             </p>
                         </motion.div>
                     ) : gameState === 'error' ? (
                         <motion.div
                             key="error"
-                            className="p-12 border-2 rounded-[3.5rem] transition-colors duration-500 bg-zinc-950/50 dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800"
+                            className="p-16 border border-white/5 rounded-[4rem] bg-[#111114]"
                         >
-                            <div className="flex flex-col items-center gap-6">
-                                <span className="text-4xl text-red-500">❌</span>
-                                <p className="text-red-500 font-bold text-center">{errorMessage}</p>
+                            <div className="flex flex-col items-center gap-8">
+                                <span className="text-6xl flex justify-center">❌</span>
+                                <p className="text-red-500 font-black text-center text-xl">{errorMessage}</p>
                                 <button
                                     onClick={() => fetchTrivia()}
-                                    className="px-8 py-3 rounded-2xl font-black text-sm bg-zinc-950 text-white hover:scale-105 transition-all"
+                                    className="px-10 py-4 rounded-[2rem] font-black text-base bg-white text-zinc-950 hover:scale-105 transition-all"
                                 >
                                     REINTENTAR
                                 </button>
@@ -330,23 +330,23 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                     ) : (
                         <motion.div
                             key="content"
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            className="flex flex-col w-full max-h-full p-8 md:p-10 border-2 rounded-[3.5rem] shadow-2xl transition-colors duration-500 overflow-hidden bg-zinc-950/50 dark:bg-zinc-950/50 border-white/5"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="flex flex-col w-full max-h-full p-10 border border-white/5 rounded-[3.5rem] bg-[#111114] shadow-2xl overflow-hidden"
                         >
                             {/* Question with dynamic font size */}
-                            <div className="flex-1 overflow-y-auto no-scrollbar min-h-0 mb-8 md:mb-10">
+                            <div className="flex-1 overflow-y-auto no-scrollbar min-h-0 mb-10">
                                 <h3 className={cn(
-                                    "font-black text-zinc-900 dark:text-zinc-100 leading-tight transition-all text-center md:text-left",
-                                    (currentTrivia?.question.length || 0) > 150 ? "text-xl md:text-2xl" :
-                                        (currentTrivia?.question.length || 0) > 100 ? "text-2xl md:text-3xl" :
-                                            "text-3xl md:text-4xl"
+                                    "font-black text-white leading-tight transition-all text-center md:text-left",
+                                    (currentTrivia?.question.length || 0) > 150 ? "text-2xl" :
+                                        (currentTrivia?.question.length || 0) > 100 ? "text-3xl" :
+                                            "text-4xl"
                                 )}>
                                     {currentTrivia?.question}
                                 </h3>
                             </div>
 
-                            <div className="grid grid-cols-1 gap-3 shrink-0">
+                            <div className="grid grid-cols-1 gap-4 shrink-0">
                                 {currentTrivia?.options.map((option, idx) => {
                                     const isSelected = selectedAnswer === option
                                     const isCorrect = gameState === 'answered' && option === currentTrivia?.correctAnswer
@@ -358,16 +358,16 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                                             onClick={() => handleAnswer(option)}
                                             disabled={gameState === 'answered'}
                                             className={cn(
-                                                "group relative w-full p-5 md:p-6 text-left rounded-[2rem] font-bold transition-all border-2 overflow-hidden",
+                                                "group relative w-full p-6 text-left rounded-[2.5rem] font-black transition-all border border-white/5 overflow-hidden",
                                                 gameState === 'playing'
-                                                    ? "hover:border-zinc-900 dark:hover:border-zinc-100 hover:scale-[1.02]"
+                                                    ? "hover:bg-white/5 hover:scale-[1.02]"
                                                     : "cursor-default"
                                             )}
                                             style={{
                                                 backgroundColor: isCorrect
-                                                    ? 'rgba(16, 185, 129, 0.1)'
+                                                    ? 'rgba(16, 185, 129, 0.15)'
                                                     : isWrong
-                                                        ? 'rgba(239, 68, 68, 0.1)'
+                                                        ? 'rgba(239, 68, 68, 0.15)'
                                                         : 'rgba(255, 255, 255, 0.02)',
                                                 borderColor: isCorrect
                                                     ? '#10b981'
@@ -376,19 +376,19 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                                                         : 'rgba(255, 255, 255, 0.05)'
                                             }}
                                         >
-                                            <div className="flex items-center justify-between">
+                                            <div className="flex items-center justify-between px-2">
                                                 <span className={cn(
-                                                    "text-base md:text-lg tracking-tight transition-colors",
+                                                    "text-lg transition-colors",
                                                     isCorrect ? "text-emerald-400" :
                                                         isWrong ? "text-red-400" :
-                                                            "text-zinc-300"
+                                                            "text-zinc-400"
                                                 )}>
                                                     {option}
                                                 </span>
                                                 <ArrowRight
-                                                    size={18}
+                                                    size={22}
                                                     className={cn(
-                                                        "transition-all",
+                                                        "transition-all text-zinc-700",
                                                         gameState === 'playing' ? "opacity-0 group-hover:opacity-100 group-hover:translate-x-1" : "opacity-0"
                                                     )}
                                                 />
@@ -403,7 +403,7 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
             </div>
 
             {/* Selector de Acción Inferior */}
-            <div className="mt-auto px-4 pt-4 pb-8 grid grid-cols-4 gap-3 shrink-0 w-full transition-opacity"
+            <div className="mt-auto px-6 pt-6 pb-12 grid grid-cols-4 gap-4 shrink-0 w-full transition-opacity"
                 style={{ opacity: gameState === 'answered' ? 1 : 0.5 }}
             >
                 <motion.button
@@ -411,9 +411,9 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                     onClick={() => setShowContext(true)}
                     whileHover={{ scale: gameState === 'answered' ? 1.05 : 1 }}
                     whileTap={{ scale: gameState === 'answered' ? 0.95 : 1 }}
-                    className="col-span-1 flex items-center justify-center py-5 rounded-[2rem] transition-all border-2 border-white/5 bg-zinc-900/50 text-zinc-300"
+                    className="col-span-1 flex items-center justify-center py-6 rounded-[2.5rem] border border-white/5 bg-[#111114] text-zinc-500"
                 >
-                    <Pin size={22} />
+                    <Pin size={28} />
                 </motion.button>
 
                 <motion.button
@@ -421,9 +421,9 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                     onClick={() => setShowFact(true)}
                     whileHover={{ scale: gameState === 'answered' ? 1.05 : 1 }}
                     whileTap={{ scale: gameState === 'answered' ? 0.95 : 1 }}
-                    className="col-span-1 flex items-center justify-center py-5 rounded-[2rem] transition-all border-2 border-white/5 bg-zinc-900/50 text-zinc-300"
+                    className="col-span-1 flex items-center justify-center py-6 rounded-[2.5rem] border border-white/5 bg-[#111114] text-zinc-500"
                 >
-                    <Lightbulb size={22} />
+                    <Lightbulb size={28} />
                 </motion.button>
 
                 <motion.button
@@ -431,7 +431,7 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                     onClick={() => fetchTrivia()}
                     whileHover={{ scale: gameState === 'answered' ? 1.02 : 1 }}
                     whileTap={{ scale: gameState === 'answered' ? 0.98 : 1 }}
-                    className="col-span-2 flex items-center justify-center py-5 rounded-[2rem] transition-all border-2 border-zinc-100 bg-white dark:bg-zinc-50 dark:border-zinc-50 text-zinc-950 font-black"
+                    className="col-span-2 flex items-center justify-center py-6 rounded-[2.5rem] bg-white text-zinc-950 font-black text-xl"
                 >
                     SIGUIENTE
                 </motion.button>
@@ -442,7 +442,7 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                 isOpen={showContext}
                 onClose={() => setShowContext(false)}
                 title="Contexto"
-                icon={<Pin size={20} />}
+                icon={<Pin size={24} />}
                 content={currentTrivia?.explanation}
             />
 
@@ -450,7 +450,7 @@ export default function TriviaGame({ onBack }: TriviaGameProps) {
                 isOpen={showFact}
                 onClose={() => setShowFact(false)}
                 title="Dato curioso"
-                icon={<Lightbulb size={20} />}
+                icon={<Lightbulb size={24} />}
                 content={currentTrivia?.funFact}
             />
         </div>
@@ -466,10 +466,10 @@ function StreakBadge({ count }: { count: number }) {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             key={count}
-            className="flex items-center gap-1.5 px-4 py-2 bg-orange-500/10 text-orange-500 rounded-full border border-orange-500/20"
+            className="flex items-center gap-2 px-5 py-2.5 bg-orange-500/10 text-orange-500 rounded-full border border-orange-500/20 shadow-xl"
         >
-            <Flame size={20} fill="currentColor" />
-            <span className="text-sm font-black italic">
+            <Flame size={24} fill="currentColor" />
+            <span className="text-base font-black italic">
                 {count}
             </span>
         </motion.div>
@@ -488,47 +488,44 @@ function ModeCard({ title, icon, description, onClick, colorTheme, index }: {
     return (
         <motion.button
             variants={{
-                hidden: { opacity: 0, x: -20 },
+                hidden: { opacity: 0, x: -10 },
                 visible: { opacity: 1, x: 0 }
             }}
-            whileHover={{ y: -4, scale: 1.005 }}
-            whileTap={{ scale: 0.985 }}
+            whileHover={{ scale: 1.005 }}
+            whileTap={{ scale: 0.995 }}
             onClick={onClick}
             className={cn(
-                "relative group w-full text-left p-8 transition-all duration-500",
-                "rounded-[3.2rem] border-2 border-white/5 bg-zinc-950 shadow-2xl"
+                "relative group w-full text-left p-9 transition-all duration-300",
+                "rounded-[3.5rem] border border-white/5 bg-[#111114]"
             )}
         >
-            <div className="relative z-10 flex items-center gap-8">
-                {/* Large Icon Container */}
-                <div className="w-16 h-16 shrink-0 flex items-center justify-center text-5xl drop-shadow-xl group-hover:scale-110 transition-transform duration-500">
+            <div className="relative z-10 flex items-center gap-10">
+                {/* Large Icon Box - Flat as requested */}
+                <div className="w-20 h-20 shrink-0 flex items-center justify-center text-7xl drop-shadow-md select-none">
                     {icon}
                 </div>
 
                 {/* Text Content */}
-                <div className="flex-1">
+                <div className="flex-1 flex flex-col justify-center">
                     <h3 className={cn(
-                        "text-3xl font-black mb-2 transition-all duration-500 tracking-tight",
-                        colorTheme === 'green' ? 'text-emerald-400 drop-shadow-[0_0_15px_rgba(16,185,129,0.3)]' :
-                        colorTheme === 'orange' ? 'text-orange-400 drop-shadow-[0_0_15px_rgba(251,146,60,0.3)]' :
-                        colorTheme === 'purple' ? 'text-purple-400 drop-shadow-[0_0_15px_rgba(168,85,247,0.3)]' : 
-                        'text-blue-400 drop-shadow-[0_0_15px_rgba(59,130,246,0.3)]'
+                        "text-2xl font-black mb-1.5 transition-colors tracking-tight",
+                        colorTheme === 'green' ? 'text-emerald-400' :
+                        colorTheme === 'orange' ? 'text-orange-400' :
+                        colorTheme === 'purple' ? 'text-purple-400' : 
+                        'text-blue-400'
                     )}>
                         {title}
                     </h3>
-                    <p className="text-base text-zinc-500 dark:text-zinc-500 font-medium leading-tight max-w-[200px]">
+                    <p className="text-sm text-zinc-500 font-bold leading-tight max-w-[220px]">
                         {description}
                     </p>
                 </div>
 
-                {/* Primary Action Button (The Circle in the image) */}
-                <div className="w-14 h-14 rounded-full bg-zinc-900/80 border border-white/10 flex items-center justify-center text-zinc-500 group-hover:text-white group-hover:border-white/20 transition-all duration-300 shadow-xl">
-                    <ArrowRight size={24} />
+                {/* Circular Arrow Button on the right - Solid as requested */}
+                <div className="w-16 h-16 rounded-full bg-[#1c1c1e] border border-white/5 flex items-center justify-center text-zinc-600 transition-all duration-300 group-hover:text-zinc-100 shadow-xl">
+                    <ArrowRight size={28} />
                 </div>
             </div>
-            
-            {/* Subtle Inner Glow */}
-            <div className="absolute inset-x-12 bottom-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
         </motion.button>
     )
 }
@@ -549,32 +546,32 @@ function GameModal({ isOpen, onClose, title, icon, content }: {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="absolute inset-0 bg-black/60 backdrop-blur-xl"
+                        className="absolute inset-0 bg-black/70 backdrop-blur-3xl"
                     />
                     <motion.div
-                        initial={{ scale: 0.9, opacity: 0, y: 30 }}
+                        initial={{ scale: 0.95, opacity: 0, y: 40 }}
                         animate={{ scale: 1, opacity: 1, y: 0 }}
-                        exit={{ scale: 0.9, opacity: 0, y: 30 }}
-                        className="relative w-full max-w-sm p-8 rounded-[3.5rem] border-2 border-white/10 shadow-2xl z-10 bg-zinc-950"
+                        exit={{ scale: 0.95, opacity: 0, y: 40 }}
+                        className="relative w-full max-w-md p-10 rounded-[4rem] border border-white/10 shadow-2xl z-10 bg-[#0c0c0e]"
                     >
-                        <div className="flex items-center justify-between mb-8">
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-[1.5rem] flex items-center justify-center bg-zinc-900 text-white border border-white/10"
+                        <div className="flex items-center justify-between mb-10">
+                            <div className="flex items-center gap-5">
+                                <div className="w-14 h-14 rounded-3xl flex items-center justify-center bg-[#111114] text-white border border-white/5 shadow-xl"
                                 >
                                     {icon}
                                 </div>
-                                <h2 className="text-2xl font-black text-white">{title}</h2>
+                                <h2 className="text-3xl font-black text-white tracking-tight">{title}</h2>
                             </div>
                             <button
                                 onClick={onClose}
-                                className="w-10 h-10 rounded-full flex items-center justify-center transition-colors hover:bg-zinc-800 text-zinc-500"
+                                className="w-12 h-12 rounded-full flex items-center justify-center transition-colors hover:bg-zinc-900 text-zinc-600"
                             >
-                                <X size={24} />
+                                <X size={28} />
                             </button>
                         </div>
 
-                        <div className="space-y-4">
-                            <p className="text-zinc-400 text-lg leading-relaxed font-bold">
+                        <div className="space-y-6">
+                            <p className="text-zinc-400 text-xl leading-relaxed font-bold">
                                 {content || "Sin información disponible."}
                             </p>
                         </div>
@@ -583,7 +580,7 @@ function GameModal({ isOpen, onClose, title, icon, content }: {
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={onClose}
-                            className="w-full mt-10 py-5 rounded-[2rem] font-black text-lg bg-white text-zinc-950 shadow-xl"
+                            className="w-full mt-12 py-6 rounded-[2.5rem] font-black text-xl bg-white text-zinc-950 shadow-2xl"
                         >
                             ENTENDIDO
                         </motion.button>
