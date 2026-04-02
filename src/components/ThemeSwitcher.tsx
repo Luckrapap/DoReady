@@ -47,6 +47,8 @@ export default function ThemeSwitcher() {
 
     const applyTheme = async (newTheme: Theme, newPreset: Preset, newHue?: number) => {
         const finalHue = newHue ?? customHue
+        
+        // Force state updates even if same value to ensure re-sync
         setTheme(newTheme)
         setPreset(newPreset)
         if (newHue !== undefined) setCustomHue(newHue)
@@ -56,11 +58,16 @@ export default function ThemeSwitcher() {
             localStorage.setItem('theme-preset', newPreset)
             localStorage.setItem('theme-custom-hue', finalHue.toString())
 
-            // Manually trigger a storage event so ThemeHandler catches it immediately on the same tab
+            // FORCE NATIVE SYNC IMMEDIATELY
+            if (newTheme === 'system') {
+                await syncNativeTheme()
+            }
+
+            // Manually trigger a storage event for immediate UI response
             window.dispatchEvent(Object.assign(new Event('storage'), {
                 key: 'theme',
                 newValue: newTheme,
-                skipReload: true // Prevent infinite loops
+                skipReload: true
             }))
         } catch (e) { }
     }
@@ -71,7 +78,7 @@ export default function ThemeSwitcher() {
         </div>
     )
 
-    // Calculate active index for the slider pill
+    // Robust Indexing
     const getActiveIndex = () => {
         if (theme === 'light') return 0;
         if (theme === 'dark') return 1;
@@ -86,11 +93,14 @@ export default function ThemeSwitcher() {
                     Apariencia del Sistema
                 </h3>
                 <div className="relative flex p-1.5 bg-zinc-100 dark:bg-zinc-800/50 rounded-2xl md:rounded-full overflow-hidden border border-zinc-200/50 dark:border-zinc-700/50">
-                    <motion.div
-                        className="absolute top-1.5 bottom-1.5 w-[calc((100%-12px)/3)] bg-white dark:bg-zinc-700 shadow-md rounded-xl md:rounded-full border border-zinc-200 dark:border-zinc-600 z-0"
-                        animate={{ left: `calc(${idx} * (100% - 12px) / 3 + 6px)` }}
-                        transition={{ type: "spring", stiffness: 400, damping: 30, bounce: 0.1 }}
-                    />
+                    {/* The Infallible Pill */}
+                    <div className="absolute inset-1.5 z-0 pointer-events-none">
+                        <motion.div
+                            className="h-full w-1/3 bg-white dark:bg-zinc-700 shadow-md rounded-xl md:rounded-full border border-zinc-200 dark:border-zinc-600"
+                            animate={{ x: `${idx * 100}%` }}
+                            transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                        />
+                    </div>
 
                     <ThemeButton
                         active={theme === 'light'}
@@ -227,7 +237,7 @@ export default function ThemeSwitcher() {
             </div>
             {/* Version indicator for troubleshooting */}
             <div className="flex flex-col items-center pt-2 opacity-20 hover:opacity-100 transition-opacity gap-1">
-                <span className="text-[10px] font-mono text-zinc-500">v4.1-definitive</span>
+                <span className="text-[10px] font-mono text-zinc-500">v4.2-final</span>
                 <span className="text-[8px] font-bold text-zinc-400 uppercase tracking-tighter">
                     Sensor: {mounted ? (isDarkModeRequested() ? 'Dark' : 'Light') : '...'}
                 </span>
