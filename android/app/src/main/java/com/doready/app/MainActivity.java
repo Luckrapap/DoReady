@@ -15,17 +15,11 @@ public class MainActivity extends BridgeActivity {
         // Enable Edge-to-Edge (Essential for Android 14/15)
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         
-        // Reset status and navigation bars to full transparency
-        getWindow().setStatusBarColor(Color.TRANSPARENT);
-        getWindow().setNavigationBarColor(Color.TRANSPARENT);
-
         // FORCE WebView to follow system theme (Essential for 'Device' button sync)
         WebView webView = getBridge().getWebView();
         WebSettings settings = webView.getSettings();
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             settings.setAlgorithmicDarkeningAllowed(true);
         }
-        
-        registerPlugin(SystemThemePlugin.class);
     }
 }
