@@ -19,9 +19,14 @@ public class MainActivity extends BridgeActivity {
         getWindow().setStatusBarColor(Color.TRANSPARENT);
         getWindow().setNavigationBarColor(Color.TRANSPARENT);
 
-        // FORCE WebView to follow system theme (Essential for 'Device' button sync)
+        // FORCE WebView to follow system theme at the ROM level
         WebView webView = getBridge().getWebView();
         WebSettings settings = webView.getSettings();
+        
+        // Force hardware to report correct color scheme to matchMedia
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            settings.setForceDark(WebSettings.FORCE_DARK_AUTO);
+        }
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             settings.setAlgorithmicDarkeningAllowed(true);
         }

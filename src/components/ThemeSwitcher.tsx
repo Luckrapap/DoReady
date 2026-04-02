@@ -22,8 +22,11 @@ export default function ThemeSwitcher() {
     const [customHue, setCustomHue] = useState<number>(220)
     const [showPicker, setShowPicker] = useState(false)
 
+    const [pinkFlash, setPinkFlash] = useState(true)
+
     useEffect(() => {
         setMounted(true)
+        setTimeout(() => setPinkFlash(false), 2000)
 
         try {
             setPreset((localStorage.getItem('theme-preset') as Preset) || 'slate')
@@ -88,6 +91,17 @@ export default function ThemeSwitcher() {
 
     return (
         <div className="space-y-8">
+            <AnimatePresence>
+                {pinkFlash && (
+                    <motion.div 
+                        initial={{ opacity: 1 }} 
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[9999] bg-pink-500 flex items-center justify-center text-white font-bold text-2xl"
+                    >
+                        DIAGNOSTIC v6.0 PINK
+                    </motion.div>
+                )}
+            </AnimatePresence>
             <div className="space-y-3">
                 <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50 uppercase tracking-wider px-1">
                     Apariencia del Sistema
@@ -239,7 +253,7 @@ export default function ThemeSwitcher() {
             </div>
             {/* Version indicator for troubleshooting */}
             <div className="flex flex-col items-center pt-2 opacity-20 hover:opacity-100 transition-opacity gap-1">
-                <span className="text-[10px] font-mono text-zinc-500">v5.0-ULTIMATE</span>
+                <span className="text-[10px] font-mono text-zinc-500">v6.0-PINK</span>
                 <span className="text-[8px] font-bold text-zinc-400 uppercase tracking-tighter">
                     Sensor: {mounted ? (isDarkModeRequested() ? 'Dark' : 'Light') : '...'}
                 </span>
