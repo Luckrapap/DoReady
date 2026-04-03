@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:gravity="center">
+        <!-- Scale to match our 201.6px web logo (roughly 144dp on standard xxhdpi screen) -->
+        <bitmap
+            android:src="@drawable/splash"
+            android:gravity="center"
+            android:width="222dp"
+            android:height="202dp" />
+    </item>
+</layer-list>
