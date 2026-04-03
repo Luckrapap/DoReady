@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Logo from './Logo'
+import { SplashScreen } from '@capacitor/splash-screen'
 
 export default function StartupLoader() {
     const [isVisible, setIsVisible] = useState(true)
@@ -14,6 +15,9 @@ export default function StartupLoader() {
         // Handover: Switch from manual DOM removal to CSS-driven state
         // This is 100% safe for React hydration and prevents navigation crashes.
         document.documentElement.classList.add('app-ready')
+
+        // Native Handover: Hide the native Android splash once the web logo is ready
+        SplashScreen.hide().catch(() => {})
 
         // Auto-dismiss after 1.3 seconds (ChatGPT snappy style)
         const timer = setTimeout(() => {
