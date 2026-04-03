@@ -4,6 +4,7 @@ import { Toaster } from "sonner";
 import "./globals.css";
 import ThemeHandler from "@/components/ThemeHandler";
 import OfflineOverlay from "@/components/OfflineOverlay";
+import StartupLoader from "@/components/StartupLoader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -93,6 +94,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${outfit.variable} ${playfair.variable} antialiased select-none fixed inset-0 w-full h-[100dvh] overflow-hidden overscroll-none`}
       >
         <ThemeHandler />
+        <StartupLoader />
         <OfflineOverlay />
         <main className="h-full w-full relative pt-safe pb-safe">
           {children}
