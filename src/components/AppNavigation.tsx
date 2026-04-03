@@ -42,7 +42,7 @@ export default function AppNavigation() {
                 style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
             >
                 <div className="flex items-center gap-1 mb-10 px-2">
-                    <Logo size={36} />
+                    <Logo size={36} className="-ml-6 -mr-10 -translate-y-2" />
                     <span className="font-bold text-4xl tracking-tight" style={{ color: 'var(--accent)' }}>DoReady</span>
                 </div>
 

@@ -102,8 +102,8 @@ export default function RootLayout({
                 justify-content: center;
               }
               #startup-static-logo {
-                width: 222px;
-                height: 202px;
+                width: 221.76px;
+                height: 201.6px;
                 background-color: #ffffff;
                 -webkit-mask-image: url(/logo.png?v=3.0-PerfectAlign);
                 -webkit-mask-size: contain;

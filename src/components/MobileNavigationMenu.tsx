@@ -32,7 +32,7 @@ export default function MobileNavigationMenu() {
         <div className="flex flex-col pt-safe-top pb-safe-bottom h-[100dvh] w-full px-2">
             <div className="flex items-center justify-between gap-1 mt-12 mb-12 px-6">
                 <div className="flex items-center gap-4">
-                    <Logo size={36} />
+                    <Logo size={36} className="-ml-6 -mr-10 -translate-y-2" />
                     <span className="font-bold text-4xl tracking-tighter text-zinc-900 dark:text-white focus:outline-none">DoReady</span>
                 </div>
             </div>
