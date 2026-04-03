@@ -10,16 +10,10 @@ export default function NavigationLoader() {
     const pathname = usePathname()
     const searchParams = useSearchParams()
 
-    // Efecto inteligente: espera 600ms después de que Next.js cambie la ruta
-    useEffect(() => {
-        if (!isLoading) return;
-        
-        const timer = setTimeout(() => {
-            setIsLoading(false)
-        }, 600)
-        
-        return () => clearTimeout(timer)
-    }, [pathname, searchParams, isLoading])
+    // El loader ahora es puramente reactivo a eventos globales.
+    // Solo desaparece cuando recibe 'navigation-stop' desde el PageTransition
+    // o por el timeout de seguridad.
+
 
     useEffect(() => {
         let safetyTimeout: NodeJS.Timeout | null = null
