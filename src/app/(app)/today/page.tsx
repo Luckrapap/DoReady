@@ -54,7 +54,7 @@ export default async function TodayPage({
                 <TasksContainer 
                     initialTasks={tasks} 
                     dateStr={activeDateStr} 
-                    title={isToday ? "Hoy" : "Enfoque Diario"} 
+                    title={isToday ? "Hoy" : "Agenda"} 
                     displayDate={displayDate} 
                 />
                 

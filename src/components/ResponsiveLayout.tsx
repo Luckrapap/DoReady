@@ -60,6 +60,7 @@ export default function ResponsiveLayout({ children }: { children: React.ReactNo
         const handleTouchStart = (e: TouchEvent) => {
             if (e.touches.length > 1) return;
             if (window.innerWidth >= 768) return;
+            if (e.target instanceof Element && e.target.closest('[data-no-swipe="true"]')) return;
 
             startX = e.touches[0].clientX;
             startY = e.touches[0].clientY;
