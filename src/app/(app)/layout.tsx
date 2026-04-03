@@ -1,5 +1,5 @@
 import AppNavigation from "@/components/AppNavigation";
-import DraggableLayout from "@/components/DraggableLayout";
+import ResponsiveLayout from "@/components/ResponsiveLayout";
 import PageTransition from "@/components/PageTransition";
 import NavigationLoader from "@/components/NavigationLoader";
 import { Suspense } from "react";
@@ -10,7 +10,7 @@ export default function AppLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <div className="flex flex-col-reverse md:flex-row h-[100dvh] overflow-hidden transition-colors duration-500 bg-white dark:bg-[#0a0a0a]">
+        <div className="flex flex-col-reverse md:flex-row h-[100dvh] overflow-hidden transition-colors duration-500 bg-[var(--background)]">
             {/* Loading Indicator for Route Changes */}
             <Suspense fallback={null}>
                 <NavigationLoader />
@@ -19,8 +19,8 @@ export default function AppLayout({
             {/* Navigation: Sidebar on desktop, Absolute Background on mobile */}
             <AppNavigation />
 
-            {/* Main content area wrapped in DraggableLayout for the Reveal gesture */}
-            <DraggableLayout>
+            {/* Main content area wrapped in ResponsiveLayout for the Reveal gesture */}
+            <ResponsiveLayout>
                 <main className="flex-1 relative overflow-hidden flex flex-col">
                     <div className="flex-1 overflow-y-auto">
                         <PageTransition>
@@ -28,7 +28,7 @@ export default function AppLayout({
                         </PageTransition>
                     </div>
                 </main>
-            </DraggableLayout>
+            </ResponsiveLayout>
         </div>
     );
 }

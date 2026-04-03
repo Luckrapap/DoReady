@@ -52,8 +52,8 @@ export default function MobileNavigationMenu() {
                             className={cn(
                                 "flex items-center gap-5 px-5 py-4.5 rounded-2xl text-[20px] font-semibold transition-all relative",
                                 isActive
-                                    ? "text-zinc-900 dark:text-white bg-zinc-100 dark:bg-white/10"
-                                    : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-white/5"
+                                    ? "text-[var(--primary)] bg-[var(--surface-hover)]"
+                                    : "text-[var(--secondary)] hover:text-[var(--primary)] hover:bg-[var(--surface-hover)]/50"
                             )}
                         >
                             <link.icon size={28} className={cn(isActive && "stroke-[2.5px]", !isActive && "opacity-80")} />
@@ -79,8 +79,8 @@ export default function MobileNavigationMenu() {
                                 className={cn(
                                     "flex items-center gap-5 px-5 py-4.5 rounded-2xl text-[20px] font-semibold transition-all relative",
                                     isActive
-                                        ? "text-zinc-900 dark:text-white font-bold bg-zinc-100 dark:bg-white/10"
-                                        : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-white/5"
+                                    ? "text-[var(--primary)] font-bold bg-[var(--surface-hover)]"
+                                    : "text-[var(--secondary)] hover:text-[var(--primary)] hover:bg-[var(--surface-hover)]/50"
                                 )}
                             >
                                 <link.icon size={28} className={cn(isActive && "stroke-[2.5px]", !isActive && "opacity-80")} />

@@ -18,14 +18,13 @@
 }
 
 :root {
-  /* Next.js Layout Foundation Colors - ChatGPT Style Contrast */
+  /* Next.js Layout Foundation Colors - ChatGPT High Contrast */
   --theme-background: #ffffff;
   --theme-foreground: #09090b;
   --theme-primary: #09090b;
   --theme-secondary: #71717a;
-  --theme-surface: #f4f4f7;
-  /* Distinct gray for sidebar/drawers */
-  --theme-surface-hover: #e9e9ee;
+  --theme-surface: #f1f1f4;
+  --theme-surface-hover: #e6e6ec;
   --theme-border: #e2e2e7;
   --theme-accent: #0f172a;
   --theme-on-accent: #f8fafc;
@@ -39,14 +38,12 @@
 }
 
 .dark {
-  /* Next.js Layout Foundation Colors - Pure Black Contrast */
+  /* Next.js Layout Foundation Colors - OLED Black Contrast */
   --theme-background: #000000;
-  /* Pure black background */
   --theme-foreground: #f8fafc;
   --theme-primary: #f8fafc;
   --theme-secondary: #a1a1aa;
   --theme-surface: #0f0f10;
-  /* Very dark zinc for sidebar */
   --theme-surface-hover: #18181b;
   --theme-border: #1e1e20;
   --theme-accent: #334155;
