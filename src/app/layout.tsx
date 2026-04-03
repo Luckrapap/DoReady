@@ -84,6 +84,11 @@ export default function RootLayout({
                     };
                     apply();
                     setTimeout(apply, 0);
+
+                    // Safety Fallback: Kill the splash after 5s if React hasn't woken up
+                    setTimeout(function() {
+                      document.documentElement.classList.add('app-ready');
+                    }, 5000);
                   } catch (e) {}
                 })();
             `,
