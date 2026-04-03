@@ -10,26 +10,33 @@ export default function NavigationLoader() {
     const pathname = usePathname()
     const searchParams = useSearchParams()
 
+    // Efecto inteligente: espera 600ms después de que Next.js cambie la ruta
     useEffect(() => {
-        // Al detectar un cambio en pathname o searchParams, detenemos la carga.
-        setIsLoading(false)
-    }, [pathname, searchParams])
+        if (!isLoading) return;
+        
+        const timer = setTimeout(() => {
+            setIsLoading(false)
+        }, 600)
+        
+        return () => clearTimeout(timer)
+    }, [pathname, searchParams, isLoading])
 
     useEffect(() => {
-        let timeoutId: NodeJS.Timeout | null = null
+        let safetyTimeout: NodeJS.Timeout | null = null
 
         const handleStart = () => {
             setIsLoading(true)
-            // Safety timeout: stop loading after 4 seconds to prevent "infinite" state
-            if (timeoutId) clearTimeout(timeoutId)
-            timeoutId = setTimeout(() => {
+            // Timeout de seguridad: detiene la carga tras 4s si algo falla
+            if (safetyTimeout) clearTimeout(safetyTimeout)
+            safetyTimeout = setTimeout(() => {
                 setIsLoading(false)
             }, 4000)
         }
 
         const handleStop = () => {
+            // Detención inmediata para eventos de cancelación directos
             setIsLoading(false)
-            if (timeoutId) clearTimeout(timeoutId)
+            if (safetyTimeout) clearTimeout(safetyTimeout)
         }
 
         window.addEventListener('navigation-start', handleStart)
@@ -40,7 +47,7 @@ export default function NavigationLoader() {
             window.removeEventListener('navigation-start', handleStart)
             window.removeEventListener('navigation-stop', handleStop)
             window.removeEventListener('close-mobile-drawer', handleStop)
-            if (timeoutId) clearTimeout(timeoutId)
+            if (safetyTimeout) clearTimeout(safetyTimeout)
         }
     }, [])
 
@@ -51,15 +58,14 @@ export default function NavigationLoader() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    onClick={() => setIsLoading(false)} // Manual override
-                    className="fixed inset-0 z-[999] flex items-center justify-center bg-white/70 dark:bg-black/50 backdrop-blur-md pointer-events-auto cursor-pointer"
+                    transition={{ duration: 0.3 }}
+                    className="fixed inset-0 z-[999] flex items-center justify-center bg-white/70 dark:bg-black/50 backdrop-blur-md pointer-events-auto"
                 >
                     <div className="flex flex-col items-center gap-8">
                         <ThreeDotsLoading />
                         <div className="flex flex-col items-center gap-2">
                             <span className="text-zinc-900/90 dark:text-white/90 font-bold text-3xl tracking-widest uppercase">Cargando...</span>
-                            <span className="text-[10px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.3em]">BUILD v3.1 • Sync-Fix-Enabled</span>
+                            <span className="text-[10px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.3em]">BUILD v3.2.1 • Smart-Auto-Exit</span>
                         </div>
                     </div>
                 </motion.div>
