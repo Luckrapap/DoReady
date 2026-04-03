@@ -12,19 +12,24 @@ export default function StartupLoader() {
     useEffect(() => {
         setMounted(true)
         
-        // Handover: Switch from manual DOM removal to CSS-driven state
-        // This is 100% safe for React hydration and prevents navigation crashes.
-        document.documentElement.classList.add('app-ready')
+        // Handover: Robust transition for first-run stability
+        const handoverTimer = setTimeout(() => {
+            // Handover: Switch from manual DOM removal to CSS-driven state
+            document.documentElement.classList.add('app-ready')
 
-        // Native Handover: Hide the native Android splash once the web logo is ready
-        SplashScreen.hide().catch(() => {})
+            // Native Handover: Hide the native Android splash once the web logo is ready
+            SplashScreen.hide().catch(() => {})
+        }, 200)
 
         // Auto-dismiss after 1.3 seconds (ChatGPT snappy style)
         const timer = setTimeout(() => {
             setIsVisible(false)
         }, 1300)
 
-        return () => clearTimeout(timer)
+        return () => {
+            clearTimeout(handoverTimer)
+            clearTimeout(timer)
+        }
     }, [])
 
     if (!mounted) return null
