@@ -51,13 +51,13 @@ export default function PasswordModal({ isOpen, onClose }: PasswordModalProps) {
                         initial={{ opacity: 0, y: 100, scale: 0.9 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 100, scale: 0.9 }}
-                        className="fixed inset-0 m-auto w-full max-w-lg h-fit border rounded-[2.5rem] shadow-2xl z-[70] overflow-hidden transition-colors duration-500"
+                        className="fixed inset-0 m-auto w-full max-w-lg h-fit border rounded-[2.5rem] shadow-2xl z-[70] overflow-hidden"
                         style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
                     >
                         <div className="p-8">
                             <div className="flex items-center justify-between mb-8">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-2.5 rounded-2xl transition-colors duration-500"
+                                    <div className="p-2.5 rounded-2xl"
                                         style={{ backgroundColor: 'var(--border)', color: 'var(--accent)' }}
                                     >
                                         <KeyRound size={20} />

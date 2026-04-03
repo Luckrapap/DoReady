@@ -5,7 +5,7 @@ import { ShieldCheck } from 'lucide-react'
 export default function PrivacyShield() {
     return (
         <section
-            className="rounded-3xl p-6 shadow-sm border transition-colors duration-500"
+            className="rounded-3xl p-6 shadow-sm border"
             style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
         >
             <div className="flex items-center gap-4 mb-8">

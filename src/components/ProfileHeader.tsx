@@ -70,7 +70,7 @@ export default function ProfileHeader({ profile, email, isGuest = false }: Profi
     }
 
     return (
-        <div className="border rounded-3xl p-10 shadow-sm mb-8 transition-colors duration-500"
+        <div className="border rounded-3xl p-10 shadow-sm mb-8"
             style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
         >
             <div className="flex flex-col md:flex-row items-center gap-10">
@@ -189,7 +189,7 @@ export default function ProfileHeader({ profile, email, isGuest = false }: Profi
                                         initial={{ opacity: 0, scale: 0.9 }}
                                         animate={{ opacity: 1, scale: 1 }}
                                         exit={{ opacity: 0, scale: 0.9 }}
-                                        className="flex items-center gap-3 p-2 pl-4 rounded-2xl border transition-colors duration-500"
+                                        className="flex items-center gap-3 p-2 pl-4 rounded-2xl border"
                                         style={{
                                             backgroundColor: 'color-mix(in srgb, var(--surface) 90%, var(--accent))',
                                             borderColor: 'var(--border)'
@@ -224,7 +224,7 @@ export default function ProfileHeader({ profile, email, isGuest = false }: Profi
                                 ) : (
                                     <button
                                         onClick={() => setIsEditingGender(true)}
-                                        className="px-5 py-2.5 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded-2xl text-xs font-bold uppercase tracking-wider text-zinc-500 shadow-sm border transition-all duration-500 flex items-center gap-2 group"
+                                        className="px-5 py-2.5 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded-2xl text-xs font-bold uppercase tracking-wider text-zinc-500 shadow-sm border transition-all flex items-center gap-2 group"
                                         style={{ backgroundColor: 'var(--border)', borderColor: 'color-mix(in srgb, var(--border) 50%, transparent)' }}
                                     >
                                         {profile?.gender ? (
@@ -244,7 +244,7 @@ export default function ProfileHeader({ profile, email, isGuest = false }: Profi
                                         initial={{ opacity: 0, scale: 0.9 }}
                                         animate={{ opacity: 1, scale: 1 }}
                                         exit={{ opacity: 0, scale: 0.9 }}
-                                        className="flex items-center gap-3 p-2 pl-4 rounded-2xl border transition-colors duration-500"
+                                        className="flex items-center gap-3 p-2 pl-4 rounded-2xl border"
                                         style={{
                                             backgroundColor: 'color-mix(in srgb, var(--surface) 90%, var(--accent))',
                                             borderColor: 'var(--border)'
@@ -275,7 +275,7 @@ export default function ProfileHeader({ profile, email, isGuest = false }: Profi
                                 ) : (
                                     <button
                                         onClick={() => setIsEditingBirthDate(true)}
-                                        className="px-5 py-2.5 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded-2xl text-xs font-bold uppercase tracking-wider text-zinc-500 shadow-sm border transition-all duration-500 flex items-center gap-2 group"
+                                        className="px-5 py-2.5 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded-2xl text-xs font-bold uppercase tracking-wider text-zinc-500 shadow-sm border transition-all flex items-center gap-2 group"
                                         style={{ backgroundColor: 'var(--border)', borderColor: 'color-mix(in srgb, var(--border) 50%, transparent)' }}
                                     >
                                         {profile?.birth_date ? (

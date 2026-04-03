@@ -23,7 +23,7 @@ export default function InsightsDashboard({ analyticsData }: Props) {
     return (
         <div className="w-full">
             <div className="flex flex-col items-center justify-center text-center mb-8">
-                <div className="w-16 h-16 rounded-[1.25rem] text-white flex items-center justify-center mb-6 shadow-xl relative overflow-hidden transition-colors duration-500"
+                <div className="w-16 h-16 rounded-[1.25rem] text-white flex items-center justify-center mb-6 shadow-xl relative overflow-hidden"
                     style={{ backgroundColor: 'var(--accent)' }}
                 >
                     <div className="absolute inset-0 bg-white/20 dark:bg-black/20 animate-pulse" />
@@ -56,7 +56,7 @@ export default function InsightsDashboard({ analyticsData }: Props) {
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="w-full backdrop-blur-md border rounded-[2rem] p-6 md:p-10 shadow-sm transition-colors duration-500"
+                    className="w-full backdrop-blur-md border rounded-[2rem] p-6 md:p-10 shadow-sm"
                     style={{
                         backgroundColor: 'color-mix(in srgb, var(--surface) 80%, transparent)',
                         borderColor: 'var(--border)'

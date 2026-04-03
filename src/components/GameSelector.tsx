@@ -21,7 +21,7 @@ function GameCard({ title, description, icon: Icon, onClick, disabled, color }: 
             onClick={onClick}
             disabled={disabled}
             className={cn(
-                "relative group w-full text-left p-6 rounded-[2rem] border-2 transition-all duration-500 overflow-hidden shadow-sm",
+                "relative group w-full text-left p-6 rounded-[2rem] border-2 transition-all overflow-hidden shadow-sm",
                 disabled
                     ? "opacity-60 cursor-not-allowed"
                     : "hover:shadow-xl cursor-pointer"
@@ -112,7 +112,7 @@ export default function GameSelector({ onSelectGame }: GameSelectorProps) {
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest mb-6 transition-colors duration-500"
+                    className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest mb-6 transition-colors"
                     style={{
                         backgroundColor: 'color-mix(in srgb, var(--accent) 15%, transparent)',
                         color: 'var(--accent)'

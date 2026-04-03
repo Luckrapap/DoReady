@@ -54,13 +54,13 @@ export default function DeleteAccountModal({ isOpen, onClose }: DeleteAccountMod
                         initial={{ opacity: 0, y: 100, scale: 0.9 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 100, scale: 0.9 }}
-                        className="fixed inset-0 m-auto w-full max-w-lg h-fit border rounded-[2.5rem] shadow-2xl z-[70] overflow-hidden transition-colors duration-500"
+                        className="fixed inset-0 m-auto w-full max-w-lg h-fit border rounded-[2.5rem] shadow-2xl z-[70] overflow-hidden"
                         style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
                     >
                         <div className="p-8">
                             <div className="flex items-center justify-between mb-8">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-2.5 rounded-2xl flex items-center justify-center transition-colors duration-500"
+                                    <div className="p-2.5 rounded-2xl flex items-center justify-center"
                                         style={{ backgroundColor: 'color-mix(in srgb, var(--surface) 90%, #ef4444)', color: '#ef4444' }}
                                     >
                                         <Trash2 size={20} />
@@ -77,7 +77,7 @@ export default function DeleteAccountModal({ isOpen, onClose }: DeleteAccountMod
                             </div>
 
                             <div className="space-y-6">
-                                <div className="p-6 rounded-3xl border flex gap-4 transition-colors duration-500"
+                                <div className="p-6 rounded-3xl border flex gap-4"
                                     style={{
                                         backgroundColor: 'color-mix(in srgb, var(--surface) 95%, #ef4444)',
                                         borderColor: 'color-mix(in srgb, var(--border) 50%, #ef4444)'

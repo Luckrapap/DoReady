@@ -37,11 +37,11 @@ export default function AICoach() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 20, scale: 0.95 }}
                         transition={{ duration: 0.2 }}
-                        className="absolute bottom-24 right-4 md:bottom-24 md:right-8 z-40 w-[calc(100vw-32px)] max-w-[380px] h-[500px] max-h-[70vh] flex flex-col border rounded-2xl shadow-xl overflow-hidden transition-colors duration-500"
+                        className="absolute bottom-24 right-4 md:bottom-24 md:right-8 z-40 w-[calc(100vw-32px)] max-w-[380px] h-[500px] max-h-[70vh] flex flex-col border rounded-2xl shadow-xl overflow-hidden"
                         style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
                     >
                         {/* Header */}
-                        <div className="flex items-center gap-3 px-4 py-3 border-b transition-colors duration-500"
+                        <div className="flex items-center gap-3 px-4 py-3 border-b"
                             style={{
                                 backgroundColor: 'color-mix(in srgb, var(--surface) 95%, var(--accent))',
                                 borderColor: 'var(--border)'
@@ -73,7 +73,7 @@ export default function AICoach() {
                                         className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
                                     >
                                         <div
-                                            className={`px-4 py-2 rounded-2xl max-w-[75%] text-sm transition-colors duration-500 ${m.role === 'user'
+                                            className={`px-4 py-2 rounded-2xl max-w-[75%] text-sm ${m.role === 'user'
                                                 ? 'text-white rounded-tr-sm'
                                                 : 'text-zinc-900 dark:text-zinc-100 rounded-tl-sm'
                                                 }`}
@@ -93,7 +93,7 @@ export default function AICoach() {
                             )}
                             {isLoading && (
                                 <div className="flex justify-start">
-                                    <div className="px-4 py-2.5 rounded-2xl rounded-tl-sm transition-colors duration-500"
+                                    <div className="px-4 py-2.5 rounded-2xl rounded-tl-sm"
                                         style={{ backgroundColor: 'color-mix(in srgb, var(--surface) 90%, var(--accent))' }}
                                     >
                                         <Loader2 size={16} className="animate-spin text-zinc-500" />
@@ -110,12 +110,12 @@ export default function AICoach() {
                         )}
 
                         {/* Input Area */}
-                        <div className="p-3 border-t transition-colors duration-500"
+                        <div className="p-3 border-t"
                             style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
                         >
                             <form
                                 onSubmit={handleSubmit}
-                                className="flex items-center gap-2 border rounded-full pl-4 pr-1.5 py-1.5 transition-colors duration-500"
+                                className="flex items-center gap-2 border rounded-full pl-4 pr-1.5 py-1.5"
                                 style={{
                                     backgroundColor: 'color-mix(in srgb, var(--surface) 95%, var(--accent))',
                                     borderColor: 'var(--border)'

@@ -211,7 +211,7 @@ export default function CheckDayCalendar() {
     }
 
     return (
-        <div className="w-full backdrop-blur-md border rounded-[2rem] p-6 shadow-sm transition-colors duration-500"
+        <div className="w-full backdrop-blur-md border rounded-[2rem] p-6 shadow-sm"
             style={{
                 backgroundColor: 'color-mix(in srgb, var(--surface) 80%, transparent)',
                 borderColor: 'var(--border)'
@@ -219,7 +219,7 @@ export default function CheckDayCalendar() {
         >
             {/* Layer Toggler & Month Header */}
             <div className="flex flex-col items-center mb-6 gap-4">
-                <div className="flex items-center gap-4 p-1.5 rounded-2xl border transition-colors duration-500"
+                <div className="flex items-center gap-4 p-1.5 rounded-2xl border"
                     style={{ backgroundColor: 'var(--border)', borderColor: 'color-mix(in srgb, var(--border) 50%, transparent)' }}
                 >
                     <button
@@ -311,7 +311,7 @@ export default function CheckDayCalendar() {
                             onTouchMove={handleTouchEndOrMove}
                             onTouchCancel={handleTouchEndOrMove}
                             className={cn(
-                                "group relative h-14 md:h-20 border rounded-xl flex items-center justify-center cursor-pointer transition-all hover:shadow-sm duration-500",
+                                "group relative h-14 md:h-20 border rounded-xl flex items-center justify-center cursor-pointer transition-all hover:shadow-sm",
                                 !inCurrentMonth && "opacity-20 pointer-events-none",
                                 isToday(day) && "ring-2 ring-[var(--accent)] ring-offset-2 ring-offset-[var(--background)] shadow-sm"
                             )}

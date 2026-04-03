@@ -106,7 +106,7 @@ export default function GameInterface({ onBack }: TriviaGameProps) {
         <div className="flex items-center gap-4">
             <div className="relative group">
                 <div className="absolute -inset-1 bg-gradient-to-r from-[var(--accent)] to-blue-500 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
-                <div className="relative w-12 h-12 rounded-2xl flex items-center justify-center shadow-2xl transition-all duration-500 border border-white/20"
+                <div className="relative w-12 h-12 rounded-2xl flex items-center justify-center shadow-2xl transition-all border border-white/20"
                     style={{ backgroundColor: 'var(--accent)', color: 'var(--surface)' }}
                 >
                     <Gamepad2 size={24} strokeWidth={2.5} />
@@ -306,7 +306,7 @@ export default function GameInterface({ onBack }: TriviaGameProps) {
                     {gameState === 'loading' ? (
                         <motion.div
                             key="loading"
-                            className="flex-1 flex flex-col items-center justify-center gap-6 p-6 transition-all duration-500"
+                            className="flex-1 flex flex-col items-center justify-center gap-6 p-6 transition-all"
                         >
                             <div className="relative w-16 h-16">
                                 {[...Array(12)].map((_, i) => (
@@ -331,7 +331,7 @@ export default function GameInterface({ onBack }: TriviaGameProps) {
                     ) : gameState === 'error' ? (
                         <motion.div
                             key="error"
-                            className="p-12 border rounded-[2.5rem] transition-colors duration-500"
+                            className="p-12 border rounded-[2.5rem]"
                             style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
                         >
                             <div className="flex flex-col items-center gap-4">
@@ -349,7 +349,7 @@ export default function GameInterface({ onBack }: TriviaGameProps) {
                             key="content"
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="flex flex-col w-full max-h-full p-4 md:p-8 border rounded-[2rem] md:rounded-[2.5rem] shadow-xl md:shadow-2xl transition-colors duration-500 overflow-hidden"
+                            className="flex flex-col w-full max-h-full p-4 md:p-8 border rounded-[2rem] md:rounded-[2.5rem] shadow-xl md:shadow-2xl overflow-hidden"
                             style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
                         >
                             {/* Question with dynamic font size */}

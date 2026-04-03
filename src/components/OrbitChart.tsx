@@ -252,13 +252,13 @@ export default function OrbitChart() {
                             initial={{ opacity: 0, y: 100, scale: 0.9 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, y: 100, scale: 0.9 }}
-                            className="w-full max-w-lg h-fit border rounded-[2.5rem] shadow-2xl overflow-hidden transition-colors duration-500"
+                            className="w-full max-w-lg h-fit border rounded-[2.5rem] shadow-2xl overflow-hidden"
                             style={{ backgroundColor: 'var(--surface, #f0f4f8)', borderColor: 'var(--border, #e2e8f0)' }}
                         >
                             <div className="p-8">
                                 <div className="flex items-center justify-between mb-8">
                                     <div className="flex items-center gap-3">
-                                        <div className="p-2.5 rounded-2xl transition-colors duration-500"
+                                        <div className="p-2.5 rounded-2xl"
                                             style={{ backgroundColor: 'var(--border, #e2e8f0)', color: 'var(--accent, #3b82f6)' }}
                                         >
                                             <Pencil size={20} />
