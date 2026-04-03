@@ -14,9 +14,15 @@ export default function StartupLoader() {
         // Handover: Find and hide the static CSS overlay once React is ready
         const staticOverlay = document.getElementById('startup-static-overlay')
         if (staticOverlay) {
-            // Immediate pull down for absolute coherence
-            staticOverlay.style.background = 'transparent'
-            setTimeout(() => staticOverlay.remove(), 100)
+            staticOverlay.style.opacity = '0'
+            staticOverlay.style.pointerEvents = 'none'
+            staticOverlay.style.transition = 'opacity 0.6s ease-out'
+            
+            // Wait for transition before DOM removal
+            setTimeout(() => {
+                const wrapper = document.getElementById('startup-static-wrapper')
+                if (wrapper) wrapper.remove()
+            }, 600)
         }
 
         // Auto-dismiss after 1.3 seconds (ChatGPT snappy style)
