@@ -26,8 +26,9 @@
   --theme-surface: #f1f1f4;
   --theme-surface-hover: #e6e6ec;
   --theme-border: #e2e2e7;
-  --theme-accent: #0f172a;
-  --theme-on-accent: #f8fafc;
+  --theme-accent: #e4e4e7;       /* Matching the progress counter gray for harmony */
+  --theme-on-accent: #18181b;    /* Dark text on light accent */
+  --theme-on-accent-fallback: #18181b;
 
   /* Legacy Aliases */
   --background: var(--theme-background);

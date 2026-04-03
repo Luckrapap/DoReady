@@ -15,12 +15,14 @@ interface TaskItemProps {
     task: Task
     onToggle: () => void
     onDelete: () => void
+    onClick?: () => void
 }
 
-export default function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
+export default function TaskItem({ task, onToggle, onDelete, onClick }: TaskItemProps) {
     const isCompleted = task.is_completed
 
-    const handleToggle = () => {
+    const handleToggle = (e: React.MouseEvent) => {
+        e.stopPropagation()
         // Haptic feedback
         if (!isCompleted) {
             Haptics.impact({ style: ImpactStyle.Medium }).catch(() => {})
@@ -37,22 +39,23 @@ export default function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
             whileTap={{ scale: 0.98 }}
+            onClick={() => onClick && onClick()}
             className={cn(
-                "group relative flex items-center gap-5 p-5 rounded-3xl transition-all duration-300 tap-highlight-transparent",
-                isCompleted ? "bg-opacity-50" : "bg-opacity-100"
+                "group relative flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 tap-highlight-transparent cursor-pointer",
+                isCompleted ? "opacity-50 shadow-none" : "shadow-sm"
             )}
             style={{ 
                 backgroundColor: 'var(--surface)', 
                 border: '1px solid',
-                borderColor: isCompleted ? 'var(--accent)' : 'var(--border)'
+                borderColor: 'var(--border)'
             }}
         >
-            {/* Checkbox - 44px for primary mobile action */}
+            {/* Checkbox */}
             <div 
                 onClick={handleToggle}
                 className={cn(
-                    "flex-shrink-0 w-11 h-11 rounded-full border-2 flex items-center justify-center transition-all duration-300 relative overflow-hidden cursor-pointer active:scale-90",
-                    isCompleted ? "border-transparent" : "border-zinc-300 dark:border-zinc-700 hover:border-zinc-400 dark:hover:border-zinc-500"
+                    "flex-shrink-0 w-[26px] h-[26px] rounded-full border-[1.5px] flex items-center justify-center transition-all duration-300 relative overflow-hidden cursor-pointer active:scale-90",
+                    isCompleted ? "border-transparent" : "border-zinc-300 dark:border-zinc-600 hover:border-zinc-400 dark:hover:border-zinc-500"
                 )}
                 style={isCompleted ? { backgroundColor: 'var(--accent)' } : {}}
             >
@@ -61,15 +64,15 @@ export default function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
                     animate={{ scale: isCompleted ? 1.1 : 0 }}
                     transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 >
-                    <Check size={22} strokeWidth={3} className="text-white" />
+                    <Check size={16} strokeWidth={3} className="text-[var(--theme-on-accent)]" />
                 </motion.div>
             </div>
 
             {/* Title */}
-            <div className="flex-1 flex flex-col justify-center min-w-0">
+            <div className="flex-1 min-w-0 pr-2">
                 <span className={cn(
-                    "text-xl font-medium transition-all duration-300 truncate",
-                    isCompleted ? "text-zinc-500 dark:text-zinc-400 line-through decoration-zinc-400/50" : "text-zinc-900 dark:text-zinc-100"
+                    "text-[17px] font-light transition-all duration-300 truncate block",
+                    isCompleted ? "text-zinc-500 dark:text-zinc-500 line-through decoration-zinc-400/50" : "text-zinc-800 dark:text-zinc-100"
                 )}>
                     {task.title}
                 </span>
@@ -80,19 +83,11 @@ export default function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
                     e.stopPropagation()
                     onDelete()
                 }}
-                className="p-3 text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-xl transition-all active:scale-90"
+                className="p-2 text-zinc-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-lg transition-all active:scale-90 absolute right-2 opacity-0 group-hover:opacity-100 md:relative md:opacity-100"
                 aria-label="Delete task"
             >
-                <Trash2 size={20} />
+                <Trash2 size={16} />
             </button>
-
-            {/* Subtle background glow when completed */}
-            {isCompleted && (
-                <div 
-                    className="absolute inset-0 rounded-3xl opacity-5 pointer-events-none"
-                    style={{ backgroundColor: 'var(--accent)' }}
-                />
-            )}
         </motion.div>
     )
 }

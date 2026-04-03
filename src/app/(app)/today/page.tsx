@@ -49,20 +49,18 @@ export default async function TodayPage({
     })
 
     return (
-        <main className="min-h-screen flex justify-center py-12 px-4 selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black">
+        <main className="min-h-screen flex justify-center pt-3 pb-12 px-4 selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black">
             <div className="w-full max-w-xl">
-                {/* Header (Simplified compared to Sprint 2 since Sidebar exists) */}
-                <header className="mb-12 flex flex-col items-center justify-center text-center gap-10">
-                    <div className="flex flex-col items-center">
-                        <h1 className="font-playfair font-medium text-6xl md:text-8xl tracking-tight text-zinc-900 dark:text-zinc-50 py-2">
-                            {isToday ? "Hoy" : "Enfoque Diario"}
-                        </h1>
-                        <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400 mt-2">{displayDate}</p>
-                    </div>
+                <TasksContainer 
+                    initialTasks={tasks} 
+                    dateStr={activeDateStr} 
+                    title={isToday ? "Hoy" : "Enfoque Diario"} 
+                    displayDate={displayDate} 
+                />
+                
+                <div className="mt-12 flex justify-center pb-8">
                     <StreakCounter streak={streak} />
-                </header>
-
-                <TasksContainer initialTasks={tasks} dateStr={activeDateStr} />
+                </div>
             </div>
         </main>
     )

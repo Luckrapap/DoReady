@@ -144,6 +144,58 @@ export async function createTask(title: string, dateStr: string) {
     return data[0]
 }
 
+export async function updateTaskTitle(id: string, title: string) {
+    const supabase = await createClient()
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+        throw new Error('Not authenticated')
+    }
+
+    const { error } = await supabase
+        .from('tasks')
+        .update({ title })
+        .eq('id', id)
+        .eq('user_id', user.id)
+
+    if (error) {
+        console.error('Error updating task title:', error)
+        return false
+    }
+
+    revalidatePath('/')
+    return true
+}
+
+export async function swapTaskPositions(id1: string, id2: string) {
+    const supabase = await createClient()
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return false
+
+    // Bring both tasks to get their created_at
+    const { data, error } = await supabase
+        .from('tasks')
+        .select('id, created_at')
+        .in('id', [id1, id2])
+        .eq('user_id', user.id)
+
+    if (error || !data || data.length !== 2) {
+        return false
+    }
+
+    const [tA, tB] = data
+
+    // Execute swap independently
+    await Promise.all([
+        supabase.from('tasks').update({ created_at: tB.created_at }).eq('id', tA.id),
+        supabase.from('tasks').update({ created_at: tA.created_at }).eq('id', tB.id)
+    ])
+
+    revalidatePath('/')
+    return true
+}
+
 export async function updateTaskStatus(id: string, is_completed: boolean) {
     const supabase = await createClient()
 
