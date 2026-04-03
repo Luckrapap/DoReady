@@ -19,10 +19,10 @@ export default function StartupLoader() {
             setTimeout(() => staticOverlay.remove(), 100)
         }
 
-        // Auto-dismiss after 3 seconds (Cinematic duration)
+        // Auto-dismiss after 1.3 seconds (ChatGPT snappy style)
         const timer = setTimeout(() => {
             setIsVisible(false)
-        }, 3000)
+        }, 1300)
 
         return () => clearTimeout(timer)
     }, [])
@@ -35,31 +35,20 @@ export default function StartupLoader() {
                 <motion.div
                     initial={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.8, ease: "linear" }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
                     className="fixed inset-0 z-[9999] flex items-center justify-center bg-black overflow-hidden pointer-events-none"
                 >
                     <div className="relative flex flex-col items-center">
                         <motion.div
-                            initial={{ scale: 0.9, opacity: 0 }}
-                            animate={{ scale: 1.1, opacity: 1 }}
+                            initial={{ scale: 1, opacity: 1 }}
+                            animate={{ scale: 1.15 }}
                             transition={{ 
-                                duration: 3, 
-                                ease: "linear"
+                                duration: 1.3, 
+                                ease: "easeOut"
                             }}
                         >
-                            {/* Logo Cinematic v3.0 (Balanced Size 72) */}
+                            {/* Logo Perfect v3.5.3 (Matches static shell) */}
                             <Logo size={72} className="ml-0 mr-0 translate-y-0" />
-                        </motion.div>
-                        
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 0.4 }}
-                            transition={{ delay: 1.5, duration: 1.0 }}
-                            className="absolute -bottom-24"
-                        >
-                            <span className="text-[10px] font-bold uppercase tracking-[0.6em] text-zinc-600">
-                                DoReady v3.5.2
-                            </span>
                         </motion.div>
                     </div>
                 </motion.div>

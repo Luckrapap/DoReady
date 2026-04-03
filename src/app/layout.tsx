@@ -101,6 +101,19 @@ export default function RootLayout({
                 align-items: center;
                 justify-content: center;
               }
+              #startup-static-logo {
+                width: 222px;
+                height: 202px;
+                background-color: #ffffff;
+                -webkit-mask-image: url(/logo.png?v=3.0-PerfectAlign);
+                -webkit-mask-size: contain;
+                -webkit-mask-repeat: no-repeat;
+                -webkit-mask-position: center;
+                mask-image: url(/logo.png?v=3.0-PerfectAlign);
+                mask-size: contain;
+                mask-repeat: no-repeat;
+                mask-position: center;
+              }
             `,
           }}
         />
@@ -108,7 +121,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${outfit.variable} ${playfair.variable} antialiased select-none fixed inset-0 w-full h-[100dvh] overflow-hidden overscroll-none`}
       >
-        <div id="startup-static-overlay" />
+        <div id="startup-static-overlay">
+          <div id="startup-static-logo" />
+        </div>
         <ThemeHandler />
         <StartupLoader />
         <OfflineOverlay />
