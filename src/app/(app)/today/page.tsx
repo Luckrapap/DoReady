@@ -49,7 +49,7 @@ export default async function TodayPage({
     })
 
     return (
-        <main className="min-h-screen flex justify-center pt-3 pb-12 px-4 selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black">
+        <main className="min-h-screen flex justify-center pt-16 pb-12 px-4 selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black">
             <div className="w-full max-w-xl">
                 <TasksContainer 
                     initialTasks={tasks} 

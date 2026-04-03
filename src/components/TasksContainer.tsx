@@ -142,7 +142,7 @@ export default function TasksContainer({ initialTasks, dateStr, title, displayDa
     return (
         <section className="flex flex-col gap-8">
             {/* Reactive Header */}
-            <header className="mb-2 flex flex-col gap-1 px-4">
+            <header className="mb-6 flex flex-col gap-1 px-4">
                 <div className="flex items-end justify-between">
                     <h1 className="font-bold text-6xl md:text-8xl tracking-tighter text-zinc-900 dark:text-zinc-50 relative bottom-1.5">
                         {title}
