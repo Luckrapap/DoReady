@@ -10,10 +10,18 @@ export default function StartupLoader() {
 
     useEffect(() => {
         setMounted(true)
-        // Auto-dismiss after 1.8 seconds (duration of scaling + slight pause)
+        
+        // Handover: Find and hide the static CSS overlay once React is ready
+        const staticOverlay = document.getElementById('startup-static-overlay')
+        if (staticOverlay) {
+            staticOverlay.style.opacity = '0'
+            setTimeout(() => staticOverlay.remove(), 500)
+        }
+
+        // Auto-dismiss after scaling duration + pause
         const timer = setTimeout(() => {
             setIsVisible(false)
-        }, 1800)
+        }, 2200)
 
         return () => clearTimeout(timer)
     }, [])
@@ -26,33 +34,35 @@ export default function StartupLoader() {
                 <motion.div
                     initial={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.5, ease: "easeInOut" }}
+                    transition={{ duration: 0.6, ease: "easeInOut" }}
                     className="fixed inset-0 z-[9999] flex items-center justify-center bg-white dark:bg-black overflow-hidden pointer-events-none"
                 >
                     <div className="relative flex flex-col items-center">
-                        {/* Custom Animated Logo Container */}
                         <motion.div
-                            initial={{ scale: 0.8, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
+                            initial={{ scale: 0.2, opacity: 0 }}
+                            animate={{ 
+                                scale: [0.2, 1.25, 1],
+                                opacity: 1 
+                            }}
                             transition={{ 
-                                duration: 1.2, 
+                                duration: 1.5, 
                                 ease: [0.16, 1, 0.3, 1], // Custom bounce/smooth ease
-                                delay: 0.1
+                                delay: 0.1,
+                                times: [0, 0.7, 1] // Keyframe timing
                             }}
                         >
-                            {/* We use the Logo component but override its margins for centering */}
-                            <Logo size={42} className="ml-0 mr-0 translate-y-0" />
+                            {/* Logo Gigante v2.0 (84 is double the previous size) */}
+                            <Logo size={84} className="ml-0 mr-0 translate-y-0" />
                         </motion.div>
                         
-                        {/* Optional subtle tagline or version if needed in future */}
                         <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 0.4, y: 0 }}
-                            transition={{ delay: 0.8, duration: 0.8 }}
-                            className="absolute -bottom-16"
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ opacity: 0.6, y: 0 }}
+                            transition={{ delay: 1.0, duration: 1.0 }}
+                            className="absolute -bottom-24"
                         >
-                            <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-400 dark:text-zinc-600">
-                                DoReady v3.5
+                            <span className="text-xs font-black uppercase tracking-[0.6em] text-zinc-400 dark:text-zinc-600">
+                                DoReady v3.5.1
                             </span>
                         </motion.div>
                     </div>

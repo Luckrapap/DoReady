@@ -89,10 +89,33 @@ export default function RootLayout({
             `,
           }}
         />
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+              #startup-static-overlay {
+                position: fixed;
+                inset: 0;
+                z-index: 9998;
+                background-color: #ffffff;
+                transition: opacity 0.5s ease-out;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              }
+              .dark #startup-static-overlay {
+                background-color: #000000;
+              }
+              body:not(.dark) #startup-static-overlay {
+                background-color: #ffffff;
+              }
+            `,
+          }}
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${outfit.variable} ${playfair.variable} antialiased select-none fixed inset-0 w-full h-[100dvh] overflow-hidden overscroll-none`}
       >
+        <div id="startup-static-overlay" />
         <ThemeHandler />
         <StartupLoader />
         <OfflineOverlay />
