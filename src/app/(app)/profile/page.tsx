@@ -35,7 +35,7 @@ export default async function ProfilePage() {
 
                 {/* Additional Settings Card */}
                 <section
-                    className="rounded-3xl p-8 shadow-sm border transition-colors duration-500"
+                    className="rounded-3xl p-8 shadow-sm border"
                     style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
                 >
                     <div className="flex items-center gap-4 mb-8">

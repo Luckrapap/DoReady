@@ -16,17 +16,31 @@ export default function NavigationLoader() {
     }, [pathname, searchParams])
 
     useEffect(() => {
-        const handleStart = () => setIsLoading(true)
-        const handleStop = () => setIsLoading(false)
+        let timeoutId: NodeJS.Timeout | null = null
+
+        const handleStart = () => {
+            setIsLoading(true)
+            // Safety timeout: stop loading after 4 seconds to prevent "infinite" state
+            if (timeoutId) clearTimeout(timeoutId)
+            timeoutId = setTimeout(() => {
+                setIsLoading(false)
+            }, 4000)
+        }
+
+        const handleStop = () => {
+            setIsLoading(false)
+            if (timeoutId) clearTimeout(timeoutId)
+        }
 
         window.addEventListener('navigation-start', handleStart)
         window.addEventListener('navigation-stop', handleStop)
-        window.addEventListener('close-mobile-drawer', handleStop) // Fallback if clicking same page
+        window.addEventListener('close-mobile-drawer', handleStop)
 
         return () => {
             window.removeEventListener('navigation-start', handleStart)
             window.removeEventListener('navigation-stop', handleStop)
             window.removeEventListener('close-mobile-drawer', handleStop)
+            if (timeoutId) clearTimeout(timeoutId)
         }
     }, [])
 
@@ -38,11 +52,15 @@ export default function NavigationLoader() {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.2 }}
-                    className="fixed inset-0 z-[999] flex items-center justify-center bg-white/70 dark:bg-black/50 backdrop-blur-md pointer-events-auto"
+                    onClick={() => setIsLoading(false)} // Manual override
+                    className="fixed inset-0 z-[999] flex items-center justify-center bg-white/70 dark:bg-black/50 backdrop-blur-md pointer-events-auto cursor-pointer"
                 >
                     <div className="flex flex-col items-center gap-8">
                         <ThreeDotsLoading />
-                        <span className="text-zinc-900/90 dark:text-white/90 font-bold text-3xl tracking-widest uppercase">Cargando...</span>
+                        <div className="flex flex-col items-center gap-2">
+                            <span className="text-zinc-900/90 dark:text-white/90 font-bold text-3xl tracking-widest uppercase">Cargando...</span>
+                            <span className="text-[10px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.3em]">BUILD v3.1 • Sync-Fix-Enabled</span>
+                        </div>
                     </div>
                 </motion.div>
             )}

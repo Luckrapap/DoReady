@@ -76,7 +76,7 @@ export default function BrainDump({ initialIdeas }: Props) {
         <div className="w-full max-w-2xl mx-auto px-4 py-8 pb-28">
             {/* Header */}
             <div className="flex flex-col items-center mb-12 text-center">
-                <div className="w-16 h-16 rounded-[1.5rem] flex items-center justify-center mb-6 shadow-sm transition-colors duration-500"
+                <div className="w-16 h-16 rounded-[1.5rem] flex items-center justify-center mb-6 shadow-sm"
                     style={{ backgroundColor: 'var(--border)' }}
                 >
                     <Brain size={32} style={{ color: 'var(--accent)' }} className="opacity-60" />
@@ -91,8 +91,8 @@ export default function BrainDump({ initialIdeas }: Props) {
 
             {/* Main Input Area */}
             <div className="relative mb-12 group">
-                <div className="absolute inset-0 bg-zinc-900/5 dark:bg-white/5 blur-xl group-hover:blur-2xl transition-all duration-500 rounded-[2rem]" />
-                <div className="relative backdrop-blur-xl border rounded-[2rem] p-6 shadow-xl transition-colors duration-500"
+                <div className="absolute inset-0 bg-zinc-900/5 dark:bg-white/5 blur-xl group-hover:blur-2xl transition-all rounded-[2rem]" />
+                <div className="relative backdrop-blur-xl border rounded-[2rem] p-6 shadow-xl"
                     style={{
                         backgroundColor: 'color-mix(in srgb, var(--surface) 80%, transparent)',
                         borderColor: 'var(--border)'
@@ -135,7 +135,7 @@ export default function BrainDump({ initialIdeas }: Props) {
                             initial={{ opacity: 0, y: 15, scale: 0.98 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
-                            className="group relative border rounded-2xl p-5 transition-all hover:shadow-md duration-500"
+                            className="group relative border rounded-2xl p-5 transition-all hover:shadow-md"
                             style={{
                                 backgroundColor: 'color-mix(in srgb, var(--surface) 40%, transparent)',
                                 borderColor: 'var(--border)'

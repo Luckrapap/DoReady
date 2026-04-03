@@ -10,7 +10,7 @@ export default function AppLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <div className="flex flex-col-reverse md:flex-row h-[100dvh] overflow-hidden transition-colors duration-500 bg-[var(--background)]">
+        <div className="flex flex-col-reverse md:flex-row h-[100dvh] overflow-hidden bg-[var(--background)]">
             {/* Loading Indicator for Route Changes */}
             <Suspense fallback={null}>
                 <NavigationLoader />

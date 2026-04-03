@@ -44,11 +44,13 @@ export default function MobileNavigationMenu() {
                         <Link
                             key={link.name}
                             href={link.href}
-                            onClick={() => {
-                                triggerHaptic();
-                                window.dispatchEvent(new Event('close-mobile-drawer'));
-                                window.dispatchEvent(new Event('navigation-start'));
-                            }}
+                                onClick={() => {
+                                    triggerHaptic();
+                                    window.dispatchEvent(new Event('close-mobile-drawer'));
+                                    if (pathname !== link.href) {
+                                        window.dispatchEvent(new Event('navigation-start'));
+                                    }
+                                }}
                             className={cn(
                                 "flex items-center gap-5 px-5 py-4.5 rounded-2xl text-[20px] font-semibold transition-all relative",
                                 isActive
@@ -74,7 +76,9 @@ export default function MobileNavigationMenu() {
                                 onClick={() => {
                                     triggerHaptic();
                                     window.dispatchEvent(new Event('close-mobile-drawer'));
-                                    window.dispatchEvent(new Event('navigation-start'));
+                                    if (pathname !== link.href) {
+                                        window.dispatchEvent(new Event('navigation-start'));
+                                    }
                                 }}
                                 className={cn(
                                     "flex items-center gap-5 px-5 py-4.5 rounded-2xl text-[20px] font-semibold transition-all relative",

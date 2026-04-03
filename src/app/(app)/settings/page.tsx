@@ -20,15 +20,15 @@ export default function SettingsPage() {
                     </h2>
                     <Link
                         href="/settings/security"
-                        className="group transition-all duration-500 flex items-center justify-between rounded-3xl p-6 shadow-sm border hover:shadow-md"
+                        className="group flex items-center justify-between rounded-3xl p-6 shadow-sm border hover:shadow-md transition-shadow"
                         style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
                     >
                         <div className="flex items-center gap-4">
-                            <div className="p-3 rounded-2xl transition-all duration-500" style={{ backgroundColor: 'color-mix(in srgb, var(--accent) 10%, transparent)', color: 'var(--accent)' }}>
+                            <div className="p-3 rounded-2xl" style={{ backgroundColor: 'color-mix(in srgb, var(--accent) 10%, transparent)', color: 'var(--accent)' }}>
                                 <ShieldCheck size={24} strokeWidth={2.5} />
                             </div>
                             <div>
-                                <h3 className="text-xl font-extrabold tracking-tight transition-colors duration-500" style={{ color: 'var(--accent)' }}>Seguridad</h3>
+                                <h3 className="text-xl font-extrabold tracking-tight" style={{ color: 'var(--accent)' }}>Seguridad</h3>
                                 <p className="text-sm font-medium text-zinc-500/80 dark:text-zinc-400/80 tracking-wide">Contraseña, sesiones y protección de cuenta.</p>
                             </div>
                         </div>

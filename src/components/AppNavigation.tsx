@@ -77,10 +77,12 @@ export default function AppNavigation() {
                                         href={link.href}
                                         onClick={() => {
                                             triggerHaptic()
-                                            window.dispatchEvent(new Event('navigation-start'))
+                                            if (pathname !== link.href) {
+                                                window.dispatchEvent(new Event('navigation-start'))
+                                            }
                                         }}
                                         className={cn(
-                                            "flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-semibold transition-all relative group shrink-0",
+                                            "flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-semibold transition-shadow relative group shrink-0",
                                             isActive
                                                 ? "text-zinc-900 dark:text-zinc-50"
                                                 : "text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
@@ -121,10 +123,12 @@ export default function AppNavigation() {
                                     href={link.href}
                                     onClick={() => {
                                         triggerHaptic()
-                                        window.dispatchEvent(new Event('navigation-start'))
+                                        if (pathname !== link.href) {
+                                            window.dispatchEvent(new Event('navigation-start'))
+                                        }
                                     }}
                                     className={cn(
-                                        "flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-semibold transition-all relative group",
+                                        "flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-semibold transition-shadow relative group",
                                         isActive
                                             ? "text-zinc-900 dark:text-zinc-50 font-bold"
                                             : "text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"

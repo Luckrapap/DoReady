@@ -86,7 +86,7 @@ export default function TasksContainer({ initialTasks, dateStr }: TasksContainer
                     <motion.div
                         initial={{ opacity: 0, scale: 0.98 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="flex flex-col items-center justify-center py-16 transition-colors duration-500 border border-dashed rounded-[32px] gap-4"
+                        className="flex flex-col items-center justify-center py-16 border border-dashed rounded-[32px] gap-4"
                         style={{
                             backgroundColor: 'color-mix(in srgb, var(--surface) 20%, transparent)',
                             borderColor: 'var(--border)'
