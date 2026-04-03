@@ -63,9 +63,8 @@ export default function NavigationLoader() {
                 >
                     <div className="flex flex-col items-center gap-8">
                         <ThreeDotsLoading />
-                        <div className="flex flex-col items-center gap-2">
-                            <span className="text-zinc-900/90 dark:text-white/90 font-bold text-3xl tracking-widest uppercase">Cargando...</span>
-                            <span className="text-[10px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.3em]">BUILD v3.2.1 • Smart-Auto-Exit</span>
+                        <div className="flex flex-col items-center">
+                            <span className="text-zinc-900/90 dark:text-white/90 font-bold text-3xl tracking-widest uppercase text-center">Cargando...</span>
                         </div>
                     </div>
                 </motion.div>
