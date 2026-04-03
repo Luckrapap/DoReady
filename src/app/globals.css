@@ -38,14 +38,14 @@
 }
 
 .dark {
-  /* Next.js Layout Foundation Colors - OLED Black Contrast */
+  /* Next.js Layout Foundation Colors - OLED Black Contrast (Higher Distinction) */
   --theme-background: #000000;
   --theme-foreground: #f8fafc;
   --theme-primary: #f8fafc;
   --theme-secondary: #a1a1aa;
-  --theme-surface: #0f0f10;
-  --theme-surface-hover: #18181b;
-  --theme-border: #1e1e20;
+  --theme-surface: #171717;      /* Clean Dark Gray / Zinc-900ish */
+  --theme-surface-hover: #1f1f22;
+  --theme-border: #232326;
   --theme-accent: #334155;
   --theme-on-accent: #ffffff;
 
