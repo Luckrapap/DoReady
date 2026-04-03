@@ -100,6 +100,11 @@ export default function RootLayout({
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                transition: opacity 0.8s ease-out;
+              }
+              html.app-ready #startup-static-overlay {
+                opacity: 0;
+                pointer-events: none;
               }
               #startup-static-logo {
                 width: 221.76px;
@@ -121,16 +126,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${outfit.variable} ${playfair.variable} antialiased select-none fixed inset-0 w-full h-[100dvh] overflow-hidden overscroll-none`}
       >
-        <div 
-          id="startup-static-wrapper"
-          dangerouslySetInnerHTML={{
-            __html: `
-              <div id="startup-static-overlay">
-                <div id="startup-static-logo"></div>
-              </div>
-            `
-          }}
-        />
+        <div id="startup-static-overlay">
+          <div id="startup-static-logo"></div>
+        </div>
         <ThemeHandler />
         <StartupLoader />
         <OfflineOverlay />

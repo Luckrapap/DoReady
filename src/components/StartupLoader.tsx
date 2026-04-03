@@ -11,19 +11,9 @@ export default function StartupLoader() {
     useEffect(() => {
         setMounted(true)
         
-        // Handover: Find and hide the static CSS overlay once React is ready
-        const staticOverlay = document.getElementById('startup-static-overlay')
-        if (staticOverlay) {
-            staticOverlay.style.opacity = '0'
-            staticOverlay.style.pointerEvents = 'none'
-            staticOverlay.style.transition = 'opacity 0.6s ease-out'
-            
-            // Wait for transition before DOM removal
-            setTimeout(() => {
-                const wrapper = document.getElementById('startup-static-wrapper')
-                if (wrapper) wrapper.remove()
-            }, 600)
-        }
+        // Handover: Switch from manual DOM removal to CSS-driven state
+        // This is 100% safe for React hydration and prevents navigation crashes.
+        document.documentElement.classList.add('app-ready')
 
         // Auto-dismiss after 1.3 seconds (ChatGPT snappy style)
         const timer = setTimeout(() => {
