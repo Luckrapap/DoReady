@@ -14,14 +14,15 @@ export default function StartupLoader() {
         // Handover: Find and hide the static CSS overlay once React is ready
         const staticOverlay = document.getElementById('startup-static-overlay')
         if (staticOverlay) {
-            staticOverlay.style.opacity = '0'
-            setTimeout(() => staticOverlay.remove(), 500)
+            // Immediate pull down for absolute coherence
+            staticOverlay.style.background = 'transparent'
+            setTimeout(() => staticOverlay.remove(), 100)
         }
 
-        // Auto-dismiss after scaling duration + pause
+        // Auto-dismiss after 3 seconds (Cinematic duration)
         const timer = setTimeout(() => {
             setIsVisible(false)
-        }, 2200)
+        }, 3000)
 
         return () => clearTimeout(timer)
     }, [])
@@ -34,35 +35,30 @@ export default function StartupLoader() {
                 <motion.div
                     initial={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.6, ease: "easeInOut" }}
-                    className="fixed inset-0 z-[9999] flex items-center justify-center bg-white dark:bg-black overflow-hidden pointer-events-none"
+                    transition={{ duration: 0.8, ease: "linear" }}
+                    className="fixed inset-0 z-[9999] flex items-center justify-center bg-black overflow-hidden pointer-events-none"
                 >
                     <div className="relative flex flex-col items-center">
                         <motion.div
-                            initial={{ scale: 0.2, opacity: 0 }}
-                            animate={{ 
-                                scale: [0.2, 1.25, 1],
-                                opacity: 1 
-                            }}
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1.1, opacity: 1 }}
                             transition={{ 
-                                duration: 1.5, 
-                                ease: [0.16, 1, 0.3, 1], // Custom bounce/smooth ease
-                                delay: 0.1,
-                                times: [0, 0.7, 1] // Keyframe timing
+                                duration: 3, 
+                                ease: "linear"
                             }}
                         >
-                            {/* Logo Gigante v2.0 (84 is double the previous size) */}
-                            <Logo size={84} className="ml-0 mr-0 translate-y-0" />
+                            {/* Logo Cinematic v3.0 (Balanced Size 72) */}
+                            <Logo size={72} className="ml-0 mr-0 translate-y-0" />
                         </motion.div>
                         
                         <motion.div
-                            initial={{ opacity: 0, y: 15 }}
-                            animate={{ opacity: 0.6, y: 0 }}
-                            transition={{ delay: 1.0, duration: 1.0 }}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 0.4 }}
+                            transition={{ delay: 1.5, duration: 1.0 }}
                             className="absolute -bottom-24"
                         >
-                            <span className="text-xs font-black uppercase tracking-[0.6em] text-zinc-400 dark:text-zinc-600">
-                                DoReady v3.5.1
+                            <span className="text-[10px] font-bold uppercase tracking-[0.6em] text-zinc-600">
+                                DoReady v3.5.2
                             </span>
                         </motion.div>
                     </div>

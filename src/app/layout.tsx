@@ -96,17 +96,10 @@ export default function RootLayout({
                 position: fixed;
                 inset: 0;
                 z-index: 9998;
-                background-color: #ffffff;
-                transition: opacity 0.5s ease-out;
+                background-color: #000000;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-              }
-              .dark #startup-static-overlay {
-                background-color: #000000;
-              }
-              body:not(.dark) #startup-static-overlay {
-                background-color: #ffffff;
               }
             `,
           }}

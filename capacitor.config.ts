@@ -10,7 +10,7 @@ const config: CapacitorConfig = {
     cleartext: true
   },
   android: {
-    backgroundColor: "#ffffff"
+    backgroundColor: "#000000"
   }
 };
 
