@@ -6,6 +6,12 @@ import { revalidatePath } from 'next/cache'
 export type CheckDayLayer = 'performance' | 'mood'
 export type CheckDayStatus = 'check' | 'x' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | null
 
+export interface CheckDayRecord {
+    status: CheckDayStatus
+    color?: string
+    notes?: string
+}
+
 export async function getCheckDays(year: number, month: number, layer: CheckDayLayer = 'performance') {
     const supabase = await createClient()
 
@@ -15,14 +21,13 @@ export async function getCheckDays(year: number, month: number, layer: CheckDayL
         throw new Error(authError ? `Auth Error: ${authError.message}` : 'Not authenticated')
     }
 
-    // Format start and end of month
-    const startDate = `${year}-${String(month).padStart(2, '0')}-01`
-    const lastDay = new Date(year, month, 0).getDate()
-    const endDate = `${year}-${String(month).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`
+    // Fetch with a buffer to handle weeks spanning multiple months
+    const startDate = new Date(year, month - 1, -7).toISOString().split('T')[0]
+    const endDate = new Date(year, month, 7).toISOString().split('T')[0]
 
     const { data, error } = await supabase
         .from('check_days')
-        .select('date, status')
+        .select('date, status, color, notes')
         .eq('user_id', user.id)
         .eq('layer_type', layer)
         .gte('date', startDate)
@@ -38,15 +43,19 @@ export async function getCheckDays(year: number, month: number, layer: CheckDayL
         return {}
     }
 
-    const checkMap: Record<string, CheckDayStatus> = {}
+    const checkMap: Record<string, CheckDayRecord> = {}
     data.forEach(item => {
-        checkMap[item.date] = item.status as CheckDayStatus
+        checkMap[item.date] = { 
+            status: item.status as CheckDayStatus,
+            color: item.color || undefined,
+            notes: item.notes || undefined
+        }
     })
 
     return checkMap
 }
 
-export async function toggleCheckDay(dateStr: string, status: CheckDayStatus, layer: CheckDayLayer = 'performance') {
+export async function toggleCheckDay(dateStr: string, status: CheckDayStatus, color?: string, notes?: string, layer: CheckDayLayer = 'performance') {
     const supabase = await createClient()
 
     try {
@@ -75,6 +84,8 @@ export async function toggleCheckDay(dateStr: string, status: CheckDayStatus, la
                     user_id: user.id,
                     date: dateStr,
                     status: status,
+                    color: color,
+                    notes: notes,
                     layer_type: layer
                 }, {
                     onConflict: 'user_id, date, layer_type'
