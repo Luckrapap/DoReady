@@ -1,8 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
-import { getTasks, getCurrentStreak } from '@/app/actions/tasks'
+import { getTasks } from '@/app/actions/tasks'
 import TasksContainer from '@/components/TasksContainer'
-import StreakCounter from '@/components/StreakCounter'
 
 // Basic helper to get today's date in YYYY-MM-DD format based on local server time
 function getTodayDateStr() {
@@ -31,10 +30,7 @@ export default async function TodayPage({
     const activeDateStr = typeof date === 'string' ? date : getTodayDateStr()
     const isToday = activeDateStr === getTodayDateStr()
 
-    const [tasks, streak] = await Promise.all([
-        getTasks(activeDateStr),
-        getCurrentStreak()
-    ])
+    const tasks = await getTasks(activeDateStr)
 
     // Parse the active date string (YYYY-MM-DD) for display
     // Using UTC to avoid timezone shifts when parsing YYYY-MM-DD strings
@@ -58,9 +54,6 @@ export default async function TodayPage({
                     displayDate={displayDate} 
                 />
                 
-                <div className="mt-12 flex justify-center pb-8">
-                    <StreakCounter streak={streak} />
-                </div>
             </div>
         </main>
     )

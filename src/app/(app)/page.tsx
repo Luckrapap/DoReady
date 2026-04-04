@@ -1,8 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
-import { getTasks, getCurrentStreak } from '@/app/actions/tasks'
+import { getTasks } from '@/app/actions/tasks'
 import TasksContainer from '@/components/TasksContainer'
-import StreakCounter from '@/components/StreakCounter'
 
 // Basic helper to get today's date in YYYY-MM-DD format based on local server time
 function getTodayDateStr() {
@@ -31,10 +30,7 @@ export default async function Home({
   const activeDateStr = typeof date === 'string' ? date : getTodayDateStr()
   const isToday = activeDateStr === getTodayDateStr()
 
-  const [tasks, streak] = await Promise.all([
-    getTasks(activeDateStr),
-    getCurrentStreak()
-  ])
+  const tasks = await getTasks(activeDateStr)
 
   // Parse the active date string (YYYY-MM-DD) for display
   // Using UTC to avoid timezone shifts when parsing YYYY-MM-DD strings
@@ -54,18 +50,12 @@ export default async function Home({
       style={{ backgroundColor: 'var(--background)' }}
     >
       <div className="w-full max-w-xl">
-        {/* Header (Simplified compared to Sprint 2 since Sidebar exists) */}
-        <header className="mb-12 flex items-start justify-between">
-          <div>
-            <h1 className="font-bold text-2xl tracking-tight text-zinc-900 dark:text-zinc-50">
-              {isToday ? "Hoy" : "Enfoque Diario"}
-            </h1>
-            <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400 mt-1">{displayDate}</p>
-          </div>
-          <StreakCounter streak={streak} />
-        </header>
-
-        <TasksContainer initialTasks={tasks} dateStr={activeDateStr} />
+        <TasksContainer 
+          initialTasks={tasks} 
+          dateStr={activeDateStr} 
+          title={isToday ? "Hoy" : "Enfoque Diario"}
+          displayDate={displayDate}
+        />
       </div>
     </main>
   )

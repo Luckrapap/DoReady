@@ -2,8 +2,7 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import CalendarGrid from '@/components/CalendarGrid'
 import TasksContainer from '@/components/TasksContainer'
-import StreakCounter from '@/components/StreakCounter'
-import { getMonthTaskCounts, getTasks, getCurrentStreak } from '@/app/actions/tasks'
+import { getMonthTaskCounts, getTasks } from '@/app/actions/tasks'
 import { ChevronLeft } from 'lucide-react'
 import Link from 'next/link'
 
@@ -32,10 +31,7 @@ export default async function CalendarPage({
 
     // If a date is selected, we show the Agenda for that day
     if (selectedDateStr) {
-        const [tasks, streak] = await Promise.all([
-            getTasks(selectedDateStr),
-            getCurrentStreak()
-        ])
+        const tasks = await getTasks(selectedDateStr)
 
         const [year, month, day] = selectedDateStr.split('-').map(Number)
         const dateObj = new Date(Date.UTC(year, month - 1, day))
@@ -56,9 +52,6 @@ export default async function CalendarPage({
                         displayDate={displayDate} 
                     />
 
-                    <div className="mt-12 flex justify-center pb-8">
-                        <StreakCounter streak={streak} />
-                    </div>
                 </div>
             </main>
         )

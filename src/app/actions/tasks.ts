@@ -56,69 +56,6 @@ export async function getMonthTaskCounts() {
     return counts
 }
 
-export async function getCurrentStreak() {
-    const supabase = await createClient()
-
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return 0
-
-    // Fetch unique dates where tasks were completed
-    const { data, error } = await supabase
-        .from('tasks')
-        .select('date')
-        .eq('user_id', user.id)
-        .eq('is_completed', true)
-        .order('date', { ascending: false })
-
-    if (error) {
-        console.error('Error fetching streak data:', {
-            message: error.message,
-            details: error.details,
-            hint: error.hint,
-            code: error.code
-        })
-        return 0
-    }
-    if (!data || data.length === 0) return 0
-
-    // Deduplicate dates
-    const uniqueDates = Array.from(new Set(data.map(t => t.date)))
-
-    let streak = 0
-
-    // Calculate today's date in YYYY-MM-DD using UTC to avoid timezone issues
-    const d = new Date()
-    const todayStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
-
-    const dYes = new Date()
-    dYes.setDate(dYes.getDate() - 1)
-    const yesterdayStr = `${dYes.getFullYear()}-${String(dYes.getMonth() + 1).padStart(2, '0')}-${String(dYes.getDate()).padStart(2, '0')}`
-
-    // If the most recent completed task is not today or yesterday, streak is broken
-    if (uniqueDates[0] !== todayStr && uniqueDates[0] !== yesterdayStr) {
-        return 0
-    }
-
-    // Calculate consecutive days
-    let currentDateObj = new Date(uniqueDates[0])
-
-    for (let i = 0; i < uniqueDates.length; i++) {
-        const loopDateStr = uniqueDates[i]
-
-        // Check if loopDateStr matches expected current date down the streak
-        const expectedDateStr = `${currentDateObj.getFullYear()}-${String(currentDateObj.getMonth() + 1).padStart(2, '0')}-${String(currentDateObj.getDate()).padStart(2, '0')}`
-
-        if (loopDateStr === expectedDateStr) {
-            streak++
-            // Move backwards 1 day
-            currentDateObj.setDate(currentDateObj.getDate() - 1)
-        } else {
-            break // Streak broken
-        }
-    }
-
-    return streak
-}
 
 export async function createTask(title: string, dateStr: string) {
     const supabase = await createClient()
