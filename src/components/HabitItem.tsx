@@ -8,20 +8,36 @@ import { Haptics, ImpactStyle } from '@capacitor/haptics'
 import { cn } from '@/utils/utils'
 import { toggleHabitLog, deleteHabit } from '@/app/actions/habits'
 
+const wiggleVariants: any = {
+    reorder: {
+        rotate: [0, -0.4, 0.4, -0.4, 0.4, 0],
+        transition: {
+            duration: 0.5,
+            repeat: Infinity,
+            ease: "easeInOut"
+        }
+    },
+    idle: {
+        rotate: 0
+    }
+}
+
 type HabitItemProps = {
     habit: { id: string, title: string, is_completed: boolean };
     dateStr: string;
     onStatusChange: (habitId: string, isCompleted: boolean) => void;
     onDelete: (habitId: string) => void;
     onEdit: () => void;
+    isReorderMode?: boolean;
 }
 
-export default function HabitItem({ habit, dateStr, onStatusChange, onDelete, onEdit }: HabitItemProps) {
+export default function HabitItem({ habit, dateStr, onStatusChange, onDelete, onEdit, isReorderMode }: HabitItemProps) {
     const [isPending, startTransition] = useTransition()
     const [isHovered, setIsHovered] = useState(false)
 
     // Using an optimistic toggle locally for immediate feedback
     const handleToggle = () => {
+        if (isReorderMode) return
         const newStatus = !habit.is_completed;
         
         // Haptic feedback
@@ -31,10 +47,10 @@ export default function HabitItem({ habit, dateStr, onStatusChange, onDelete, on
             Haptics.impact({ style: ImpactStyle.Light }).catch(() => {})
         }
 
+        // Optimistic UI update - BEFORE the transition to ensure instant feedback
+        onStatusChange(habit.id, newStatus);
+
         startTransition(async () => {
-            // Optimistic UI update
-            onStatusChange(habit.id, newStatus);
-            
             const success = await toggleHabitLog(habit.id, dateStr, newStatus);
             if (!success) {
                 // Revert if failed
@@ -48,78 +64,76 @@ export default function HabitItem({ habit, dateStr, onStatusChange, onDelete, on
     return (
         <motion.div
             layout
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            whileTap={{ scale: 0.98 }}
-            className={cn(
-                "group relative flex items-center gap-5 p-5 rounded-3xl transition-all duration-300 tap-highlight-transparent",
-                habit.is_completed ? "bg-opacity-50" : "bg-opacity-100"
-            )}
-            style={{ 
-                backgroundColor: 'var(--surface)', 
-                border: '1px solid',
-                borderColor: habit.is_completed ? 'var(--accent)' : 'var(--border)'
-            }}
+            variants={wiggleVariants}
+            animate={isReorderMode ? "reorder" : "idle"}
+            initial="idle"
+            className="flex items-center gap-2 w-full"
         >
-            {/* Minimalist Checkbox - Increased touch target for mobile (44px) */}
-            <div 
-                onClick={handleToggle}
+            <motion.div
+                whileTap={{ scale: isReorderMode ? 1.05 : 0.98 }}
+                onClick={() => { if (!isReorderMode) onEdit() }}
                 className={cn(
-                    "flex-shrink-0 w-11 h-11 rounded-full border-2 flex items-center justify-center transition-all duration-300 relative overflow-hidden cursor-pointer active:scale-90",
-                    habit.is_completed ? "border-transparent" : "border-zinc-300 dark:border-zinc-700 hover:border-zinc-400 dark:hover:border-zinc-500"
+                    "flex-1 min-w-0 group relative flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 tap-highlight-transparent cursor-pointer",
+                    isReorderMode 
+                        ? "cursor-grab active:cursor-grabbing border-[var(--accent)]/30 border bg-[var(--surface)] shadow-lg z-10" 
+                        : habit.is_completed 
+                            ? "shadow-none bg-[var(--surface)] border border-[var(--border)]" 
+                            : "shadow-sm bg-[var(--surface)] border border-[var(--border)]"
                 )}
-                style={habit.is_completed ? { backgroundColor: 'var(--accent)' } : {}}
+            >
+            <div 
+                onClick={(e) => { e.stopPropagation(); handleToggle() }}
+                className={cn(
+                    "flex-shrink-0 w-[26px] h-[26px] rounded-full border-[1.5px] flex items-center justify-center transition-all duration-300 relative overflow-hidden active:scale-90",
+                    isReorderMode
+                        ? "bg-[var(--accent)]/10 text-[var(--accent)] border border-[var(--accent)]/20"
+                        : habit.is_completed 
+                            ? "border-transparent cursor-pointer" 
+                            : "border-zinc-300 dark:border-zinc-600 hover:border-zinc-400 dark:hover:border-zinc-500 cursor-pointer"
+                )}
+                style={!isReorderMode && habit.is_completed ? { backgroundColor: 'var(--accent)' } : {}}
             >
                 <motion.div
                     initial={false}
                     animate={{ scale: habit.is_completed ? 1.1 : 0 }}
                     transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 >
-                    <Check size={22} strokeWidth={3} className="text-white" />
+                    <Check size={16} strokeWidth={3} className="text-[var(--theme-on-accent)]" />
                 </motion.div>
             </div>
 
             {/* Title */}
-            <div className="flex-1 flex flex-col justify-center min-w-0">
+            <div className="flex-1 min-w-0 pr-2">
                 <span className={cn(
-                    "text-xl font-medium transition-all duration-300 truncate",
-                    habit.is_completed ? "text-zinc-500 dark:text-zinc-400 line-through decoration-zinc-400/50" : "text-zinc-900 dark:text-zinc-100"
+                    "text-[17px] transition-all duration-300 truncate block",
+                    isReorderMode 
+                        ? "text-zinc-900 dark:text-zinc-50 font-medium" 
+                        : "font-light " + (habit.is_completed ? "text-zinc-400 dark:text-zinc-500 line-through decoration-zinc-400/50" : "text-zinc-800 dark:text-zinc-100")
                 )}>
                     {habit.title}
                 </span>
             </div>
 
-            <div className="flex items-center gap-1">
-                {/* Orbit Icon */}
-                <Link
-                    href={`/orbit/${habit.id}`}
-                    onClick={(e) => e.stopPropagation()}
-                    className="p-3 text-zinc-400 hover:text-[var(--accent)] hover:bg-[var(--accent)]/5 rounded-xl transition-all active:scale-90"
-                >
-                    <Orbit size={20} />
-                </Link>
 
-                {/* Edit Icon */}
-            <button
-                onClick={(e) => {
-                    e.stopPropagation()
-                    onEdit()
-                }}
-                className="p-3 text-zinc-400 hover:text-[var(--accent)] hover:bg-[var(--accent)]/5 rounded-xl transition-all active:scale-90"
-            >
-                <Pencil size={20} />
-                </button>
-            </div>
+
+
 
             
-            {/* Subtle background glow when completed */}
-            {habit.is_completed && (
-                <div 
-                    className="absolute inset-0 rounded-3xl opacity-5 pointer-events-none"
-                    style={{ backgroundColor: 'var(--accent)' }}
-                />
-            )}
+            </motion.div>
+
+            {/* Right Orbit Box */}
+            <motion.button
+                whileTap={!isReorderMode ? { scale: 0.92 } : undefined}
+                className={cn(
+                    "flex-shrink-0 w-[58px] h-[58px] rounded-2xl border flex items-center justify-center transition-all duration-300 group/orbit tap-highlight-transparent",
+                    isReorderMode 
+                        ? "opacity-30 grayscale pointer-events-none"
+                        : "bg-[var(--surface)] border-[var(--border)] text-zinc-400 hover:text-[var(--accent)] hover:border-[var(--accent)] hover:bg-[var(--accent)]/5 shadow-sm"
+                )}
+                title="Ver órbita"
+            >
+                <Orbit className="transition-transform duration-700 ease-in-out group-hover/orbit:rotate-180" size={24} strokeWidth={2} />
+            </motion.button>
         </motion.div>
     )
 }

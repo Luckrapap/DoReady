@@ -1,32 +1,39 @@
 import Link from 'next/link'
 import { login, signup, signInAsGuest } from './actions'
 import { SubmitButton } from './SubmitButton'
-import { User, Mail, Lock, Calendar, ClipboardList, Sparkles, Zap, ArrowRight, LogIn, ArrowLeft } from 'lucide-react'
+import { User, Mail, Lock, Calendar, ClipboardList, Sparkles, Zap, ArrowRight, LogIn } from 'lucide-react'
 import Logo from '@/components/Logo'
 import PasswordInput from '@/components/PasswordInput'
 import { createClient } from '@/utils/supabase/server'
+import { headers } from 'next/headers'
+import { redirect } from 'next/navigation'
+import CircularBackButton from '@/components/CircularBackButton'
+import FadeIn from '@/components/FadeIn'
 
-export default async function LoginPage(props: { searchParams: Promise<{ error?: string, type?: string }> }) {
+export default async function LoginView(props: { searchParams: Promise<{ error?: string, type?: string }> }) {
     const searchParams = await props.searchParams
     const errorMessage = searchParams?.error
     const type = searchParams?.type
-    const showChoice = !type // Show choice if no type is selected
+    const showChoice = !type
     const isRegistering = type === 'register'
 
-    // Fragile Guest Mode: If an anonymous user returns to the login selection screen,
-    // we effectively "sign them out" so they start fresh or choose another path.
+    // Detect mobile for redirection
+    const headersList = await headers()
+    const userAgent = headersList.get('user-agent') || ''
+    const isMobile = /mobile|android|iphone|ipad|phone/i.test(userAgent)
+
     if (showChoice) {
         const supabase = await createClient()
         const { data: { user } } = await supabase.auth.getUser()
         if (user?.is_anonymous) {
+            // Note: Performing side effects during render is generally discouraged, 
+            // but in a Server Component page this is often used for session cleanup.
             await supabase.auth.signOut()
         }
-    }
 
-    if (showChoice) {
         return (
-            <div className="flex min-h-screen w-full items-center justify-center bg-white dark:bg-zinc-950 px-4 py-12 font-outfit">
-                <div className="w-full max-w-4xl flex flex-col items-center">
+            <div className="flex h-[100dvh] overflow-y-auto w-full items-center justify-center bg-white dark:bg-zinc-950 px-4 py-12 font-outfit">
+                <FadeIn className="w-full max-w-4xl flex flex-col items-center">
                     <div className="flex flex-col items-center mb-16 gap-1">
                         <Logo size={64} style={{ color: 'var(--accent)' }} className="animate-in zoom-in duration-700" />
                         <h1 className="text-6xl font-black tracking-tighter uppercase leading-none" style={{ color: 'var(--accent)' }}>DoReady</h1>
@@ -61,31 +68,23 @@ export default async function LoginPage(props: { searchParams: Promise<{ error?:
                     <Link href="/" className="mt-16 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-50 text-xs font-black uppercase tracking-[0.4em] transition-all">
                         ← Volver al inicio
                     </Link>
-                </div>
+                </FadeIn>
             </div>
         )
     }
 
     return (
-        <div className="flex min-h-screen w-full items-center justify-center bg-zinc-50 dark:bg-zinc-950 px-4 py-12">
-            <div className="w-full max-w-md flex flex-col items-center">
-                <div className="flex flex-col items-center mb-8 gap-1 relative w-full">
-                    <Link
-                        href="/login"
-                        className="absolute left-0 top-1/2 -translate-y-1/2 p-2 text-zinc-400 hover:text-black dark:hover:text-white transition-colors flex items-center gap-1 group"
-                        title="Volver a la selección"
-                    >
-                        <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-                        <span className="text-xs font-bold uppercase tracking-widest hidden sm:inline">Volver</span>
-                    </Link>
-
-                    <Link href="/login" className="flex flex-col items-center gap-1 hover:scale-110 transition-transform">
-                        <Logo size={36} style={{ color: 'var(--accent)' }} className="shadow-lg" />
-                    </Link>
-                    <h1 className="text-4xl font-bold tracking-tight leading-none" style={{ color: 'var(--accent)' }}>DoReady</h1>
-                    <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                        {isRegistering ? "Empieza tu camino al enfoque radical." : "Bienvenido de nuevo. Hagamos que suceda."}
-                    </p>
+        <div className="flex h-[100dvh] overflow-y-auto w-full items-center justify-center bg-zinc-50 dark:bg-zinc-950 px-4 py-12 font-outfit">
+            <FadeIn className="w-full max-w-md flex flex-col items-center">
+                <div className="w-full flex justify-center mb-10">
+                    <div className="relative">
+                        <div className="absolute right-[calc(100%+0.85rem)] top-1/2 -translate-y-1/2">
+                            <CircularBackButton href={isMobile ? "/" : "/login"} />
+                        </div>
+                        <h1 className="text-5xl font-semibold tracking-tight text-zinc-100 dark:text-zinc-100 whitespace-nowrap">
+                            {isRegistering ? "Registrarse" : "Acceder"}
+                        </h1>
+                    </div>
                 </div>
 
                 <form action={isRegistering ? signup : login} className="w-full flex flex-col gap-4 bg-white dark:bg-zinc-900 p-8 rounded-[2.5rem] shadow-xl border border-zinc-200 dark:border-zinc-800">
@@ -186,7 +185,7 @@ export default async function LoginPage(props: { searchParams: Promise<{ error?:
                     <SubmitButton isRegistering={isRegistering} />
 
                 </form>
-            </div>
+            </FadeIn>
         </div>
     )
 }

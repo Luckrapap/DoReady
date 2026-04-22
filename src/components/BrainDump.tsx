@@ -73,22 +73,7 @@ export default function BrainDump({ initialIdeas }: Props) {
     }
 
     return (
-        <div className="w-full max-w-2xl mx-auto px-4 py-8 pb-28">
-            {/* Header */}
-            <div className="flex flex-col items-center mb-12 text-center">
-                <div className="w-16 h-16 rounded-[1.5rem] flex items-center justify-center mb-6 shadow-sm"
-                    style={{ backgroundColor: 'var(--border)' }}
-                >
-                    <Brain size={32} style={{ color: 'var(--accent)' }} className="opacity-60" />
-                </div>
-                <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-                    Tablero de Ideas
-                </h1>
-                <p className="text-zinc-500 dark:text-zinc-400 mt-2 max-w-sm text-sm">
-                    Sácalo de tu mente. Entiérralo aquí. Recupera tu enfoque.
-                </p>
-            </div>
-
+        <div className="flex-1 w-full overflow-y-auto overflow-x-hidden no-scrollbar px-4 pb-28">
             {/* Main Input Area */}
             <div className="relative mb-12 group">
                 <div className="absolute inset-0 bg-zinc-900/5 dark:bg-white/5 blur-xl group-hover:blur-2xl transition-all rounded-[2rem]" />
@@ -103,6 +88,11 @@ export default function BrainDump({ initialIdeas }: Props) {
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={handleKeyDown}
+                        onFocus={(e) => {
+                            setTimeout(() => {
+                                e.target.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                            }, 300)
+                        }}
                         placeholder="¿Qué te distrae ahora mismo? Suéltalo..."
                         className="w-full bg-transparent border-none outline-none resize-none text-lg md:text-xl text-zinc-800 dark:text-zinc-200 placeholder:text-zinc-400 dark:placeholder:text-zinc-600 min-h-[100px]"
                     />
@@ -163,7 +153,7 @@ export default function BrainDump({ initialIdeas }: Props) {
                 {optimisticIdeas.length === 0 && (
                     <div className="text-center py-20">
                         <div className="text-zinc-300 dark:text-zinc-800 text-sm font-medium italic">
-                            Tu Tablero de Ideas está vacío. Tu mente debería estarlo también.
+                            Tu IdeaBox está vacío. Tu mente debería estarlo también.
                         </div>
                     </div>
                 )}

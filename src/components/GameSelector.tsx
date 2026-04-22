@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Brain, Gamepad2, Sparkles, Lock } from 'lucide-react'
+import { Brain, Gamepad2, Sparkles, Lock, RotateCcw } from 'lucide-react'
 import { cn } from '@/utils/utils'
 
 interface GameCardProps {
@@ -89,60 +89,50 @@ export default function GameSelector({ onSelectGame }: GameSelectorProps) {
             disabled: false
         },
         {
-            id: 'zen-flow',
-            title: 'Zen Flow',
-            description: 'Un rompecabezas relajante para despejar la mente antes de volver al trabajo.',
-            icon: Sparkles,
-            color: 'bg-purple-500',
-            disabled: true
-        },
-        {
-            id: 'logic-dash',
-            title: 'Logic Dash',
-            description: 'Desafíos de lógica rápidos para despertar tu pensamiento crítico.',
-            icon: Gamepad2,
-            color: 'bg-orange-500',
-            disabled: true
+            id: 'recall',
+            title: 'Recall',
+            description: 'Pon a prueba tu memoria con un desafío visual único.',
+            icon: RotateCcw,
+            color: 'bg-green-500',
+            disabled: false
         }
     ]
 
     return (
         <div className="w-full">
-            <header className="mb-12 text-center">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
+            <header className="flex flex-col gap-1 px-4 flex-shrink-0 mb-12">
+                <div className="flex items-end justify-center">
+                    {/* Left phanton box for horizontal balance - ZERO WIDTH */}
+                    <div className="opacity-0 w-0 overflow-hidden pointer-events-none bg-zinc-200 dark:bg-zinc-800 rounded-full px-6 py-2.5 mt-2 mb-1 flex items-center justify-center">
+                        <span className="text-4xl md:text-5xl font-light">0/0</span>
+                    </div>
+                    <motion.h1
+                        initial={{ opacity: 1, y: 0 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0 }}
+                        className="font-bold text-6xl md:text-8xl tracking-tighter text-zinc-900 dark:text-zinc-50 relative bottom-1.5 whitespace-nowrap"
+                    >
+                        Procas<span style={{ color: 'var(--accent)' }}>Tive</span>
+                    </motion.h1>
+                    {/* Right phanton box for horizontal balance and height match - ZERO WIDTH */}
+                    <div className="opacity-0 w-0 overflow-hidden pointer-events-none bg-zinc-200 dark:bg-zinc-800 rounded-full px-6 py-2.5 mt-2 mb-1 flex items-center justify-center">
+                        <span className="text-4xl md:text-5xl font-light">0/0</span>
+                    </div>
+                </div>
+                <motion.p 
+                    initial={{ opacity: 1, y: 0 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest mb-6 transition-colors"
-                    style={{
-                        backgroundColor: 'color-mix(in srgb, var(--accent) 15%, transparent)',
-                        color: 'var(--accent)'
-                    }}
+                    transition={{ delay: 0 }}
+                    className="text-base font-medium text-zinc-500 dark:text-zinc-400 text-center select-none mt-2"
                 >
-                    <Sparkles size={12} />
-                    Pausa Productiva
-                </motion.div>
-                <motion.h1
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 }}
-                    className="text-4xl md:text-5xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 mb-4"
-                >
-                    Procas<span style={{ color: 'var(--accent)' }}>Tive</span>
-                </motion.h1>
-                <motion.p
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                    className="text-zinc-500 dark:text-zinc-400 max-w-md mx-auto"
-                >
-                    Elige un micro-desafío para recargar energías y volver al trabajo con más enfoque.
+                    Siempre hay algo que puedas hacer
                 </motion.p>
             </header>
 
             <motion.div
-                initial={{ opacity: 0 }}
+                initial={{ opacity: 1 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
+                transition={{ delay: 0 }}
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
             >
                 {games.map((game) => (

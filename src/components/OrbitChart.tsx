@@ -263,7 +263,7 @@ export default function OrbitChart() {
                                         >
                                             <Pencil size={20} />
                                         </div>
-                                        <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-50">Editar Órbita</h2>
+                                        <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-50">Editar HabitOrbit</h2>
                                     </div>
                                     <button
                                         onClick={() => setIsModalOpen(false)}
@@ -276,12 +276,12 @@ export default function OrbitChart() {
 
                                 <div className="space-y-5">
                                     <div>
-                                        <label className="block text-[10px] font-bold uppercase tracking-[0.1em] text-zinc-500 mb-2 px-1">Nombre de la Órbita</label>
+                                        <label className="block text-[10px] font-bold uppercase tracking-[0.1em] text-zinc-500 mb-2 px-1">Nombre de la HabitOrbit</label>
                                         <textarea
                                             autoFocus
                                             value={tempText}
                                             onChange={(e) => setTempText(e.target.value)}
-                                            placeholder="Nombre de tu órbita"
+                                            placeholder="Nombre de tu HabitOrbit"
                                             className="w-full p-4 rounded-2xl border-none transition-all text-sm text-zinc-900 dark:text-zinc-50 outline-none resize-none min-h-[80px]"
                                             style={{ backgroundColor: 'color-mix(in srgb, var(--surface, #f0f4f8) 90%, var(--accent, #3b82f6))' }}
                                         />

@@ -156,6 +156,31 @@ export async function updateHabit(id: string, title: string) {
     return data[0]
 }
 
+export async function saveHabitsOrder(orderedHabits: any[]) {
+    const supabase = await createClient()
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return false
+
+    // Preserve order by updating created_at timestamps
+    const now = new Date()
+    
+    const updates = orderedHabits.map((habit, index) => {
+        // Higher timestamps for items earlier in the list (ascending sort)
+        const timestamp = new Date(now.getTime() - (orderedHabits.length - index) * 1000).toISOString()
+        return supabase
+            .from('habits')
+            .update({ created_at: timestamp })
+            .eq('id', habit.id)
+            .eq('user_id', user.id)
+    })
+
+    await Promise.all(updates)
+    
+    revalidatePath('/habits')
+    return true
+}
+
 export async function reorderHabit(habitId: string, newCreatedAt: string) {
     const supabase = await createClient()
 

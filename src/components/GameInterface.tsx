@@ -15,12 +15,29 @@ export default function GameInterface({ onBack }: TriviaGameProps) {
     const [gameState, setGameState] = useState<'loading' | 'playing' | 'answered' | 'error'>('loading')
     const [currentTrivia, setCurrentTrivia] = useState<TriviaResponse | null>(null)
     const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
-    const [streak, setStreak] = useState(0)
+    const [streaks, setStreaks] = useState<Record<string, number>>({})
     const [isFetching, setIsFetching] = useState(false)
     const [errorMessage, setErrorMessage] = useState('')
     const [showContext, setShowContext] = useState(false)
     const [showFact, setShowFact] = useState(false)
     const [gameMode, setGameMode] = useState<'chill' | 'expert' | 'random' | 'focus' | null>(null)
+
+    // Sound URLs
+    const SOUNDS = {
+        success: '/correct.mp3',
+        error: '/incorrect.mp3',
+        click: 'https://raw.githubusercontent.com/rse/soundfx/master/soundfx.d/click1.mp3',
+        roblox: 'https://raw.githubusercontent.com/MaximumADHD/Roblox-Client-Tracker/roblox/content/sounds/button.wav'
+    }
+
+    const playSound = useCallback((type: 'success' | 'error' | 'click' | 'roblox') => {
+        const audio = new Audio(SOUNDS[type])
+        audio.volume = (type === 'click' || type === 'roblox') ? 0.5 : 0.8
+        audio.play().catch(err => console.log('Audio play failed:', err))
+    }, [])
+
+    // Racha actual derivada del modo de juego
+    const streak = gameMode ? (streaks[gameMode] || 0) : 0;
     const [isEnteringTopic, setIsEnteringTopic] = useState(false)
     const [customTopic, setCustomTopic] = useState('')
 
@@ -79,10 +96,13 @@ export default function GameInterface({ onBack }: TriviaGameProps) {
         setSelectedAnswer(answer)
         setGameState('answered')
 
+        const currentMode = gameMode || 'general'
         if (answer === currentTrivia.correctAnswer) {
-            setStreak(prev => prev + 1)
+            setStreaks(prev => ({ ...prev, [currentMode]: (prev[currentMode] || 0) + 1 }))
+            playSound('success')
         } else {
-            setStreak(0)
+            setStreaks(prev => ({ ...prev, [currentMode]: 0 }))
+            playSound('error')
         }
     }
 
@@ -126,141 +146,6 @@ export default function GameInterface({ onBack }: TriviaGameProps) {
         </div>
     )
 
-    if (isEnteringTopic) {
-        return (
-            <div className="w-full max-w-2xl mx-auto h-full flex flex-col">
-                <div className="flex items-center justify-between mb-8 px-4 relative shrink-0">
-                    <div className="flex items-center gap-4">
-                        <motion.button
-                            onClick={() => setIsEnteringTopic(false)}
-                            whileHover={{ scale: 1.1, x: -2 }}
-                            whileTap={{ scale: 0.9 }}
-                            className="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300"
-                            style={{
-                                backgroundColor: 'color-mix(in srgb, var(--surface) 80%, transparent)',
-                                borderColor: 'var(--border)',
-                                color: 'var(--accent)',
-                                backdropFilter: 'blur(8px)'
-                            }}
-                        >
-                            <ChevronLeft size={24} strokeWidth={2.5} />
-                        </motion.button>
-                        {renderHeaderContent("Personalizado")}
-                    </div>
-                </div>
-
-                <div className="flex-1 flex flex-col justify-center px-6 gap-8">
-                    <div className="text-center space-y-4">
-                        <span className="text-6xl">🎯</span>
-                        <h3 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">Tú pones las reglas</h3>
-                        <p className="text-sm text-zinc-500 font-medium">¿Sobre qué tema quieres que te desafíe hoy?</p>
-                    </div>
-
-                    <div className="relative">
-                        <input
-                            autoFocus
-                            type="text"
-                            value={customTopic}
-                            onChange={(e) => setCustomTopic(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && handleConfirmFocus()}
-                            placeholder="Ej: Mitología Griega, IA, Formula 1..."
-                            className="w-full p-6 rounded-[2rem] border-2 border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-lg font-bold focus:border-blue-500 outline-none transition-all placeholder:text-zinc-300 dark:placeholder:text-zinc-700"
-                        />
-                        <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                            <span className="text-xs font-bold text-zinc-300 dark:text-zinc-700 px-3 uppercase tracking-widest">Tema</span>
-                        </div>
-                    </div>
-
-                    <motion.button
-                        whileHover={{ scale: 1.02, y: -2 }}
-                        whileTap={{ scale: 0.98 }}
-                        disabled={!customTopic.trim() || isFetching}
-                        onClick={handleConfirmFocus}
-                        className={cn(
-                            "w-full p-6 rounded-[2rem] font-black text-lg transition-all shadow-xl shadow-blue-500/10",
-                            customTopic.trim()
-                                ? "bg-blue-500 text-white hover:bg-blue-600"
-                                : "bg-zinc-100 dark:bg-zinc-800 text-zinc-400 cursor-not-allowed"
-                        )}
-                    >
-                        {isFetching ? "Preparando desafío..." : "EMPEZAR DESAFÍO"}
-                    </motion.button>
-                </div>
-            </div>
-        )
-    }
-
-    if (gameMode === null) {
-        return (
-            <div className="w-full max-w-2xl mx-auto h-full flex flex-col">
-                <div className="flex items-center justify-between mb-8 px-4 relative shrink-0">
-                    <div className="flex items-center gap-4">
-                        <motion.button
-                            onClick={onBack}
-                            whileHover={{ scale: 1.1, x: -2 }}
-                            whileTap={{ scale: 0.9 }}
-                            className="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300"
-                            style={{
-                                backgroundColor: 'color-mix(in srgb, var(--surface) 80%, transparent)',
-                                borderColor: 'var(--border)',
-                                color: 'var(--accent)',
-                                backdropFilter: 'blur(8px)'
-                            }}
-                        >
-                            <ChevronLeft size={24} strokeWidth={2.5} />
-                        </motion.button>
-                        {renderHeaderContent("Selecciona un modo")}
-                    </div>
-                </div>
-
-                <motion.div
-                    initial="hidden"
-                    animate="visible"
-                    variants={{
-                        hidden: { opacity: 0 },
-                        visible: {
-                            opacity: 1,
-                            transition: {
-                                staggerChildren: 0.12,
-                                delayChildren: 0.2
-                            }
-                        }
-                    }}
-                    className="flex flex-col px-4 gap-4 mt-12 md:mt-20 pb-20"
-                >
-                    <ModeCard
-                        title="Chill"
-                        icon="🌿"
-                        description="Preguntas fáciles y relajantes para pasar el rato."
-                        onClick={() => handleStartMode('chill')}
-                        colorTheme="green"
-                    />
-                    <ModeCard
-                        title="Random"
-                        icon="🎲"
-                        description="Una mezcla de todo; nunca sabes qué vendrá."
-                        onClick={() => handleStartMode('random')}
-                        colorTheme="orange"
-                    />
-                    <ModeCard
-                        title="Experto"
-                        icon="🧠"
-                        description="Retos difíciles solo para mentes maestras."
-                        onClick={() => handleStartMode('expert')}
-                        colorTheme="purple"
-                    />
-                    <ModeCard
-                        title="Enfoque"
-                        icon="🎯"
-                        description="Elige el tema que tú quieras y yo te pregunto."
-                        onClick={() => handleStartMode('focus')}
-                        colorTheme="blue"
-                    />
-                </motion.div>
-            </div>
-        )
-    }
-
     const currentModeSubtitle =
         gameMode === 'chill' ? 'Chill' :
             gameMode === 'expert' ? 'Experto' :
@@ -268,253 +153,418 @@ export default function GameInterface({ onBack }: TriviaGameProps) {
                     gameMode === 'focus' ? 'Enfoque' : 'General';
 
     return (
-        <div className="w-full max-w-2xl mx-auto h-full flex flex-col">
-            {/* Header & Streak */}
-            <div className="flex items-center justify-between mb-8 px-4 relative shrink-0">
-                <div className="flex items-center gap-4">
-                    {onBack && (
-                        <motion.button
-                            onClick={() => {
-                                setGameMode(null)
-                                setGameState('playing') // Reset gameState to ensure clean return
-                            }}
-                            whileHover={{ scale: 1.1, x: -2 }}
-                            whileTap={{ scale: 0.9 }}
-                            className="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300"
-                            style={{
-                                backgroundColor: 'color-mix(in srgb, var(--surface) 80%, transparent)',
-                                borderColor: 'var(--border)',
-                                color: 'var(--accent)',
-                                backdropFilter: 'blur(8px)'
-                            }}
-                        >
-                            <ChevronLeft size={24} strokeWidth={2.5} />
-                        </motion.button>
-                    )}
-                    {renderHeaderContent(currentModeSubtitle)}
-
-                    <div className="ml-auto">
-                        <StreakBadge count={streak} />
+        <AnimatePresence mode="wait">
+            {isEnteringTopic ? (
+                <motion.div
+                    key="entering-topic"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.4 }}
+                    className="w-full max-w-2xl mx-auto h-full flex flex-col pt-4 md:pt-2 font-sans"
+                >
+                    <div className="flex items-center justify-between mb-8 px-4 relative shrink-0 h-16">
+                        <div className="flex items-center gap-4">
+                            <motion.button
+                                onClick={() => setIsEnteringTopic(false)}
+                                whileHover={{ scale: 1.1, x: -2 }}
+                                whileTap={{ scale: 0.9 }}
+                                className="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300"
+                                style={{
+                                    backgroundColor: 'color-mix(in srgb, var(--surface) 80%, transparent)',
+                                    borderColor: 'var(--border)',
+                                    color: 'var(--accent)',
+                                    backdropFilter: 'blur(8px)'
+                                }}
+                            >
+                                <ChevronLeft size={24} strokeWidth={2.5} />
+                            </motion.button>
+                            {renderHeaderContent("Personalizado")}
+                        </div>
                     </div>
-                </div>
 
-            </div>
+                    <div className="flex-1 flex flex-col justify-center px-6 gap-8">
+                        <div className="text-center space-y-4">
+                            <span className="text-6xl">🎯</span>
+                            <h3 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">Tú pones las reglas</h3>
+                            <p className="text-sm text-zinc-500 font-medium">¿Sobre qué tema quieres que te desafíe hoy?</p>
+                        </div>
 
-            {/* Game Content Area */}
-            <div className="flex-1 flex flex-col justify-start md:justify-center overflow-y-auto no-scrollbar">
-                <AnimatePresence mode="wait">
-                    {gameState === 'loading' ? (
-                        <motion.div
-                            key="loading"
-                            className="flex-1 flex flex-col items-center justify-center gap-6 p-6 transition-all"
-                        >
-                            <div className="relative w-16 h-16">
-                                {[...Array(12)].map((_, i) => (
-                                    <motion.div
-                                        key={i}
-                                        className="absolute left-[30px] top-0 w-[5px] h-[16px] rounded-full bg-zinc-400 dark:bg-zinc-500"
-                                        style={{ transformOrigin: '2.5px 32px', rotate: i * 30 }}
-                                        animate={{ opacity: [0.15, 1, 0.15] }}
-                                        transition={{
-                                            repeat: Infinity,
-                                            duration: 1.2,
-                                            delay: i * 0.1,
-                                            ease: "linear"
-                                        }}
-                                    />
-                                ))}
+                        <div className="relative">
+                            <input
+                                autoFocus
+                                type="text"
+                                value={customTopic}
+                                onChange={(e) => setCustomTopic(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleConfirmFocus()}
+                                placeholder="Ej: Mitología Griega, IA, Formula 1..."
+                                className="w-full p-6 rounded-[2rem] border-2 border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-lg font-bold focus:border-[var(--accent)] outline-none transition-all placeholder:text-zinc-300 dark:placeholder:text-zinc-700"
+                            />
+                            <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                                <span className="text-xs font-bold text-zinc-300 dark:text-zinc-700 px-3 uppercase tracking-widest">Tema</span>
                             </div>
-                            <p className="text-base font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.25em] text-center">
-                                Generando pregunta
-                            </p>
-                        </motion.div>
-                    ) : gameState === 'error' ? (
-                        <motion.div
-                            key="error"
-                            className="p-12 border rounded-[2.5rem]"
-                            style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
+                        </div>
+
+                        <motion.button
+                            whileHover={{ scale: 1.02, y: -2 }}
+                            whileTap={{ scale: 0.98 }}
+                            disabled={!customTopic.trim() || isFetching}
+                            onClick={handleConfirmFocus}
+                            className={cn(
+                                "w-full p-6 rounded-[2rem] font-black text-lg transition-all shadow-xl",
+                                customTopic.trim()
+                                    ? "bg-[var(--accent)] text-[var(--theme-on-accent)]"
+                                    : "bg-zinc-100 dark:bg-zinc-800 text-zinc-400 cursor-not-allowed"
+                            )}
                         >
-                            <div className="flex flex-col items-center gap-4">
-                                <p className="text-red-500 font-medium">{errorMessage}</p>
-                                <button
-                                    onClick={() => fetchTrivia()}
-                                    className="px-6 py-2 rounded-full font-bold text-sm bg-zinc-900 dark:bg-zinc-50 text-white dark:text-black"
+                            {isFetching ? "Preparando desafío..." : "EMPEZAR DESAFÍO"}
+                        </motion.button>
+                    </div>
+                </motion.div>
+            ) : gameMode === null ? (
+                <motion.div
+                    key="mode-selector"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.4 }}
+                    className="w-full max-w-2xl mx-auto h-full flex flex-col pt-4 md:pt-2"
+                >
+                    <div className="flex items-center justify-between mb-8 px-4 relative shrink-0 h-16">
+                        <div className="flex items-center gap-4">
+                            <motion.button
+                                onClick={onBack}
+                                whileHover={{ scale: 1.1, x: -2 }}
+                                whileTap={{ scale: 0.9 }}
+                                className="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300"
+                                style={{
+                                    backgroundColor: 'color-mix(in srgb, var(--surface) 80%, transparent)',
+                                    borderColor: 'var(--border)',
+                                    color: 'var(--accent)',
+                                    backdropFilter: 'blur(8px)'
+                                }}
+                            >
+                                <ChevronLeft size={24} strokeWidth={2.5} />
+                            </motion.button>
+                            {renderHeaderContent("Selecciona un modo")}
+                        </div>
+                    </div>
+
+                    <motion.div
+                        initial="hidden"
+                        animate="visible"
+                        variants={{
+                            hidden: { opacity: 0 },
+                            visible: {
+                                opacity: 1,
+                                transition: {
+                                    staggerChildren: 0.12,
+                                    delayChildren: 0.2
+                                }
+                            }
+                        }}
+                        className="flex-1 flex flex-col justify-center px-4 gap-3 pb-8"
+                    >
+                        <ModeCard
+                            title="Chill"
+                            icon="🌿"
+                            description="Preguntas fáciles y relajantes para pasar el rato."
+                            onClick={() => handleStartMode('chill')}
+                            colorTheme="green"
+                        />
+                        <ModeCard
+                            title="Random"
+                            icon="🎲"
+                            description="Una mezcla de todo; nunca sabes qué vendrá."
+                            onClick={() => handleStartMode('random')}
+                            colorTheme="orange"
+                        />
+                        <ModeCard
+                            title="Experto"
+                            icon="🧠"
+                            description="Retos difíciles solo para mentes maestras."
+                            onClick={() => handleStartMode('expert')}
+                            colorTheme="purple"
+                        />
+                        <ModeCard
+                            title="Enfoque"
+                            icon="🎯"
+                            description="Elige el tema que tú quieras y yo te pregunto."
+                            onClick={() => handleStartMode('focus')}
+                            colorTheme="blue"
+                        />
+                    </motion.div>
+                </motion.div>
+            ) : (
+                <motion.div
+                    key="active-game"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.4 }}
+                    className="w-full max-w-2xl mx-auto h-full flex flex-col pt-4 md:pt-2"
+                >
+                    {/* Header & Streak */}
+                    <div className="flex items-center justify-between mb-8 px-4 relative shrink-0 h-16">
+                        <div className="flex items-center gap-4">
+                            {onBack && (
+                                <motion.button
+                                    onClick={() => {
+                                        setGameMode(null)
+                                        setGameState('playing') // Reset gameState to ensure clean return
+                                    }}
+                                    whileHover={{ scale: 1.1, x: -2 }}
+                                    whileTap={{ scale: 0.9 }}
+                                    className="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300"
+                                    style={{
+                                        backgroundColor: 'color-mix(in srgb, var(--surface) 80%, transparent)',
+                                        borderColor: 'var(--border)',
+                                        color: 'var(--accent)',
+                                        backdropFilter: 'blur(8px)'
+                                    }}
                                 >
-                                    Reintentar
-                                </button>
-                            </div>
-                        </motion.div>
-                    ) : (
-                        <motion.div
-                            key="content"
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            className="flex flex-col w-full max-h-full p-4 md:p-8 border rounded-[2rem] md:rounded-[2.5rem] shadow-xl md:shadow-2xl overflow-hidden"
-                            style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
-                        >
-                            {/* Question with dynamic font size */}
-                            <div className="flex-1 overflow-y-auto no-scrollbar min-h-0 mb-4 md:mb-6">
-                                <h3 className={cn(
-                                    "font-bold text-zinc-900 dark:text-zinc-50 leading-tight transition-all text-center md:text-left",
-                                    (currentTrivia?.question.length || 0) > 150 ? "text-lg md:text-xl" :
-                                        (currentTrivia?.question.length || 0) > 100 ? "text-xl md:text-2xl" :
-                                            "text-2xl md:text-3xl"
-                                )}>
-                                    {currentTrivia?.question}
-                                </h3>
-                            </div>
+                                    <ChevronLeft size={24} strokeWidth={2.5} />
+                                </motion.button>
+                            )}
+                            {renderHeaderContent(currentModeSubtitle)}
+                        </div>
 
-                            <div className="grid grid-cols-1 gap-2 md:gap-3 shrink-0">
-                                {currentTrivia?.options.map((option, idx) => {
-                                    const isSelected = selectedAnswer === option
-                                    const isCorrect = gameState === 'answered' && option === currentTrivia?.correctAnswer
-                                    const isWrong = gameState === 'answered' && isSelected && option !== currentTrivia?.correctAnswer
+                        <div className="ml-auto w-16 h-16 flex items-center justify-center">
+                            <StreakBadge count={streak} />
+                        </div>
+                    </div>
 
-                                    return (
+                    {/* Game Content Area */}
+                    <div className="flex-1 flex flex-col justify-start md:justify-center overflow-y-auto no-scrollbar">
+                        <AnimatePresence mode="wait">
+                            {gameState === 'loading' ? (
+                                <motion.div
+                                    key="loading"
+                                    className="flex-1 flex flex-col items-center justify-center gap-6 p-6 transition-all"
+                                >
+                                    <div className="relative w-16 h-16">
+                                        {[...Array(12)].map((_, i) => (
+                                            <motion.div
+                                                key={i}
+                                                className="absolute left-[30px] top-0 w-[5px] h-[16px] rounded-full bg-zinc-400 dark:bg-zinc-500"
+                                                style={{ transformOrigin: '2.5px 32px', rotate: i * 30 }}
+                                                animate={{ opacity: [0.15, 1, 0.15] }}
+                                                transition={{
+                                                    repeat: Infinity,
+                                                    duration: 1.2,
+                                                    delay: i * 0.1,
+                                                    ease: "linear"
+                                                }}
+                                            />
+                                        ))}
+                                    </div>
+                                    <p className="text-base font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.25em] text-center">
+                                        Generando pregunta
+                                    </p>
+                                </motion.div>
+                            ) : gameState === 'error' ? (
+                                <motion.div
+                                    key="error"
+                                    className="p-12 border rounded-[2.5rem]"
+                                    style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
+                                >
+                                    <div className="flex flex-col items-center gap-4">
+                                        <p className="text-red-500 font-medium">{errorMessage}</p>
                                         <button
-                                            key={idx}
-                                            onClick={() => handleAnswer(option)}
-                                            disabled={gameState === 'answered'}
-                                            className={cn(
-                                                "group relative w-full p-4 md:p-5 text-left rounded-2xl font-bold transition-all border-2 overflow-hidden",
-                                                gameState === 'playing'
-                                                    ? "hover:border-zinc-900 dark:hover:border-zinc-50 hover:scale-[1.01]"
-                                                    : "cursor-default"
-                                            )}
-                                            style={{
-                                                backgroundColor: isCorrect
-                                                    ? 'rgba(34, 197, 94, 0.1)'
-                                                    : isWrong
-                                                        ? 'rgba(239, 68, 68, 0.1)'
-                                                        : 'color-mix(in srgb, var(--surface) 95%, var(--accent))',
-                                                borderColor: isCorrect
-                                                    ? '#22c55e'
-                                                    : isWrong
-                                                        ? '#ef4444'
-                                                        : 'var(--border)'
-                                            }}
+                                            onClick={() => fetchTrivia()}
+                                            className="px-6 py-2 rounded-full font-bold text-sm bg-zinc-900 dark:bg-zinc-50 text-white dark:text-black"
                                         >
-                                            <div className="flex items-center justify-between">
-                                                <span className={cn(
-                                                    "text-sm tracking-tight transition-colors",
-                                                    isCorrect ? "text-green-600 dark:text-green-400" :
-                                                        isWrong ? "text-red-600 dark:text-red-400" :
-                                                            "text-zinc-700 dark:text-zinc-300"
-                                                )}>
-                                                    {option}
-                                                </span>
-                                                <ArrowRight
-                                                    size={16}
-                                                    className={cn(
-                                                        "transition-all",
-                                                        gameState === 'playing' ? "opacity-0 group-hover:opacity-100 group-hover:translate-x-1" : "opacity-0"
-                                                    )}
-                                                />
-                                            </div>
+                                            Reintentar
                                         </button>
-                                    )
-                                })}
-                            </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-            </div>
+                                    </div>
+                                </motion.div>
+                            ) : (
+                                <motion.div
+                                    key="content"
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    className="flex flex-col w-full max-h-full p-4 md:p-8 border rounded-[2rem] md:rounded-[2.5rem] shadow-xl md:shadow-2xl overflow-hidden"
+                                    style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
+                                >
+                                    {/* Question with dynamic font size */}
+                                    <div className="flex-1 overflow-y-auto no-scrollbar min-h-0 mb-4 md:mb-6">
+                                        <h3 className={cn(
+                                            "font-bold text-zinc-900 dark:text-zinc-50 leading-tight transition-all text-center md:text-left",
+                                            (currentTrivia?.question.length || 0) > 150 ? "text-lg md:text-xl" :
+                                                (currentTrivia?.question.length || 0) > 100 ? "text-xl md:text-2xl" :
+                                                    "text-2xl md:text-3xl"
+                                        )}>
+                                            {currentTrivia?.question}
+                                        </h3>
+                                    </div>
 
-            {/* Selector de Acción Inferior (Independiente y Permanente) */}
-            <div className="mt-auto px-4 pt-0 pb-4 grid grid-cols-4 gap-3 shrink-0 w-full transition-opacity"
-                style={{ opacity: gameState === 'answered' ? 1 : 0.5 }}
-            >
-                <motion.button
-                    disabled={gameState !== 'answered'}
-                    onClick={() => setShowContext(true)}
-                    whileHover={{ scale: gameState === 'answered' ? 1.05 : 1 }}
-                    whileTap={{ scale: gameState === 'answered' ? 0.95 : 1 }}
-                    className="col-span-1 flex items-center justify-center py-4 rounded-2xl transition-all border-2 shadow-sm"
-                    style={{
-                        backgroundColor: 'color-mix(in srgb, var(--surface) 95%, var(--accent))',
-                        borderColor: 'var(--border)',
-                        color: 'var(--accent)'
-                    }}
-                >
-                    <Pin size={22} />
-                </motion.button>
+                                    <div className="grid grid-cols-1 gap-2 md:gap-3 shrink-0">
+                                        {currentTrivia?.options.map((option, idx) => {
+                                            const isSelected = selectedAnswer === option
+                                            const isCorrect = gameState === 'answered' && option === currentTrivia?.correctAnswer
+                                            const isWrong = gameState === 'answered' && isSelected && option !== currentTrivia?.correctAnswer
 
-                <motion.button
-                    disabled={gameState !== 'answered'}
-                    onClick={() => setShowFact(true)}
-                    whileHover={{ scale: gameState === 'answered' ? 1.05 : 1 }}
-                    whileTap={{ scale: gameState === 'answered' ? 0.95 : 1 }}
-                    className="col-span-1 flex items-center justify-center py-4 rounded-2xl transition-all border-2 shadow-sm"
-                    style={{
-                        backgroundColor: 'color-mix(in srgb, var(--surface) 95%, var(--accent))',
-                        borderColor: 'var(--border)',
-                        color: 'var(--accent)'
-                    }}
-                >
-                    <Lightbulb size={22} />
-                </motion.button>
+                                            return (
+                                                <button
+                                                    key={idx}
+                                                    onClick={() => handleAnswer(option)}
+                                                    disabled={gameState === 'answered'}
+                                                    className={cn(
+                                                        "group relative w-full p-4 md:p-5 text-left rounded-2xl font-bold transition-all border-2 overflow-hidden",
+                                                        gameState === 'playing'
+                                                            ? "hover:border-zinc-900 dark:hover:border-zinc-50 hover:scale-[1.01]"
+                                                            : "cursor-default"
+                                                    )}
+                                                    style={{
+                                                        backgroundColor: isCorrect
+                                                            ? 'rgba(34, 197, 94, 0.1)'
+                                                            : isWrong
+                                                                ? 'rgba(239, 68, 68, 0.1)'
+                                                                : 'color-mix(in srgb, var(--surface) 95%, var(--accent))',
+                                                        borderColor: isCorrect
+                                                            ? '#22c55e'
+                                                            : isWrong
+                                                                ? '#ef4444'
+                                                                : 'var(--border)'
+                                                    }}
+                                                >
+                                                    <div className="flex items-center justify-between">
+                                                        <span className={cn(
+                                                            "text-sm tracking-tight transition-colors",
+                                                            isCorrect ? "text-green-600 dark:text-green-400" :
+                                                                isWrong ? "text-red-600 dark:text-red-400" :
+                                                                    "text-zinc-700 dark:text-zinc-300"
+                                                        )}>
+                                                            {option}
+                                                        </span>
+                                                        <ArrowRight
+                                                            size={16}
+                                                            className={cn(
+                                                                "transition-all",
+                                                                gameState === 'playing' ? "opacity-0 group-hover:opacity-100 group-hover:translate-x-1" : "opacity-0"
+                                                            )}
+                                                        />
+                                                    </div>
+                                                </button>
+                                            )
+                                        })}
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
 
-                <motion.button
-                    disabled={gameState !== 'answered'}
-                    onClick={() => fetchTrivia()}
-                    whileHover={{ scale: gameState === 'answered' ? 1.02 : 1 }}
-                    whileTap={{ scale: gameState === 'answered' ? 0.98 : 1 }}
-                    className="col-span-2 flex items-center justify-center py-4 rounded-2xl transition-all border-2 shadow-sm"
-                    style={{
-                        backgroundColor: 'color-mix(in srgb, var(--surface) 95%, var(--accent))',
-                        borderColor: 'var(--border)',
-                        color: 'var(--accent)'
-                    }}
-                >
-                    <ArrowRight size={22} />
-                </motion.button>
-            </div>
+                    {/* Selector de Acción Inferior (Independiente y Permanente) */}
+                    <div className="mt-auto px-4 pt-0 pb-4 grid grid-cols-4 gap-3 shrink-0 w-full transition-all duration-300">
+                        <motion.button
+                            disabled={gameState !== 'answered'}
+                            onClick={() => {
+                                playSound('roblox')
+                                setShowContext(true)
+                            }}
+                            whileHover={{ scale: gameState === 'answered' ? 1.05 : 1 }}
+                            whileTap={{ scale: gameState === 'answered' ? 0.95 : 1 }}
+                            className={cn(
+                                "col-span-1 flex items-center justify-center py-4 rounded-2xl transition-all border-2",
+                                gameState === 'answered' ? "opacity-100 shadow-sm" : "opacity-75 grayscale shadow-none"
+                            )}
+                            style={{
+                                backgroundColor: gameState === 'answered' ? 'var(--accent)' : 'var(--surface)',
+                                borderColor: gameState === 'answered' ? 'var(--accent)' : 'var(--border)',
+                                color: gameState === 'answered' ? 'var(--theme-on-accent, #ffffff)' : 'rgb(113 113 122)' /* zinc-500 */
+                            }}
+                        >
+                            <Pin size={22} />
+                        </motion.button>
 
-            {/* Modales de Información */}
-            <GameModal
-                isOpen={showContext}
-                onClose={() => setShowContext(false)}
-                title="Contexto"
-                icon={<Pin size={20} />}
-                content={currentTrivia?.explanation}
-            />
+                        <motion.button
+                            disabled={gameState !== 'answered'}
+                            onClick={() => {
+                                playSound('roblox')
+                                setShowFact(true)
+                            }}
+                            whileHover={{ scale: gameState === 'answered' ? 1.05 : 1 }}
+                            whileTap={{ scale: gameState === 'answered' ? 0.95 : 1 }}
+                            className={cn(
+                                "col-span-1 flex items-center justify-center py-4 rounded-2xl transition-all border-2",
+                                gameState === 'answered' ? "opacity-100 shadow-sm" : "opacity-75 grayscale shadow-none"
+                            )}
+                            style={{
+                                backgroundColor: gameState === 'answered' ? 'var(--accent)' : 'var(--surface)',
+                                borderColor: gameState === 'answered' ? 'var(--accent)' : 'var(--border)',
+                                color: gameState === 'answered' ? 'var(--theme-on-accent, #ffffff)' : 'rgb(113 113 122)' /* zinc-500 */
+                            }}
+                        >
+                            <Lightbulb size={22} />
+                        </motion.button>
 
-            <GameModal
-                isOpen={showFact}
-                onClose={() => setShowFact(false)}
-                title="Dato curioso"
-                icon={<Lightbulb size={20} />}
-                content={currentTrivia?.funFact}
-            />
-        </div>
+                        <motion.button
+                            disabled={gameState !== 'answered'}
+                            onClick={() => {
+                                playSound('click')
+                                fetchTrivia()
+                            }}
+                            whileHover={{ scale: gameState === 'answered' ? 1.03 : 1 }}
+                            whileTap={{ scale: gameState === 'answered' ? 0.97 : 1 }}
+                            className={cn(
+                                "col-span-2 flex items-center justify-center py-4 rounded-2xl transition-all border-2",
+                                gameState === 'answered' ? "opacity-100 shadow-sm" : "opacity-75 grayscale shadow-none"
+                            )}
+                            style={{
+                                backgroundColor: gameState === 'answered' ? 'var(--accent)' : 'var(--surface)',
+                                borderColor: gameState === 'answered' ? 'var(--accent)' : 'var(--border)',
+                                color: gameState === 'answered' ? 'var(--theme-on-accent, #ffffff)' : 'rgb(113 113 122)' /* zinc-500 */
+                            }}
+                        >
+                            <ArrowRight size={22} />
+                        </motion.button>
+                    </div>
+
+                    {/* Modales de Información */}
+                    <GameModal
+                        isOpen={showContext}
+                        onClose={() => setShowContext(false)}
+                        title="Contexto"
+                        icon={<Pin size={20} />}
+                        content={currentTrivia?.explanation}
+                    />
+
+                    <GameModal
+                        isOpen={showFact}
+                        onClose={() => setShowFact(false)}
+                        title="Dato curioso"
+                        icon={<Lightbulb size={20} />}
+                        content={currentTrivia?.funFact}
+                    />
+                </motion.div>
+            )}
+        </AnimatePresence>
     )
 }
 
 // Sub-componente para la Racha (Fuego)
 function StreakBadge({ count }: { count: number }) {
-    if (count === 0) return null;
-
     return (
-        <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            key={count}
-            className="relative flex items-center justify-center w-14 h-14 rounded-full transition-transform active:scale-95"
-            style={{
-                backgroundColor: 'color-mix(in srgb, var(--accent) 10%, transparent)',
-                color: 'var(--accent)'
-            }}
-        >
-            <Flame size={28} fill="currentColor" className="opacity-20 absolute" />
-            <span className="relative z-10 text-lg font-black tracking-tighter leading-none mt-1">
-                {count}
-            </span>
-        </motion.div>
+        <AnimatePresence mode="wait">
+            {count > 0 && (
+                <motion.div
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0, opacity: 0 }}
+                    key={count}
+                    className="relative flex items-center justify-center w-16 h-16 transition-transform active:scale-95"
+                    style={{ color: 'var(--accent)' }}
+                >
+                    <Flame size={64} strokeWidth={1.5} fill="currentColor" className="opacity-60 absolute" />
+                    <span className="relative z-10 text-2xl font-black tracking-tighter leading-none mt-3">
+                        {count}
+                    </span>
+                </motion.div>
+            )}
+        </AnimatePresence>
     )
 }
 
-// Sub-componente para las tarjetas de modo
-// Sub-componente para las tarjetas de modo
 function ModeCard({ title, icon, description, onClick, colorTheme }: {
     title: string,
     icon: React.ReactNode | string,
@@ -522,47 +572,91 @@ function ModeCard({ title, icon, description, onClick, colorTheme }: {
     onClick: () => void,
     colorTheme: 'green' | 'purple' | 'orange' | 'blue'
 }) {
+    const themeColors = {
+        green: { 
+            bg: 'bg-emerald-50 dark:bg-emerald-500/10 group-hover:bg-emerald-100 dark:group-hover:bg-emerald-500/20', 
+            border: 'border-emerald-200 dark:border-emerald-500/30 group-hover:border-emerald-400 dark:group-hover:border-emerald-500/60', 
+            glow: 'shadow-sm group-hover:shadow-[0_0_40px_-10px_rgba(16,185,129,0.4)]', 
+            textMap: 'from-emerald-300 to-emerald-800', 
+            hoverArrow: 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white',
+            blob: 'bg-emerald-500/20'
+        },
+        orange: { 
+            bg: 'bg-orange-50 dark:bg-orange-500/10 group-hover:bg-orange-100 dark:group-hover:bg-orange-500/20', 
+            border: 'border-orange-200 dark:border-orange-500/30 group-hover:border-orange-400 dark:group-hover:border-orange-500/60', 
+            glow: 'shadow-sm group-hover:shadow-[0_0_40px_-10px_rgba(249,115,22,0.4)]', 
+            textMap: 'from-amber-400 to-red-600', 
+            hoverArrow: 'bg-orange-100 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 group-hover:bg-orange-500 group-hover:text-white',
+            blob: 'bg-orange-500/20'
+        },
+        purple: { 
+            bg: 'bg-purple-50 dark:bg-purple-500/10 group-hover:bg-purple-100 dark:group-hover:bg-purple-500/20', 
+            border: 'border-purple-200 dark:border-purple-500/30 group-hover:border-purple-400 dark:group-hover:border-purple-500/60', 
+            glow: 'shadow-sm group-hover:shadow-[0_0_40px_-10px_rgba(168,85,247,0.4)]', 
+            textMap: 'from-purple-400 via-purple-500 to-purple-700', 
+            hoverArrow: 'bg-purple-100 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 group-hover:bg-purple-500 group-hover:text-white',
+            blob: 'bg-purple-500/20'
+        },
+        blue: { 
+            bg: 'bg-blue-50 dark:bg-blue-500/10 group-hover:bg-blue-100 dark:group-hover:bg-blue-500/20', 
+            border: 'border-blue-200 dark:border-blue-500/30 group-hover:border-blue-400 dark:group-hover:border-blue-500/60', 
+            glow: 'shadow-sm group-hover:shadow-[0_0_40px_-10px_rgba(59,130,246,0.4)]', 
+            textMap: 'from-sky-400 via-blue-500 to-blue-700', 
+            hoverArrow: 'bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 group-hover:bg-blue-500 group-hover:text-white',
+            blob: 'bg-blue-500/20'
+        }
+    };
+
+    const theme = themeColors[colorTheme];
+
     return (
         <motion.button
-            whileHover={{ y: -5, scale: 1.01 }}
+            whileHover={{ scale: 1.02, y: -2 }}
             whileTap={{ scale: 0.98 }}
             onClick={onClick}
             className={cn(
-                "relative group w-full text-left p-6 transition-all duration-300",
-                "rounded-[2rem] border-2 shadow-sm hover:shadow-xl"
+                "relative group w-full text-left p-6 transition-all duration-500",
+                "rounded-[2.5rem] border-2 overflow-hidden",
+                theme.bg,
+                theme.border,
+                theme.glow
             )}
-            style={{
-                backgroundColor: 'var(--surface)',
-                borderColor: 'var(--border)'
-            }}
         >
-            <div className="relative z-10 flex items-center gap-6">
-                {/* Icon Container (Crystal Look) */}
-                <div className="w-12 h-12 shrink-0 rounded-2xl flex items-center justify-center text-white shadow-sm"
-                    style={{ backgroundColor: 'var(--accent)' }}>
-                    <span className="text-2xl drop-shadow-md">
+            {/* Ambient Background Blob natively present */}
+            <div className={cn(
+                "absolute -left-8 -top-8 w-32 h-32 rounded-full blur-[40px] opacity-50 dark:opacity-40 transition-all duration-700 group-hover:scale-150 group-hover:opacity-70",
+                theme.blob
+            )} />
+
+            <div className="relative z-10 flex items-center gap-5">
+                {/* Free Floating Icon without square */}
+                <div className="w-16 h-16 shrink-0 flex items-center justify-center transition-transform duration-500 group-hover:scale-110 group-hover:rotate-12 group-hover:-translate-y-1.5">
+                    <span className="text-[48px] drop-shadow-xl saturate-150">
                         {icon}
                     </span>
                 </div>
 
                 {/* Text Content */}
-                <div className="flex-1">
+                <div className="flex-1 space-y-1.5">
                     <h3 className={cn(
-                        "text-xl font-bold mb-1 transition-colors",
-                        colorTheme === 'green' ? 'text-emerald-600 dark:text-emerald-400' :
-                            colorTheme === 'orange' ? 'text-orange-600 dark:text-orange-400' :
-                                colorTheme === 'purple' ? 'text-purple-600 dark:text-purple-400' : 'text-blue-600 dark:text-blue-400'
-                    )}>
+                        "text-xl md:text-[24px] font-black tracking-tight",
+                        "bg-clip-text text-transparent bg-gradient-to-r drop-shadow-sm",
+                        theme.textMap
+                    )}
+                    >
                         {title}
                     </h3>
-                    <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-tight">
+                    <p className="text-sm font-semibold text-zinc-600 dark:text-zinc-400 max-w-[95%] leading-snug tracking-tight">
                         {description}
                     </p>
                 </div>
 
-                {/* Subtle Action Indicator */}
-                <div className="text-zinc-500 group-hover:text-blue-400 transition-colors">
-                    <ArrowRight size={22} />
+                {/* Arrow Action Container */}
+                <div className={cn(
+                    "w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500 shrink-0",
+                    theme.hoverArrow
+                )}>
+                    <ArrowRight size={22} strokeWidth={2.5} className="group-hover:translate-x-1 transition-transform duration-300" />
                 </div>
             </div>
         </motion.button>

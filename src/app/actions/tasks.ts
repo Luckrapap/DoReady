@@ -35,12 +35,9 @@ export async function getMonthTaskCounts() {
         throw new Error('No autenticado')
     }
 
-    // Fetch all incomplete tasks or you could group by in SQL. 
-    // For MVP: Fetch all tasks and reduce in JS. 
-    // For production: Create an RPC or use Supabase Count
     const { data, error } = await supabase
         .from('tasks')
-        .select('date')
+        .select('date, is_event')
         .eq('user_id', user.id)
 
     if (error) {
@@ -48,16 +45,23 @@ export async function getMonthTaskCounts() {
         return {}
     }
 
-    const counts: Record<string, number> = {}
+    const summary: Record<string, { hasAction: boolean, hasEvent: boolean }> = {}
     data.forEach(task => {
-        counts[task.date] = (counts[task.date] || 0) + 1
+        if (!summary[task.date]) {
+            summary[task.date] = { hasAction: false, hasEvent: false }
+        }
+        if (task.is_event) {
+            summary[task.date].hasEvent = true
+        } else {
+            summary[task.date].hasAction = true
+        }
     })
 
-    return counts
+    return summary
 }
 
 
-export async function createTask(title: string, dateStr: string) {
+export async function createTask(title: string, dateStr: string, is_event: boolean = false) {
     const supabase = await createClient()
 
     const { data: { user } } = await supabase.auth.getUser()
@@ -68,7 +72,7 @@ export async function createTask(title: string, dateStr: string) {
     const { data, error } = await supabase
         .from('tasks')
         .insert([
-            { title, user_id: user.id, date: dateStr }
+            { title, user_id: user.id, date: dateStr, is_event }
         ])
         .select()
 

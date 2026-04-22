@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import LandingHero from '@/components/LandingHero'
 import LandingNavbar from '@/components/LandingNavbar'
+import MobileLandingHero from '@/components/MobileLandingHero'
 import { BrainCircuit, Gamepad2, Layers, Sparkles, Zap } from 'lucide-react'
 
 export default function LandingContent() {
@@ -31,9 +32,11 @@ export default function LandingContent() {
     }
 
     return (
-        <main className="min-h-screen bg-white dark:bg-zinc-950 selection:bg-accent/30 font-outfit">
-            <LandingNavbar />
-            <LandingHero />
+        <>
+            {/* Desktop Version */}
+            <main className="hidden md:block h-[100dvh] overflow-y-auto bg-white dark:bg-zinc-950 selection:bg-accent/30 font-outfit">
+                <LandingNavbar />
+                <LandingHero />
 
             {/* Features Bento Grid Section */}
             <section id="features" className="py-24 lg:py-40 px-6 relative overflow-hidden border-t border-zinc-100 dark:border-zinc-900">
@@ -86,7 +89,7 @@ export default function LandingContent() {
                                 <Sparkles size={24} />
                             </div>
                             <div className="space-y-2">
-                                <h3 className="text-lg font-black tracking-tight uppercase">Tablero de Ideas</h3>
+                                <h3 className="text-lg font-black tracking-tight uppercase">IdeaBox</h3>
                                 <p className="text-sm text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed">
                                     Cero fricción. Captura relámpago. Elimina el ruido mental en milisegundos para que tu atención nunca se rompa.
                                 </p>
@@ -176,5 +179,11 @@ export default function LandingContent() {
                 </p>
             </footer>
         </main>
+
+        {/* Mobile Version */}
+        <div className="block md:hidden h-[100dvh]">
+            <MobileLandingHero />
+        </div>
+        </>
     )
 }

@@ -14,6 +14,7 @@ interface Task {
     id: string
     title: string
     is_completed: boolean
+    is_event?: boolean
 }
 
 interface TasksContainerProps {
@@ -32,8 +33,13 @@ export default function TasksContainer({ initialTasks, dateStr, title, displayDa
         setTasks(initialTasks)
     }, [initialTasks])
 
-    const completedCount = tasks.filter(t => t.is_completed).length
-    const totalCount = tasks.length
+    const actions = tasks.filter(t => !t.is_event)
+    const events = tasks.filter(t => t.is_event)
+    const pendingActions = actions.filter(t => !t.is_completed)
+    const completedActions = actions.filter(t => t.is_completed)
+
+    const completedCount = completedActions.length
+    const totalCount = actions.length
 
     const handleToggle = async (id: string, currentStatus: boolean) => {
         const newStatus = !currentStatus
@@ -136,13 +142,12 @@ export default function TasksContainer({ initialTasks, dateStr, title, displayDa
         }
     }
 
-    const todoTasks = tasks.filter(t => !t.is_completed)
-    const completedTasks = tasks.filter(t => t.is_completed)
+    // filtered tasks logic moved up
 
     return (
-        <section className="flex flex-col gap-8">
+        <div className="flex flex-col gap-6 h-full min-h-0">
             {/* Reactive Header */}
-            <header className="mb-6 flex flex-col gap-1 px-4">
+            <header className="mb-[4px] flex flex-col gap-1 px-3">
                 <div className="flex items-end justify-between">
                     <h1 className="font-bold text-6xl md:text-8xl tracking-tighter text-zinc-900 dark:text-zinc-50 relative bottom-1.5">
                         {title}
@@ -156,10 +161,13 @@ export default function TasksContainer({ initialTasks, dateStr, title, displayDa
                 <p className="text-base font-medium text-zinc-400 capitalize">{displayDate}</p>
             </header>
 
-            <CreateTaskInput dateStr={dateStr} />
+            <div className="px-3">
+                <CreateTaskInput dateStr={dateStr} />
+            </div>
 
-            {tasks.length === 0 ? (
-                <motion.div
+            <div className="flex flex-col gap-5 overflow-y-auto flex-1 min-h-0 pb-20 px-3">
+                {tasks.length === 0 ? (
+                    <motion.div
                     initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
                     className="flex flex-col items-center justify-center py-20 rounded-[32px] gap-6"
@@ -176,38 +184,67 @@ export default function TasksContainer({ initialTasks, dateStr, title, displayDa
                     </div>
                 </motion.div>
             ) : (
-                <div className="flex flex-col gap-8">
-                    {/* TO DO Section */}
-                    {todoTasks.length > 0 && (
-                        <div>
-                            <h2 className="text-[12px] font-mono font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mb-3 ml-1">
-                                Pendientes
+                <div className="flex flex-col gap-5">
+                    {/* ACCIONES Section */}
+                    {(pendingActions.length > 0 || completedActions.length > 0) && (
+                        <div className="flex flex-col gap-2">
+                            <h2 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 ml-1">
+                                Acciones
                             </h2>
-                            <div className="flex flex-col gap-2.5">
-                                <AnimatePresence mode="popLayout" initial={false}>
-                                    {todoTasks.map((task) => (
-                                        <TaskItem
-                                            key={task.id}
-                                            task={task}
-                                            onToggle={() => handleToggle(task.id, task.is_completed)}
-                                            onDelete={() => handleDelete(task.id)}
-                                            onClick={() => setEditingTask(task)}
-                                        />
-                                    ))}
-                                </AnimatePresence>
-                            </div>
+
+                            {pendingActions.length > 0 && (
+                                <div>
+                                    <h3 className="text-[17px] font-medium text-zinc-500 dark:text-zinc-400 mb-1.5 ml-1">
+                                        Pendientes
+                                    </h3>
+                                    <div className="flex flex-col gap-2.5">
+                                        <AnimatePresence mode="popLayout" initial={false}>
+                                            {pendingActions.map((task) => (
+                                                <TaskItem
+                                                    key={task.id}
+                                                    task={task}
+                                                    onToggle={() => handleToggle(task.id, task.is_completed)}
+                                                    onDelete={() => handleDelete(task.id)}
+                                                    onClick={() => setEditingTask(task)}
+                                                />
+                                            ))}
+                                        </AnimatePresence>
+                                    </div>
+                                </div>
+                            )}
+
+                            {completedActions.length > 0 && (
+                                <div>
+                                    <h3 className="text-[17px] font-medium text-zinc-500 dark:text-zinc-400 mb-1.5 ml-1">
+                                        Completadas
+                                    </h3>
+                                    <div className="flex flex-col gap-2.5">
+                                        <AnimatePresence mode="popLayout" initial={false}>
+                                            {completedActions.map((task) => (
+                                                <TaskItem
+                                                    key={task.id}
+                                                    task={task}
+                                                    onToggle={() => handleToggle(task.id, task.is_completed)}
+                                                    onDelete={() => handleDelete(task.id)}
+                                                    onClick={() => setEditingTask(task)}
+                                                />
+                                            ))}
+                                        </AnimatePresence>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     )}
 
-                    {/* COMPLETED Section */}
-                    {completedTasks.length > 0 && (
-                        <div>
-                            <h2 className="text-[12px] font-mono font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mb-3 ml-1">
-                                Completadas
+                    {/* EVENTOS Section */}
+                    {events.length > 0 && (
+                        <div className="flex flex-col gap-2">
+                            <h2 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 ml-1">
+                                Eventos
                             </h2>
-                            <div className="flex flex-col gap-1">
+                            <div className="flex flex-col gap-2.5">
                                 <AnimatePresence mode="popLayout" initial={false}>
-                                    {completedTasks.map((task) => (
+                                    {events.map((task) => (
                                         <TaskItem
                                             key={task.id}
                                             task={task}
@@ -222,6 +259,7 @@ export default function TasksContainer({ initialTasks, dateStr, title, displayDa
                     )}
                 </div>
             )}
+            </div>
 
             <EditTaskModal 
                 task={editingTask} 
@@ -232,6 +270,6 @@ export default function TasksContainer({ initialTasks, dateStr, title, displayDa
                 onMoveUp={handleMoveUp}
                 onMoveDown={handleMoveDown}
             />
-        </section>
+        </div>
     )
 }

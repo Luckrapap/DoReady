@@ -1,0 +1,8 @@
+node_modules
+.next
+.vercel
+android/app/build
+android/.gradle
+ios/Pods
+dist
+build

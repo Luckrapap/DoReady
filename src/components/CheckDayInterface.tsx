@@ -80,8 +80,7 @@ export default function CheckDayInterface() {
         
         const hasRecord = !!record?.status
         setIsEditing(hasRecord)
-
-        // Show 'view' if record exists, else 'main'
+        
         if (hasRecord) {
             setModalScreen('view')
         } else {
@@ -279,8 +278,8 @@ export default function CheckDayInterface() {
                                 <div className={cn(
                                     "w-28 h-28 md:w-32 md:h-32 flex flex-col items-center justify-center border-2 rounded-3xl transition-colors duration-300 relative overflow-hidden",
                                     isFocused 
-                                        ? "border-zinc-400 dark:border-zinc-500 shadow-lg bg-zinc-50/50 dark:bg-zinc-900/30" 
-                                        : "border-zinc-200 dark:border-zinc-800"
+                                        ? "border-[var(--border)] shadow-lg bg-[var(--surface)]" 
+                                        : "border-transparent"
                                 )}>
                                     {record?.status === 'check' ? (
                                         <Check size={isFocused ? 72 : 54} className={getColorClass(record?.color)} strokeWidth={3} />
@@ -302,7 +301,7 @@ export default function CheckDayInterface() {
                     <motion.div 
                         key={currentWeekStart.toISOString()}
                         variants={containerVariants}
-                        initial="hidden"
+                        initial={false}
                         animate="visible"
                         exit="hidden"
                         className="flex justify-center gap-4 md:gap-6 w-full relative"
@@ -387,7 +386,7 @@ export default function CheckDayInterface() {
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.8, y: 20 }}
                             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                            className="w-full max-w-sm overflow-hidden bg-white dark:bg-zinc-950 border-2 border-zinc-200 dark:border-zinc-800 rounded-[2.5rem] shadow-2xl min-h-[480px] relative z-[101]"
+                            className="w-full max-w-sm overflow-hidden bg-[var(--surface)] border-2 border-[var(--border)] rounded-[2.5rem] shadow-2xl min-h-[480px] relative z-[101]"
                         >
                             <AnimatePresence mode="popLayout" initial={false}>
                                 {modalScreen === 'view' ? (
@@ -410,7 +409,7 @@ export default function CheckDayInterface() {
                                             readOnly
                                             value={modalNote}
                                             placeholder="Sin nota para este día."
-                                            className="w-full flex-1 bg-zinc-50/50 dark:bg-zinc-900/30 border-2 border-transparent rounded-[2rem] p-6 text-zinc-900 dark:text-zinc-50 placeholder:text-zinc-400 outline-none transition-all resize-none text-lg cursor-default text-center"
+                                            className="w-full flex-1 bg-[var(--surface)] border-2 border-[var(--border)] rounded-[2rem] p-6 text-zinc-900 dark:text-zinc-50 placeholder:text-zinc-400 outline-none transition-all resize-none text-lg cursor-default text-center"
                                         />
 
                                         <div className="flex gap-4 h-16 mt-8 w-full">
@@ -453,7 +452,7 @@ export default function CheckDayInterface() {
                                                             initial={{ opacity: 0, scale: 0.9, y: -10 }}
                                                             animate={{ opacity: 1, scale: 1, y: 0 }}
                                                             exit={{ opacity: 0, scale: 0.9, y: -10 }}
-                                                            className="absolute top-12 right-0 bg-white dark:bg-zinc-900 border-2 border-zinc-100 dark:border-zinc-800 rounded-2xl shadow-xl py-2 min-w-[140px] overflow-hidden"
+                                                            className="absolute top-12 right-0 bg-[var(--surface)] border-2 border-[var(--border)] rounded-2xl shadow-xl py-2 min-w-[140px] overflow-hidden"
                                                         >
                                                             <button 
                                                                 onClick={() => { setModalScreen('confirmDelete'); setIsMenuOpen(false); Haptics.impact({ style: ImpactStyle.Medium }).catch(() => {}) }}
@@ -482,7 +481,7 @@ export default function CheckDayInterface() {
                                                     "w-20 h-20 rounded-3xl flex items-center justify-center transition-all duration-300",
                                                     modalSelectedOption === 'check' 
                                                         ? cn("text-white dark:text-zinc-950 scale-110 shadow-lg", getBgColorClass(modalSelectedColor)) 
-                                                        : "border-2 border-zinc-100 dark:border-zinc-800 text-zinc-300 dark:text-zinc-600"
+                                                        : "border-2 border-[var(--border)] text-zinc-300 dark:text-zinc-600"
                                                 )}
                                             >
                                                 <Check size={40} strokeWidth={3} />
@@ -493,7 +492,7 @@ export default function CheckDayInterface() {
                                                     "w-20 h-20 rounded-3xl flex items-center justify-center transition-all duration-300",
                                                     modalSelectedOption === 'x' 
                                                         ? cn("text-white dark:text-zinc-950 scale-110 shadow-lg", getBgColorClass(modalSelectedColor)) 
-                                                        : "border-2 border-zinc-100 dark:border-zinc-800 text-zinc-300 dark:text-zinc-600"
+                                                        : "border-2 border-[var(--border)] text-zinc-300 dark:text-zinc-600"
                                                 )}
                                             >
                                                 <X size={40} strokeWidth={3} />
@@ -504,13 +503,13 @@ export default function CheckDayInterface() {
                                             <div className="flex flex-1 gap-2">
                                                 <button 
                                                     onClick={() => { setModalScreen('color'); setInitialColorInScreen(modalSelectedColor); Haptics.impact({ style: ImpactStyle.Medium }).catch(() => {}) }}
-                                                    className="flex-1 rounded-2xl bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-50 transition-colors"
+                                                    className="flex-1 rounded-2xl bg-[var(--surface)] border-2 border-[var(--border)] flex items-center justify-center text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-50 transition-colors"
                                                 >
                                                     <Palette size={24} />
                                                 </button>
                                                 <button 
                                                     onClick={() => { setModalScreen('notes'); setInitialNoteInScreen(modalNote); Haptics.impact({ style: ImpactStyle.Medium }).catch(() => {}) }}
-                                                    className="flex-1 rounded-2xl bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-50 transition-colors"
+                                                    className="flex-1 rounded-2xl bg-[var(--surface)] border-2 border-[var(--border)] flex items-center justify-center text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-50 transition-colors"
                                                 >
                                                     <FileText size={24} />
                                                 </button>
@@ -534,10 +533,10 @@ export default function CheckDayInterface() {
                                 ) : modalScreen === 'color' ? (
                                     <motion.div 
                                         key="color"
-                                        initial={{ x: 100, opacity: 0 }}
+                                        initial={{ x: 20, opacity: 0 }}
                                         animate={{ x: 0, opacity: 1 }}
-                                        exit={{ x: 100, opacity: 0 }}
-                                        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                                        exit={{ x: -20, opacity: 0 }}
+                                        transition={{ duration: 0.3 }}
                                         className="px-6 py-8 flex flex-col items-center text-center h-full min-h-[480px]"
                                     >
                                         <h2 className="text-4xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight mb-1">
@@ -572,7 +571,7 @@ export default function CheckDayInterface() {
                                                     setModalScreen('main'); 
                                                     Haptics.impact({ style: ImpactStyle.Medium }).catch(() => {}) 
                                                 }}
-                                                className="flex-1 rounded-2xl bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center gap-2 text-zinc-900 dark:text-white font-bold transition-all"
+                                                className="flex-1 rounded-2xl bg-[var(--surface)] border-2 border-[var(--border)] flex items-center justify-center gap-2 text-zinc-900 dark:text-white font-bold transition-all"
                                             >
                                                 <X size={20} />
                                                 <span>Volver</span>
@@ -595,10 +594,10 @@ export default function CheckDayInterface() {
                                 ) : modalScreen === 'notes' ? (
                                     <motion.div 
                                         key="notes"
-                                        initial={{ x: 100, opacity: 0 }}
+                                        initial={{ x: 20, opacity: 0 }}
                                         animate={{ x: 0, opacity: 1 }}
-                                        exit={{ x: 100, opacity: 0 }}
-                                        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                                        exit={{ x: -20, opacity: 0 }}
+                                        transition={{ duration: 0.3 }}
                                         className="px-6 py-8 flex flex-col items-center text-center h-full min-h-[480px]"
                                     >
                                         <h2 className="text-4xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight mb-1">
@@ -612,7 +611,7 @@ export default function CheckDayInterface() {
                                             value={modalNote}
                                             onChange={(e) => setModalNote(e.target.value)}
                                             placeholder="Escribe algo sobre tu día..."
-                                            className="w-full flex-1 bg-zinc-100/50 dark:bg-zinc-900/50 border-2 border-zinc-100 dark:border-zinc-800 rounded-[2rem] p-6 text-zinc-900 dark:text-zinc-50 placeholder:text-zinc-400 outline-none focus:border-zinc-300 dark:focus:border-zinc-600 transition-all resize-none text-lg text-center"
+                                            className="w-full flex-1 bg-[var(--surface)] border-2 border-[var(--border)] rounded-[2rem] p-6 text-zinc-900 dark:text-zinc-50 placeholder:text-zinc-400 outline-none focus:border-zinc-300 dark:focus:border-zinc-600 transition-all resize-none text-lg text-center"
                                         />
 
                                         <div className="flex gap-4 h-16 mt-8 w-full">
@@ -641,41 +640,7 @@ export default function CheckDayInterface() {
                                             </button>
                                         </div>
                                     </motion.div>
-                                ) : (
-                                    <motion.div 
-                                        key="confirmDelete"
-                                        initial={{ x: 100, opacity: 0 }}
-                                        animate={{ x: 0, opacity: 1 }}
-                                        exit={{ x: 100, opacity: 0 }}
-                                        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                                        className="px-6 py-8 flex flex-col h-full min-h-[480px] items-center justify-center text-center"
-                                    >
-                                        <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center text-red-500 mb-6">
-                                            <Trash2 size={32} />
-                                        </div>
-                                        <h2 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight mb-2">
-                                            ¿Estás seguro?
-                                        </h2>
-                                        <p className="text-zinc-500 dark:text-zinc-400 mb-auto px-4">
-                                            Esta acción borrará el registro de este día.
-                                        </p>
-
-                                        <div className="flex gap-4 h-16 w-full mt-8">
-                                            <button 
-                                                onClick={() => { setModalScreen('main'); Haptics.impact({ style: ImpactStyle.Light }).catch(() => {}) }}
-                                                className="flex-1 rounded-2xl bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center gap-2 text-zinc-900 dark:text-white font-bold transition-all"
-                                            >
-                                                <span>No</span>
-                                            </button>
-                                            <button 
-                                                onClick={handleDelete}
-                                                className="flex-1 rounded-2xl bg-red-500 text-white flex items-center justify-center gap-2 font-bold shadow-lg shadow-red-500/20 transition-all"
-                                            >
-                                                <span>Sí</span>
-                                            </button>
-                                        </div>
-                                    </motion.div>
-                                )}
+                                ) : null}
                             </AnimatePresence>
                         </motion.div>
                     </div>

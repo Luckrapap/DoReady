@@ -1,14 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // @ts-ignore
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  // @ts-ignore
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   images: {
     unoptimized: true,
     remotePatterns: [
@@ -19,6 +11,14 @@ const nextConfig: NextConfig = {
         pathname: '/storage/v1/object/public/**',
       },
     ],
+  },
+  // @ts-ignore
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  // @ts-ignore
+  eslint: {
+    ignoreDuringBuilds: true,
   },
 };
 

@@ -3,13 +3,15 @@ import { redirect } from 'next/navigation'
 import { getTasks } from '@/app/actions/tasks'
 import TasksContainer from '@/components/TasksContainer'
 
-// Basic helper to get today's date in YYYY-MM-DD format based on local server time
+// Helper robusto para obtener la fecha de hoy forzando la zona horaria de Perú
 function getTodayDateStr() {
-    const d = new Date()
-    const year = d.getFullYear()
-    const month = String(d.getMonth() + 1).padStart(2, '0')
-    const day = String(d.getDate()).padStart(2, '0')
-    return `${year}-${month}-${day}`
+    const formatter = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'America/Lima',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    })
+    return formatter.format(new Date())
 }
 
 export default async function TodayPage({
@@ -45,15 +47,16 @@ export default async function TodayPage({
     })
 
     return (
-        <main className="min-h-screen flex justify-center pt-16 pb-12 px-4 selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black">
-            <div className="w-full max-w-xl">
-                <TasksContainer 
-                    initialTasks={tasks} 
-                    dateStr={activeDateStr} 
-                    title={isToday ? "Hoy" : "Agenda"} 
-                    displayDate={displayDate} 
-                />
-                
+        <main className="h-[100dvh] flex justify-center pt-safe-top pb-12 px-1 selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black overflow-hidden font-outfit transition-colors duration-500">
+            <div className="w-full max-w-xl h-full flex flex-col pt-8">
+                <section className="flex flex-col h-full min-h-0">
+                    <TasksContainer 
+                        initialTasks={tasks} 
+                        dateStr={activeDateStr} 
+                        title={isToday ? "Hoy" : "Agenda"} 
+                        displayDate={displayDate} 
+                    />
+                </section>
             </div>
         </main>
     )

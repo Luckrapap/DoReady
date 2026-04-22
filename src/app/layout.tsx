@@ -52,10 +52,11 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: "cover",
+  interactiveWidget: "overlays-content",
   colorScheme: "light dark",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fafafa" },
-    { media: "(prefers-color-scheme: dark)", color: "#020617" },
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#000000" },
   ],
 };
 
@@ -75,15 +76,23 @@ export default function RootLayout({
                   try {
                     var t = localStorage.getItem('theme') || 'system';
                     var doc = document.documentElement;
-                    var apply = function() {
+                    var applyTheme = function() {
                       var isDark = t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
                       doc.classList.remove('light', 'dark');
                       doc.classList.add(isDark ? 'dark' : 'light');
                       doc.style.setProperty('color-scheme', isDark ? 'dark' : 'light');
-                      // No longer using presets (chromatic accents)
                     };
-                    apply();
-                    setTimeout(apply, 0);
+                    applyTheme();
+                    setTimeout(applyTheme, 0);
+
+                    // Viewport Stability System (DoReady Layout)
+                    var updateVH = function() {
+                      var vh = window.innerHeight * 0.01;
+                      document.documentElement.style.setProperty('--vh', vh + 'px');
+                    };
+                    updateVH();
+                    window.addEventListener('resize', updateVH);
+                    window.addEventListener('orientationchange', updateVH);
 
                     // Safety Fallback: Kill the splash after 5s if React hasn't woken up
                     setTimeout(function() {
@@ -129,7 +138,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${outfit.variable} ${playfair.variable} antialiased select-none fixed inset-0 w-full h-[100dvh] overflow-hidden overscroll-none`}
+        className={`${geistSans.variable} ${geistMono.variable} ${outfit.variable} ${playfair.variable} antialiased select-none fixed inset-0 w-full h-app overflow-hidden overscroll-none bg-background text-foreground`}
       >
         <div id="startup-static-overlay">
           <div id="startup-static-logo"></div>
@@ -137,7 +146,7 @@ export default function RootLayout({
         <ThemeHandler />
         <StartupLoader />
         <OfflineOverlay />
-        <main className="h-full w-full relative pt-safe pb-safe">
+        <main className="h-full w-full relative flex flex-col overflow-hidden bg-background">
           {children}
         </main>
         <Toaster richColors closeButton position="top-right" />

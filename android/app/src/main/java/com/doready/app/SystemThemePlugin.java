@@ -6,6 +6,7 @@ import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
+import android.graphics.Color;
 import android.widget.Toast;
 import com.getcapacitor.annotation.CapacitorPlugin;
 
@@ -27,6 +28,13 @@ public class SystemThemePlugin extends Plugin {
                 WindowInsetsControllerCompat controller = new WindowInsetsControllerCompat(getActivity().getWindow(), getActivity().getWindow().getDecorView());
                 controller.setAppearanceLightStatusBars(!isDark);
                 controller.setAppearanceLightNavigationBars(!isDark);
+                
+                getActivity().getWindow().setNavigationBarColor(Color.TRANSPARENT);
+                
+                // Extra protection against system gray overlay (API 29+)
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                    getActivity().getWindow().setNavigationBarContrastEnforced(false);
+                }
             } catch (Exception e) {}
             call.resolve();
         });

@@ -4,4 +4,5 @@
     <string name="title_activity_main">DoReady</string>
     <string name="package_name">com.doready.app</string>
     <string name="custom_url_scheme">com.doready.app</string>
+    <string name="accessibility_service_description">Permite a DoReady bloquear distracciones como YouTube Shorts automáticamente para ayudarte a mantener el enfoque.</string>
 </resources>

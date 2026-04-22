@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Check, Trash2 } from 'lucide-react'
+import { Check, Trash2, Pin } from 'lucide-react'
 import { Haptics, ImpactStyle } from '@capacitor/haptics'
 import { cn } from '@/utils/utils'
 
@@ -9,6 +9,7 @@ interface Task {
     id: string
     title: string
     is_completed: boolean
+    is_event?: boolean
 }
 
 interface TaskItemProps {
@@ -22,6 +23,7 @@ export default function TaskItem({ task, onToggle, onDelete, onClick }: TaskItem
     const isCompleted = task.is_completed
 
     const handleToggle = (e: React.MouseEvent) => {
+        if (task.is_event) return // Events cannot be completed
         e.stopPropagation()
         // Haptic feedback
         if (!isCompleted) {
@@ -42,7 +44,7 @@ export default function TaskItem({ task, onToggle, onDelete, onClick }: TaskItem
             onClick={() => onClick && onClick()}
             className={cn(
                 "group relative flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 tap-highlight-transparent cursor-pointer",
-                isCompleted ? "opacity-50 shadow-none" : "shadow-sm"
+                isCompleted && !task.is_event ? "opacity-50 shadow-none" : "shadow-sm"
             )}
             style={{ 
                 backgroundColor: 'var(--surface)', 
@@ -50,29 +52,35 @@ export default function TaskItem({ task, onToggle, onDelete, onClick }: TaskItem
                 borderColor: 'var(--border)'
             }}
         >
-            {/* Checkbox */}
-            <div 
-                onClick={handleToggle}
-                className={cn(
-                    "flex-shrink-0 w-[26px] h-[26px] rounded-full border-[1.5px] flex items-center justify-center transition-all duration-300 relative overflow-hidden cursor-pointer active:scale-90",
-                    isCompleted ? "border-transparent" : "border-zinc-300 dark:border-zinc-600 hover:border-zinc-400 dark:hover:border-zinc-500"
-                )}
-                style={isCompleted ? { backgroundColor: 'var(--accent)' } : {}}
-            >
-                <motion.div
-                    initial={false}
-                    animate={{ scale: isCompleted ? 1.1 : 0 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 25 }}
+            {/* Icon/Checkbox */}
+            {task.is_event ? (
+                <div className="flex-shrink-0 w-[26px] h-[26px] flex items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700">
+                    <Pin size={14} className="text-zinc-600 dark:text-zinc-400" />
+                </div>
+            ) : (
+                <div 
+                    onClick={handleToggle}
+                    className={cn(
+                        "flex-shrink-0 w-[26px] h-[26px] rounded-full border-[1.5px] flex items-center justify-center transition-all duration-300 relative overflow-hidden cursor-pointer active:scale-90",
+                        isCompleted ? "border-transparent" : "border-zinc-300 dark:border-zinc-600 hover:border-zinc-400 dark:hover:border-zinc-500"
+                    )}
+                    style={isCompleted ? { backgroundColor: 'var(--accent)' } : {}}
                 >
-                    <Check size={16} strokeWidth={3} className="text-[var(--theme-on-accent)]" />
-                </motion.div>
-            </div>
+                    <motion.div
+                        initial={false}
+                        animate={{ scale: isCompleted ? 1.1 : 0 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                    >
+                        <Check size={16} strokeWidth={3} className="text-[var(--theme-on-accent)]" />
+                    </motion.div>
+                </div>
+            )}
 
             {/* Title */}
             <div className="flex-1 min-w-0 pr-2">
                 <span className={cn(
                     "text-[17px] font-light transition-all duration-300 truncate block",
-                    isCompleted ? "text-zinc-500 dark:text-zinc-500 line-through decoration-zinc-400/50" : "text-zinc-800 dark:text-zinc-100"
+                    isCompleted && !task.is_event ? "text-zinc-500 dark:text-zinc-500 line-through decoration-zinc-400/50" : "text-zinc-800 dark:text-zinc-100"
                 )}>
                     {task.title}
                 </span>

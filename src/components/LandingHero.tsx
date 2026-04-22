@@ -59,7 +59,7 @@ export default function LandingHero() {
             id="top"
             ref={containerRef}
             onMouseMove={handleMouseMove}
-            className="relative min-h-screen flex flex-col justify-center overflow-hidden bg-white dark:bg-zinc-950 transition-colors duration-700 font-outfit"
+            className="relative min-h-app flex flex-col justify-center overflow-hidden bg-white dark:bg-zinc-950 transition-colors duration-700 font-outfit"
         >
             {/* 1. LAYER: REACTIVE MESH GRADIENT */}
             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">

@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { KeyRound, Lock, ArrowLeft, ChevronRight, Fingerprint, Trash2, Loader2 } from 'lucide-react'
+import { KeyRound, Lock, ArrowLeft, ChevronRight, Fingerprint, Trash2 } from 'lucide-react'
+import SectionLoader from '@/components/SectionLoader'
 import Link from 'next/link'
 import SignOutButton from '@/components/SignOutButton'
 import PasswordModal from '@/components/PasswordModal'
@@ -27,11 +28,7 @@ export default function SecurityPage() {
     }, [])
 
     if (isLoading) {
-        return (
-            <div className="flex items-center justify-center min-h-[400px]">
-                <Loader2 className="animate-spin text-zinc-400" size={32} />
-            </div>
-        )
+        return <SectionLoader />
     }
 
     return (

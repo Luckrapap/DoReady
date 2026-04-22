@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { CalendarDays, CheckSquare, MountainSnow, User, BrainCircuit, Gamepad2, Lightbulb, Settings, Orbit } from 'lucide-react'
+import { CalendarDays, CheckSquare, MountainSnow, User, BrainCircuit, Gamepad2, Lightbulb, Settings, Orbit, Lock } from 'lucide-react'
 import { cn } from '@/utils/utils'
 import { motion } from 'framer-motion'
 import { Haptics, ImpactStyle } from '@capacitor/haptics'
@@ -16,9 +16,10 @@ export default function MobileNavigationMenu() {
         { name: 'Calendario', href: '/calendar', icon: CalendarDays },
         { name: 'CheckDay', href: '/check-day', icon: MountainSnow },
         { name: 'Análisis', href: '/insights', icon: BrainCircuit },
-        { name: 'Tablero de Ideas', href: '/brain-dump', icon: Lightbulb },
+        { name: 'IdeaBox', href: '/brain-dump', icon: Lightbulb },
         { name: 'ProcasTive', href: '/procastive', icon: Gamepad2 },
-        { name: 'Órbita de Hábitos', href: '/habits', icon: Orbit },
+        { name: 'HabitOrbit', href: '/habits', icon: Orbit },
+        { name: 'BlockZone', href: '/blockzone', icon: Lock },
     ]
 
     const profileLink = { name: 'Perfil', href: '/profile', icon: User }
@@ -30,7 +31,7 @@ export default function MobileNavigationMenu() {
 
     return (
         <div className="flex flex-col pt-safe-top pb-safe-bottom h-[100dvh] w-full px-2">
-            <div className="flex items-center justify-between gap-1 mt-12 mb-12 px-6">
+            <div className="flex items-center justify-between gap-1 mt-4 mb-12 px-6">
                 <div className="flex items-center gap-4">
                     <Logo size={36} className="-ml-6 -mr-10 -translate-y-2" />
                     <span className="font-bold text-4xl tracking-tighter text-zinc-900 dark:text-white focus:outline-none">DoReady</span>
@@ -66,7 +67,7 @@ export default function MobileNavigationMenu() {
                 })}
 
                 {/* Mobile Settings & Profile anchored at bottom */}
-                <div className="mt-auto flex flex-col gap-3 pt-6 border-t border-zinc-200 dark:border-white/5">
+                <div className="mt-auto flex flex-col gap-3 pt-6 border-none">
                     {[settingsLink, profileLink].map((link) => {
                         const isActive = pathname === link.href
                         return (

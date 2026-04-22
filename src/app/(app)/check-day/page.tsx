@@ -2,8 +2,8 @@ import CheckDayInterface from '@/components/CheckDayInterface'
 
 export default function CheckDayPage() {
     return (
-        <main className="h-[100dvh] flex justify-center pt-16 pb-12 px-4 selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black overflow-hidden">
-            <div className="w-full max-w-xl h-full flex flex-col">
+        <main className="h-[100dvh] flex justify-center pt-safe-top pb-12 px-4 selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black overflow-hidden">
+            <div className="w-full max-w-xl h-full flex flex-col pt-8">
                 <section className="flex flex-col h-full">
                     <header className="flex flex-col gap-1 px-4 flex-shrink-0">
                         <div className="flex items-end justify-center">

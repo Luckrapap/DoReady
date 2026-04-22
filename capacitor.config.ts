@@ -7,7 +7,9 @@ const config: CapacitorConfig = {
   server: {
     url: 'https://do-ready.vercel.app/',
     allowNavigation: ['do-ready.vercel.app'],
-    cleartext: true
+    cleartext: true,
+    androidScheme: 'https',
+    hostname: 'do-ready.vercel.app'
   },
   android: {
     backgroundColor: "#000000"
@@ -21,6 +23,10 @@ const config: CapacitorConfig = {
       showSpinner: false,
       splashFullScreen: true,
       splashImmersive: true,
+    },
+    Keyboard: {
+      resize: 'none',
+      style: 'dark'
     }
   }
 };

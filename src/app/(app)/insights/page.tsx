@@ -14,8 +14,8 @@ export default async function InsightsPage() {
     const analyticsData = await getUserAnalyticsData()
 
     return (
-        <main className="min-h-screen py-6 px-4 flex justify-center selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black relative">
-            <div className="w-full max-w-3xl mt-12 md:mt-20 mb-24">
+        <main className="min-h-app pt-safe-top pb-12 px-4 flex justify-center selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black relative">
+            <div className="w-full max-w-3xl mt-12 md:mt-20 mb-24 pt-8">
                 <InsightsDashboard analyticsData={analyticsData} />
             </div>
         </main>

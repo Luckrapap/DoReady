@@ -5,7 +5,7 @@ import { Capacitor, registerPlugin, type PluginListenerHandle } from '@capacitor
  * Simplified to only support Slate theme.
  */
 export const THEME_CONFIG = {
-  slate: { light: '#fafafa', dark: '#020617' },
+  slate: { light: '#ffffff', dark: '#000000' },
 } as const
 
 export type Preset = 'slate'
