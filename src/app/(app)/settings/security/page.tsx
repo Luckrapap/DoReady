@@ -11,6 +11,8 @@ import DeleteAccountModal from '@/components/DeleteAccountModal'
 import PrivacyShield from '@/components/PrivacyShield'
 import { createClient } from '@/utils/supabase/client'
 
+import CircularBackButton from '@/components/CircularBackButton'
+
 export default function SecurityPage() {
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
@@ -33,15 +35,10 @@ export default function SecurityPage() {
 
     return (
         <div className="max-w-xl mx-auto py-12 px-6 relative">
-            <Link
-                href="/settings"
-                className="inline-flex items-center gap-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-50 transition-colors mb-8 text-sm font-medium"
-            >
-                <ArrowLeft size={16} />
-                Volver a Configuración
-            </Link>
-
-            <header className="mb-12 text-center md:text-left">
+            <header className="mb-12 relative text-center md:text-left">
+                <div className="absolute left-0 top-0 md:top-1">
+                    <CircularBackButton href="/settings" />
+                </div>
                 <h1 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 mb-2 font-dancing lowercase">
                     seguridad
                 </h1>

@@ -170,15 +170,18 @@ export default function CalendarGrid({ taskCounts }: CalendarGridProps) {
                                         disabled={!isCurrentMonth}
                                         className={cn(
                                             "w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-base rounded-full transition-all relative",
-                                            !isCurrentMonth ? "opacity-0 pointer-events-none" : "hover:bg-zinc-100 dark:hover:bg-zinc-900",
+                                            !isCurrentMonth ? "opacity-0 pointer-events-none" : isTodayDate ? "" : "hover:bg-zinc-100 dark:hover:bg-zinc-900",
                                             isTodayDate 
-                                                ? "bg-zinc-950 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-950 font-bold shadow-lg shadow-zinc-200 dark:shadow-none scale-[0.94]" 
+                                                ? "text-zinc-50 dark:text-zinc-950 font-bold" 
                                                 : isPast
                                                     ? "text-zinc-400 dark:text-zinc-600 font-medium opacity-50"
                                                     : "text-zinc-800 dark:text-zinc-200 font-medium"
                                         )}
                                     >
-                                        {format(day, 'd')}
+                                        {isTodayDate && (
+                                            <div className="absolute inset-0 bg-zinc-950 dark:bg-zinc-50 rounded-full shadow-lg shadow-zinc-200 dark:shadow-none scale-[0.91]" />
+                                        )}
+                                        <span className="relative z-10">{format(day, 'd')}</span>
 
                                         {summary && isCurrentMonth && (
                                             <div className="absolute -bottom-[12px] md:-bottom-[14px] left-1/2 -translate-x-1/2 flex items-center justify-center gap-[3px] pointer-events-none h-[12px]">
