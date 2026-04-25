@@ -153,7 +153,7 @@ export default function BrainDump({ initialIdeas }: Props) {
                 {optimisticIdeas.length === 0 && (
                     <div className="text-center py-20">
                         <div className="text-zinc-300 dark:text-zinc-800 text-sm font-medium italic">
-                            Tu IdeaBox está vacío. Tu mente debería estarlo también.
+                            Tu NoteBox está vacío. Tu mente debería estarlo también.
                         </div>
                     </div>
                 )}

@@ -25,7 +25,7 @@ export async function getNotes() {
     return data
 }
 
-export async function createNote(title: string, content: string, emoji: string | null = null) {
+export async function createNote(title: string, content: string, emoji: string | null = null, folderId: string | null = null) {
     const supabase = await createClient()
 
     const { data: { user } } = await supabase.auth.getUser()
@@ -36,7 +36,7 @@ export async function createNote(title: string, content: string, emoji: string |
     const { data, error } = await supabase
         .from('brain_dump')
         .insert([
-            { title, content, emoji, user_id: user.id }
+            { title, content, emoji, user_id: user.id, folder_id: folderId }
         ])
         .select()
 
@@ -49,7 +49,7 @@ export async function createNote(title: string, content: string, emoji: string |
     return data[0]
 }
 
-export async function updateNote(id: string, title: string, content: string, emoji: string | null = null) {
+export async function updateNote(id: string, title: string, content: string, emoji: string | null = null, folderId: string | null = null) {
     const supabase = await createClient()
 
     const { data: { user } } = await supabase.auth.getUser()
@@ -59,7 +59,7 @@ export async function updateNote(id: string, title: string, content: string, emo
 
     const { error } = await supabase
         .from('brain_dump')
-        .update({ title, content, emoji })
+        .update({ title, content, emoji, folder_id: folderId })
         .eq('id', id)
         .eq('user_id', user.id)
 

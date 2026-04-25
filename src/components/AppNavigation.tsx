@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { CalendarDays, CheckSquare, MountainSnow, User, BrainCircuit, Gamepad2, Lightbulb, Settings, Orbit, ChevronUp, ChevronDown, Lock } from 'lucide-react'
+import { CalendarDays, CheckSquare, MountainSnow, User, BrainCircuit, Gamepad2, Lightbulb, Settings, Orbit, ChevronUp, ChevronDown, Lock, Folder } from 'lucide-react'
 import { cn } from '@/utils/utils'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Haptics, ImpactStyle } from '@capacitor/haptics'
@@ -19,7 +19,7 @@ export default function AppNavigation() {
         { name: 'Calendario', href: '/calendar', icon: CalendarDays },
         { name: 'CheckDay', href: '/check-day', icon: MountainSnow },
         { name: 'Análisis', href: '/insights', icon: BrainCircuit },
-        { name: 'IdeaBox', href: '/brain-dump', icon: Lightbulb },
+        { name: 'NoteBox', href: '/brain-dump', icon: Folder },
         { name: 'ProcasTive', href: '/procastive', icon: Gamepad2 },
         { name: 'HabitOrbit', href: '/habits', icon: Orbit },
         { name: 'BlockZone', href: '/blockzone', icon: Lock },

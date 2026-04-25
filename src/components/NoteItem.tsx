@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Trash2, FileText, GripVertical } from 'lucide-react'
+import { FileText, SquarePen } from 'lucide-react'
 import { cn } from '@/utils/utils'
 
 interface Note {
@@ -9,6 +9,7 @@ interface Note {
     title: string
     content: string
     emoji?: string | null
+    updated_at?: string | null
 }
 
 interface NoteItemProps {
@@ -31,6 +32,22 @@ const wiggleVariants: any = {
     }
 }
 
+function getRelativeDate(dateStr?: string | null): string {
+    if (!dateStr) return 'Sin fecha'
+    const date = new Date(dateStr)
+    const now = new Date()
+    const diffMs = now.getTime() - date.getTime()
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+    if (diffDays === 0) return 'Editada hoy'
+    if (diffDays === 1) return 'Editada ayer'
+    if (diffDays === 2) return 'Editada anteayer'
+    if (diffDays < 7) return `Editada hace ${diffDays} días`
+    if (diffDays < 14) return 'Editada hace una semana'
+    if (diffDays < 30) return `Editada hace ${Math.floor(diffDays / 7)} semanas`
+    if (diffDays < 60) return 'Editada hace un mes'
+    return `Editada hace ${Math.floor(diffDays / 30)} meses`
+}
+
 export default function NoteItem({ note, onClick, isReorderMode }: NoteItemProps) {
     return (
         <motion.div
@@ -41,35 +58,35 @@ export default function NoteItem({ note, onClick, isReorderMode }: NoteItemProps
             whileTap={{ scale: isReorderMode ? 1.02 : 0.98 }}
             onClick={() => !isReorderMode && onClick && onClick()}
             className={cn(
-                "group relative flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 tap-highlight-transparent",
+                "group relative flex items-center gap-4 px-4 py-4 rounded-2xl transition-colors duration-200 tap-highlight-transparent",
                 isReorderMode 
-                    ? "cursor-grab active:cursor-grabbing border-[var(--accent)]/30 border bg-[var(--surface)] shadow-lg z-10" 
-                    : "cursor-pointer shadow-sm bg-[var(--surface)] border border-[var(--border)] hover:border-zinc-300 dark:hover:border-zinc-700"
+                    ? "cursor-grab active:cursor-grabbing bg-zinc-200/80 dark:bg-zinc-700/60 shadow-sm z-10" 
+                    : "cursor-pointer bg-zinc-100 dark:bg-zinc-800/60 hover:bg-zinc-200/80 dark:hover:bg-zinc-700/60"
             )}
         >
             {/* Index Icon */}
-            <div className={cn(
-                "w-10 h-10 flex items-center justify-center rounded-xl transition-all duration-300 overflow-hidden shrink-0",
-                isReorderMode 
-                    ? "bg-[var(--accent)]/10 text-[var(--accent)] border border-[var(--accent)]/20" 
-                    : "bg-zinc-50 dark:bg-black/20 border border-[var(--border)] text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-zinc-100"
-            )}>
-                {note.emoji ? (
-                    <span className="text-xl leading-none select-none">{note.emoji}</span>
-                ) : (
-                    <FileText size={18} strokeWidth={1.5} />
-                )}
-            </div>
+            <FileText size={20} strokeWidth={1.5} className="shrink-0 text-zinc-400 dark:text-zinc-500" />
 
-            {/* Title / Content Preview */}
+            {/* Title + date */}
             <div className="flex-1 min-w-0">
                 <span className={cn(
-                    "text-[17px] font-medium transition-all duration-300 truncate block",
-                    isReorderMode ? "text-zinc-900 dark:text-zinc-50" : "font-light text-zinc-800 dark:text-zinc-100"
+                    "text-[16px] transition-all duration-300 truncate block font-medium",
+                    isReorderMode ? "text-zinc-900 dark:text-zinc-100" : "text-zinc-800 dark:text-zinc-200"
                 )}>
                     {note.title || note.content}
                 </span>
+                <span className="text-[13px] text-zinc-400 dark:text-zinc-500 truncate block mt-0.5">
+                    {getRelativeDate(note.updated_at)}
+                </span>
             </div>
+
+            {/* Edit Icon */}
+            {!isReorderMode && (
+                <div className="shrink-0 text-zinc-400 transition-opacity">
+                    <SquarePen size={18} strokeWidth={2.5} />
+                </div>
+            )}
+
         </motion.div>
     )
 }

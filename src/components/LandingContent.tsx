@@ -89,7 +89,7 @@ export default function LandingContent() {
                                 <Sparkles size={24} />
                             </div>
                             <div className="space-y-2">
-                                <h3 className="text-lg font-black tracking-tight uppercase">IdeaBox</h3>
+                                <h3 className="text-lg font-black tracking-tight uppercase">NoteBox</h3>
                                 <p className="text-sm text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed">
                                     Cero fricción. Captura relámpago. Elimina el ruido mental en milisegundos para que tu atención nunca se rompa.
                                 </p>

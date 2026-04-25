@@ -193,7 +193,7 @@ export default function HabitsContainer({
                         <Plus size={24} className="text-zinc-900 dark:text-zinc-50 group-hover:text-inherit" strokeWidth={3} />
                     </motion.button>
 
-                    {/* Middle Reorder Button (From IdeaBox) */}
+                    {/* Middle Reorder Button (From NoteBox) */}
                     <motion.button
                         onClick={async () => {
                             if (isReorderMode) {

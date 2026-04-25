@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { CalendarDays, CheckSquare, MountainSnow, User, BrainCircuit, Gamepad2, Lightbulb, Settings, Orbit, Lock } from 'lucide-react'
+import { CalendarDays, CheckSquare, MountainSnow, User, BrainCircuit, Gamepad2, Lightbulb, Settings, Orbit, Lock, Folder } from 'lucide-react'
 import { cn } from '@/utils/utils'
 import { motion } from 'framer-motion'
 import { Haptics, ImpactStyle } from '@capacitor/haptics'
@@ -31,7 +31,7 @@ export default function MobileNavigationMenu() {
         { name: 'Calendario', href: '/calendar', icon: CalendarDays, color: 'from-purple-500 to-indigo-400', glow: 'shadow-purple-500/20' },
         { name: 'CheckDay', href: '/check-day', icon: MountainSnow, color: 'from-amber-500 to-orange-400', glow: 'shadow-amber-500/20' },
         { name: 'Análisis', href: '/insights', icon: BrainCircuit, color: 'from-indigo-600 to-violet-500', glow: 'shadow-indigo-500/20' },
-        { name: 'IdeaBox', href: '/brain-dump', icon: Lightbulb, color: 'from-yellow-400 to-amber-300', glow: 'shadow-yellow-500/20' },
+        { name: 'NoteBox', href: '/brain-dump', icon: Folder, color: 'from-yellow-400 to-amber-300', glow: 'shadow-yellow-500/20' },
         { name: 'ProcasTive', href: '/procastive', icon: Gamepad2, color: 'from-rose-500 to-pink-400', glow: 'shadow-rose-500/20' },
         { name: 'HabitOrbit', href: '/habits', icon: Orbit, color: 'from-cyan-500 to-blue-400', glow: 'shadow-cyan-500/20' },
         { name: 'BlockZone', href: '/blockzone', icon: Lock, color: 'from-red-600 to-rose-600', glow: 'shadow-red-500/20' },
