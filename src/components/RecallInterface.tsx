@@ -11,7 +11,7 @@ interface RecallInterfaceProps {
 }
 
 export default function RecallInterface({ onBack }: RecallInterfaceProps) {
-    const [activeMode, setActiveMode] = useState<'classic' | 'chill' | null>(null)
+    const [activeMode, setActiveMode] = useState<'classic' | 'chill' | 'expert' | 'extreme' | null>(null)
 
     const renderHeaderContent = (subtitle: string) => (
         <div className="flex items-center gap-4">
@@ -37,7 +37,7 @@ export default function RecallInterface({ onBack }: RecallInterfaceProps) {
         </div>
     )
 
-    if (activeMode === 'classic' || activeMode === 'chill') {
+    if (activeMode) {
         return <RecallGameMode mode={activeMode} onBack={() => setActiveMode(null)} />
     }
 
@@ -104,15 +104,15 @@ export default function RecallInterface({ onBack }: RecallInterfaceProps) {
                     title="Experto"
                     icon="🧠"
                     description="Un desafío para los más experimentados."
-                    onClick={() => {}}
+                    onClick={() => setActiveMode('expert')}
                     colorTheme="purple"
                 />
                 <ModeCard
-                    title="Pulso"
-                    icon="⚡"
-                    description="Pon a prueba tu velocidad y precisión."
-                    onClick={() => {}}
-                    colorTheme="blue"
+                    title="Extremo"
+                    icon="🔥"
+                    description="El desafío definitivo. Sin margen de error."
+                    onClick={() => setActiveMode('extreme')}
+                    colorTheme="red"
                 />
             </motion.div>
         </motion.div>
@@ -125,7 +125,7 @@ function ModeCard({ title, icon, description, onClick, colorTheme }: {
     icon: React.ReactNode | string,
     description: string,
     onClick: () => void,
-    colorTheme: 'green' | 'purple' | 'orange' | 'blue'
+    colorTheme: 'green' | 'purple' | 'orange' | 'blue' | 'red'
 }) {
     const themeColors = {
         green: { 
@@ -159,6 +159,14 @@ function ModeCard({ title, icon, description, onClick, colorTheme }: {
             textMap: 'from-sky-400 via-blue-500 to-blue-700', 
             hoverArrow: 'bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 group-hover:bg-blue-500 group-hover:text-white',
             blob: 'bg-blue-500/20'
+        },
+        red: { 
+            bg: 'bg-rose-50 dark:bg-rose-500/10 group-hover:bg-rose-100 dark:group-hover:bg-rose-500/20', 
+            border: 'border-rose-200 dark:border-rose-500/30 group-hover:border-rose-400 dark:group-hover:border-rose-500/60', 
+            glow: 'shadow-sm group-hover:shadow-[0_0_40px_-10px_rgba(225,29,72,0.4)]', 
+            textMap: 'from-rose-500 via-red-500 to-red-600', 
+            hoverArrow: 'bg-rose-100 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400 group-hover:bg-rose-500 group-hover:text-white',
+            blob: 'bg-rose-500/20'
         }
     };
 
@@ -195,7 +203,7 @@ function ModeCard({ title, icon, description, onClick, colorTheme }: {
                 <div className="flex-1 space-y-1.5">
                     <h3 className={cn(
                         "text-xl md:text-[24px] font-black tracking-tight",
-                        "bg-clip-text text-transparent bg-gradient-to-r drop-shadow-sm",
+                        "bg-clip-text text-transparent bg-gradient-to-r",
                         theme.textMap
                     )}
                     >

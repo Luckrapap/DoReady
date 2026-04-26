@@ -14,23 +14,46 @@ interface CardData {
 }
 
 interface RecallGameProps {
-    mode: 'classic' | 'chill'
+    mode: 'chill' | 'classic' | 'expert' | 'extreme'
     onBack?: () => void
 }
 
-const EMOJIS = ['🍎', '🍌', '🍇', '🍊', '🍓', '🔑', '⚡']
+const EMOJIS = ['🍎', '🍌', '🍇', '🍊', '🍓', '🔑', '⚡', '🎮', '🚀', '🌈', '🎨', '🧩', '🎯', '🔮', '🧸', '🍦', '💎', '👻', '🎸', '🎲', '👽', '👾', '🤖', '🎃']
 
-function getRoundConfig(round: number, mode: 'classic' | 'chill') {
-    const pairsCount = round <= 4 ? 3 : round <= 8 ? 4 : round <= 12 ? 5 : round <= 16 ? 6 : 7
-    const grid = round <= 4 ? [3, 3] : round <= 8 ? [2, 4, 2] : round <= 12 ? [3, 4, 3] : round <= 16 ? [2, 4, 4, 2] : [3, 4, 4, 3]
+function getRoundConfig(round: number, mode: 'chill' | 'classic' | 'expert' | 'extreme') {
+    const rangeIdx = Math.min(4, Math.floor((round - 1) / 4))
+
+    let time = 0
+    let numItems = 0
+
+    if (mode === 'chill') {
+        time = [20, 25, 30, 35, 40][rangeIdx]
+        numItems = [6, 8, 10, 12, 14][rangeIdx]
+    } else if (mode === 'classic') {
+        time = [15, 20, 25, 30, 35][rangeIdx]
+        numItems = [8, 10, 12, 14, 16][rangeIdx]
+    } else if (mode === 'expert') {
+        time = [15, 20, 25, 30, 35][rangeIdx]
+        numItems = [10, 12, 14, 16, 18][rangeIdx]
+    } else if (mode === 'extreme') {
+        time = [10, 15, 20, 25, 30][rangeIdx]
+        numItems = [12, 14, 16, 18, 20][rangeIdx]
+    }
+
+    const pairs = numItems / 2
     
-    // Time logic
-    // Classic: 15, 20, 25, 30, 35
-    // Chill: 20, 25, 30, 35, 40
-    const baseTime = mode === 'chill' ? 20 : 15
-    const time = baseTime + (Math.floor((round - 1) / 4) * 5)
-    
-    return { time, pairs: pairsCount, grid }
+    // Configuración de grid dinámica según el número de elementos
+    let grid: number[] = []
+    if (numItems === 6) grid = [3, 3]
+    else if (numItems === 8) grid = [4, 4]
+    else if (numItems === 10) grid = [3, 4, 3]
+    else if (numItems === 12) grid = [4, 4, 4]
+    else if (numItems === 14) grid = [4, 6, 4]
+    else if (numItems === 16) grid = [4, 4, 4, 4]
+    else if (numItems === 18) grid = [4, 5, 5, 4]
+    else if (numItems === 20) grid = [5, 5, 5, 5]
+
+    return { time, pairs, grid }
 }
 
 function generateDeck(pairsCount: number): CardData[] {
@@ -59,9 +82,21 @@ export default function RecallGameMode({ mode, onBack }: RecallGameProps) {
     const [flippedIndices, setFlippedIndices] = useState<number[]>([])
 
     // Config derived from mode
-    const penaltySeconds = mode === 'chill' ? 3 : 5
-    const modeTitle = mode === 'chill' ? 'Chill' : 'Clásico'
-    const accentColor = mode === 'chill' ? 'var(--green-500, #22c55e)' : 'var(--accent)'
+    const penaltySeconds = 
+        mode === 'chill' ? 3 : 
+        mode === 'classic' ? 4 : 
+        mode === 'expert' ? 5 : 
+        999 // Extreme: representara tiempo agotado
+
+    const modeTitle = 
+        mode === 'chill' ? 'Chill' : 
+        mode === 'classic' ? 'Clásico' : 
+        mode === 'expert' ? 'Experto' : 'Extremo'
+
+    const accentColor = 
+        mode === 'chill' ? 'var(--green-500, #22c55e)' : 
+        mode === 'expert' ? 'var(--purple-500, #a855f7)' : 
+        mode === 'extreme' ? 'var(--rose-500, #f43f5e)' : 'var(--accent)'
 
     // Initialize round
     const startRound = useCallback((r: number) => {
@@ -157,7 +192,12 @@ export default function RecallGameMode({ mode, onBack }: RecallGameProps) {
                 const hasPenalty = cards[firstIdx].hasExclamation || cards[secondIdx].hasExclamation
                 if (hasPenalty) {
                     playIncorrectSound()
-                    setTimeLeft(t => Math.max(0, t - penaltySeconds))
+                    if (mode === 'extreme') {
+                        setTimeLeft(0)
+                        setGameState('game_over')
+                    } else {
+                        setTimeLeft(t => Math.max(0, t - penaltySeconds))
+                    }
                 }
             }
         }
