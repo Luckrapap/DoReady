@@ -531,7 +531,7 @@ export default function BrainDumpPage() {
                                 opacity: { duration: 0.4 }
                             }}
                             style={{ height: viewportHeight }}
-                             className="absolute top-0 left-0 right-0 flex flex-col pt-[60px]"
+                             className="absolute top-0 left-0 right-0 flex flex-col pt-8"
                         >
                             <header className={cn(
                                 "flex flex-col gap-1 px-3 flex-shrink-0 transition-all duration-300",
