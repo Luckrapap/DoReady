@@ -143,9 +143,9 @@ export default function BrainDumpPage() {
     const [filterType, setFilterType] = useState<'all' | 'notes' | 'folders'>('all')
     const [currentFolder, setCurrentFolder] = useState<{id: string | null, name: string}>({ id: null, name: 'Repositorio' })
     const [navigationStack, setNavigationStack] = useState<{id: string | null, name: string}[]>([{ id: null, name: 'Repositorio' }])
-    const [selectedItems, setSelectedItems] = useState<string[]>([])
     const [isSelectionMode, setIsSelectionMode] = useState(false)
     const [draggingItemId, setDraggingItemId] = useState<string | null>(null)
+    const [isDeleting, setIsDeleting] = useState(false)
     const scrollContainerRef = useRef<HTMLDivElement>(null)
     useEffect(() => {
         if (window.visualViewport) {
@@ -365,42 +365,61 @@ export default function BrainDumpPage() {
     }
 
     const handleMoveToTrash = async () => {
-        if (selectedItems.length === 0) return
+        if (selectedItems.length === 0 || isDeleting) return
+        setIsDeleting(true)
 
         const selectedNotes = notes.filter(n => selectedItems.includes(n.id))
         const selectedFolders = folders.filter(f => selectedItems.includes(f.id))
         const noteIds = selectedNotes.map(n => n.id)
         const folderIds = selectedFolders.map(f => f.id)
 
-        // 1. Guardar copia de seguridad en localStorage por si acaso
+        // 1. Guardar copia de seguridad en localStorage (evitando duplicados)
         const backupTrash = JSON.parse(localStorage.getItem('dump_trash_backup') || '{"notes":[],"folders":[]}')
-        backupTrash.notes = [...backupTrash.notes, ...selectedNotes]
-        backupTrash.folders = [...backupTrash.folders, ...selectedFolders]
-        localStorage.setItem('dump_trash_backup', JSON.stringify(backupTrash))
+        
+        const newBackupNotes = [...backupTrash.notes]
+        selectedNotes.forEach(sn => {
+            if (!newBackupNotes.find(bn => bn.id === sn.id)) newBackupNotes.push(sn)
+        })
+        
+        const newBackupFolders = [...backupTrash.folders]
+        selectedFolders.forEach(sf => {
+            if (!newBackupFolders.find(bf => bf.id === sf.id)) newBackupFolders.push(sf)
+        })
+
+        localStorage.setItem('dump_trash_backup', JSON.stringify({
+            notes: newBackupNotes,
+            folders: newBackupFolders
+        }))
 
         try {
-            // 2. Sincronizar con el servidor y esperar confirmación
+            // 2. Sincronizar con el servidor
             const [noteRes, folderRes]: any = await Promise.all([
                 noteIds.length > 0 ? moveToTrash(noteIds) : Promise.resolve({ success: true }),
                 folderIds.length > 0 ? moveFoldersToTrash(folderIds) : Promise.resolve({ success: true })
             ])
 
             if (noteRes.success && folderRes.success) {
-                // 3. Solo si el servidor confirmó, actualizamos la vista
-                setTrashNotes(prev => [...selectedNotes, ...prev])
-                setTrashFolders(prev => [...selectedFolders, ...prev])
+                // 3. Actualizar la vista evitando duplicados en el estado
+                setTrashNotes(prev => {
+                    const existingIds = new Set(prev.map(n => n.id))
+                    const filteredNew = selectedNotes.filter(sn => !existingIds.has(sn.id))
+                    return [...filteredNew, ...prev]
+                })
+                setTrashFolders(prev => {
+                    const existingIds = new Set(f => f.id)
+                    const filteredNew = selectedFolders.filter(sf => !existingIds.has(sf.id))
+                    return [...filteredNew, ...prev]
+                })
+
                 setNotes(prev => prev.filter(n => !selectedItems.includes(n.id)))
                 setFolders(prev => prev.filter(f => !selectedItems.includes(f.id)))
                 setSelectedItems([])
                 setIsSelectionMode(false)
-                console.log("✅ Sincronización con papelera exitosa")
-            } else {
-                console.error("❌ Fallo en el servidor:", noteRes.error || folderRes.error)
-                alert("Hubo un problema al guardar en la papelera. Por favor, verifica tu conexión o que las columnas SQL existan.")
             }
         } catch (error) {
             console.error("❌ Error crítico:", error)
-            alert("Error al conectar con el servidor.")
+        } finally {
+            setIsDeleting(false)
         }
     }
     const handleRestore = async () => {
@@ -1280,7 +1299,11 @@ export default function BrainDumpPage() {
                                     </div>
                                     <button 
                                         onClick={handleMoveToTrash}
-                                        className="flex flex-col items-center gap-0.5 -translate-y-2 active:scale-90 transition-transform"
+                                        disabled={isDeleting}
+                                        className={cn(
+                                            "flex flex-col items-center gap-0.5 -translate-y-2 active:scale-90 transition-transform",
+                                            isDeleting && "opacity-50 cursor-not-allowed"
+                                        )}
                                     >
                                         <div className="w-9 h-9 flex items-center justify-center rounded-full">
                                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
