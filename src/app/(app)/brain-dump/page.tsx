@@ -449,6 +449,12 @@ export default function BrainDumpPage() {
                 ...noteIds.map(id => deleteNote(id)),
                 ...folderIds.map(id => deleteFolder(id))
             ])
+
+            // Limpiar backup local para evitar "fantasmas"
+            const backupTrash = JSON.parse(localStorage.getItem('dump_trash_backup') || '{"notes":[],"folders":[]}')
+            backupTrash.notes = backupTrash.notes.filter((n: any) => !selectedItems.includes(n.id))
+            backupTrash.folders = backupTrash.folders.filter((f: any) => !selectedItems.includes(f.id))
+            localStorage.setItem('dump_trash_backup', JSON.stringify(backupTrash))
         } catch (error) {
             console.error("Error al eliminar permanentemente:", error)
         }

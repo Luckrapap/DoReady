@@ -55,13 +55,11 @@ export async function updateNote(id: string, title: string, content: string, emo
     const supabase = await createClient()
 
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) {
-        throw new Error('No autenticado')
-    }
+    if (!user) return false
 
     const { error } = await supabase
         .from('brain_dump')
-        .update({ title, content, emoji, folder_id: folderId })
+        .update({ title, content, emoji, folder_id: folderId, updated_at: new Date().toISOString() })
         .eq('id', id)
         .eq('user_id', user.id)
 
@@ -75,26 +73,25 @@ export async function updateNote(id: string, title: string, content: string, emo
 }
 
 export async function deleteNote(id: string) {
-    const supabase = await createClient()
+    try {
+        const supabase = await createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return { success: false, error: 'No autenticado' }
 
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) {
-        throw new Error('No autenticado')
-    }
+        const { error } = await supabase
+            .from('brain_dump')
+            .delete()
+            .eq('id', id)
+            .eq('user_id', user.id)
 
-    const { error } = await supabase
-        .from('brain_dump')
-        .delete()
-        .eq('id', id)
-        .eq('user_id', user.id)
-
-    if (error) {
+        if (error) throw error
+        
+        revalidatePath('/brain-dump')
+        return { success: true }
+    } catch (error) {
         console.error('Error deleting note:', error)
-        return false
+        return { success: false, error: 'Error en el servidor' }
     }
-
-    revalidatePath('/brain-dump')
-    return true
 }
 
 export async function swapNotePositions(id1: string, id2: string) {
@@ -130,8 +127,6 @@ export async function saveNotesOrder(orderedNotes: any[]) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return false
 
-    // We use a trick: update created_at to preserve order based on current "descending" sort
-    // The first item in the list will have the "newest" timestamp
     const now = new Date()
     
     const updates = orderedNotes.map((note, index) => {
@@ -148,6 +143,7 @@ export async function saveNotesOrder(orderedNotes: any[]) {
     revalidatePath('/brain-dump')
     return true
 }
+
 export async function moveToTrash(ids: string[]) {
     try {
         const supabase = await createClient()
@@ -204,6 +200,7 @@ export async function restoreNotes(ids: string[]) {
             .eq('user_id', user.id)
 
         if (error) throw error
+        
         revalidatePath('/brain-dump')
         return { success: true }
     } catch (error) {
