@@ -485,7 +485,7 @@ export default function BrainDumpPage() {
                             initial={{ y: -100 }}
                             animate={{ y: 0 }}
                             exit={{ y: -100 }}
-                            className="fixed top-[-28px] left-0 right-0 z-[110] bg-white dark:bg-black border-b border-zinc-200 dark:border-zinc-800 px-6 py-4 pt-[28px] flex items-center justify-between shadow-xl"
+                            className="fixed top-[-14px] left-0 right-0 z-[110] bg-white dark:bg-black border-b border-zinc-200 dark:border-zinc-800 px-6 py-4 flex items-center justify-between shadow-xl"
                         >
                             <div className="flex items-center gap-6">
                                 <button onClick={() => { setSelectedItems([]); setIsSelectionMode(false); }} className="text-zinc-900 dark:text-zinc-100">
