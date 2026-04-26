@@ -406,7 +406,7 @@ export default function BrainDumpPage() {
                     return [...filteredNew, ...prev]
                 })
                 setTrashFolders(prev => {
-                    const existingIds = new Set(f => f.id)
+                    const existingIds = new Set(prev.map(f => f.id))
                     const filteredNew = selectedFolders.filter(sf => !existingIds.has(sf.id))
                     return [...filteredNew, ...prev]
                 })
