@@ -27,9 +27,6 @@ export default function HabitsHeader({ isToday, completedCount, totalCount }: Ha
                         </span>
                     </div>
                 </div>
-                <p className="text-base font-medium text-zinc-400 capitalize">
-                    {isToday ? "Cultiva tus mejores hábitos" : "Revisa tu progreso pasado"}
-                </p>
             </header>
             
             <motion.div 

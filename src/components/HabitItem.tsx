@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { Check, Repeat, Pencil, Orbit } from 'lucide-react'
+import { Check, Repeat, Pencil, Orbit, GripVertical } from 'lucide-react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Haptics, ImpactStyle } from '@capacitor/haptics'
@@ -29,9 +29,10 @@ type HabitItemProps = {
     onDelete: (habitId: string) => void;
     onEdit: () => void;
     isReorderMode?: boolean;
+    onDragHandlePointerDown?: (e: React.PointerEvent) => void;
 }
 
-export default function HabitItem({ habit, dateStr, onStatusChange, onDelete, onEdit, isReorderMode }: HabitItemProps) {
+export default function HabitItem({ habit, dateStr, onStatusChange, onDelete, onEdit, isReorderMode, onDragHandlePointerDown }: HabitItemProps) {
     const [isPending, startTransition] = useTransition()
     const [isHovered, setIsHovered] = useState(false)
 
@@ -65,7 +66,7 @@ export default function HabitItem({ habit, dateStr, onStatusChange, onDelete, on
         <motion.div
             layout
             variants={wiggleVariants}
-            animate={isReorderMode ? "reorder" : "idle"}
+            animate="idle"
             initial="idle"
             className="flex items-center gap-2 w-full"
         >
@@ -121,19 +122,25 @@ export default function HabitItem({ habit, dateStr, onStatusChange, onDelete, on
             
             </motion.div>
 
-            {/* Right Orbit Box */}
-            <motion.button
-                whileTap={!isReorderMode ? { scale: 0.92 } : undefined}
-                className={cn(
-                    "flex-shrink-0 w-[58px] h-[58px] rounded-2xl border flex items-center justify-center transition-all duration-300 group/orbit tap-highlight-transparent",
-                    isReorderMode 
-                        ? "opacity-30 grayscale pointer-events-none"
-                        : "bg-[var(--surface)] border-[var(--border)] text-zinc-400 hover:text-[var(--accent)] hover:border-[var(--accent)] hover:bg-[var(--accent)]/5 shadow-sm"
-                )}
-                title="Ver órbita"
-            >
-                <Orbit className="transition-transform duration-700 ease-in-out group-hover/orbit:rotate-180" size={24} strokeWidth={2} />
-            </motion.button>
+            {isReorderMode ? (
+                <div
+                    className="shrink-0 text-zinc-400 dark:text-zinc-500 cursor-grab active:cursor-grabbing touch-none px-1 py-2"
+                    onPointerDown={onDragHandlePointerDown}
+                >
+                    <GripVertical size={20} strokeWidth={2} />
+                </div>
+            ) : (
+                <motion.button
+                    whileTap={!isReorderMode ? { scale: 0.92 } : undefined}
+                    className={cn(
+                        "flex-shrink-0 w-[58px] h-[58px] rounded-2xl border flex items-center justify-center transition-all duration-300 group/orbit tap-highlight-transparent",
+                        "bg-[var(--surface)] border-[var(--border)] text-zinc-400 hover:text-[var(--accent)] hover:border-[var(--accent)] hover:bg-[var(--accent)]/5 shadow-sm"
+                    )}
+                    title="Ver órbita"
+                >
+                    <Orbit className="transition-transform duration-700 ease-in-out group-hover/orbit:rotate-180" size={24} strokeWidth={2} />
+                </motion.button>
+            )}
         </motion.div>
     )
 }

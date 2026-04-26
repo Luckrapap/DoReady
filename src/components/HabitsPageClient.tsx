@@ -65,7 +65,7 @@ export default function HabitsPageClient({
             )}
             style={!isReorderMode ? { backgroundColor: 'var(--background)' } : {}}
         >
-            <div className="w-full max-w-xl h-full flex flex-col pt-8">
+            <div className="w-full max-w-xl h-full flex flex-col pt-1">
                 <section className="flex flex-col h-full min-h-0">
                     <motion.div
                         key="content"

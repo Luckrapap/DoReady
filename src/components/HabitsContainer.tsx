@@ -3,11 +3,11 @@
 import { useState, useOptimistic, useTransition, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 
-import { Menu, X, Plus, Orbit, Settings } from 'lucide-react'
+import { Menu, X, Plus, Orbit } from 'lucide-react'
 import HabitItem from './HabitItem'
 import CreateHabitModal from './CreateHabitModal'
 import CreateHabitInput from './CreateHabitInput'
-import { motion, AnimatePresence, Reorder } from 'framer-motion'
+import { motion, AnimatePresence, Reorder, useDragControls } from 'framer-motion'
 import { saveHabitsOrder, reorderHabit } from '@/app/actions/habits'
 import { cn } from '@/utils/utils'
 
@@ -30,6 +30,47 @@ type HabitsContainerProps = {
     onSaveOrder: (orderedHabits: Habit[]) => void;
 }
 
+// Componente interno para manejar el arrastre de forma aislada y eficiente
+const ReorderableHabitItem = ({ 
+    habit, 
+    dateStr, 
+    isReorderMode, 
+    onToggle, 
+    onDelete, 
+    onEdit 
+}: any) => {
+    const controls = useDragControls();
+
+    const handlePointerDown = (e: React.PointerEvent) => {
+        if (!isReorderMode) return;
+        e.preventDefault();
+        controls.start(e.nativeEvent);
+    };
+
+    return (
+        <Reorder.Item
+            value={habit}
+            dragListener={false}
+            dragControls={controls}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="relative"
+            style={{ x: 0 }}
+        >
+            <HabitItem
+                habit={habit}
+                dateStr={dateStr}
+                onStatusChange={onToggle}
+                onDelete={onDelete}
+                onEdit={onEdit}
+                isReorderMode={isReorderMode}
+                onDragHandlePointerDown={handlePointerDown}
+            />
+        </Reorder.Item>
+    );
+};
+
 export default function HabitsContainer({ 
     initialHabits, 
     dateStr, 
@@ -45,6 +86,7 @@ export default function HabitsContainer({
     const [editingHabit, setEditingHabit] = useState<Habit | null>(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [localHabitsOrder, setLocalHabitsOrder] = useState<Habit[]>(initialHabits)
+    const [showMainMoreMenu, setShowMainMoreMenu] = useState(false)
     const inputRef = useRef<HTMLInputElement>(null)
 
     // Sync local order when initialHabits change (from parent state)
@@ -139,7 +181,7 @@ export default function HabitsContainer({
     const totalCount = initialHabits.length;
 
     return (
-        <div className="flex flex-col gap-6 h-full min-h-0">
+        <div className="flex flex-col gap-2 h-full min-h-0">
             {/* Main Header - Dims and scales in reorder mode */}
             <header className={cn(
                 "flex flex-col gap-1 px-3 flex-shrink-0 transition-all duration-300",
@@ -149,15 +191,13 @@ export default function HabitsContainer({
                     <h1 className="font-bold text-6xl md:text-8xl tracking-tighter text-zinc-900 dark:text-zinc-50 relative bottom-1.5 whitespace-nowrap">
                         {isToday ? "Habits" : "Historial"}
                     </h1>
-                    <div className="bg-zinc-200 dark:bg-zinc-800 rounded-full px-6 py-2.5 mt-2 mb-1 flex items-center justify-center">
+                    <div className="bg-zinc-200 dark:bg-zinc-800 rounded-full px-6 py-1.5 mt-1 mb-2 flex items-center justify-center">
                         <span className="text-4xl md:text-5xl font-light text-zinc-600 dark:text-zinc-300">
                             {completedCount}/{totalCount}
                         </span>
                     </div>
                 </div>
-                <p className="text-base font-medium text-zinc-400 capitalize">
-                    {isToday ? "Cultiva tus mejores hábitos" : "Revisa tu progreso pasado"}
-                </p>
+
             </header>
             
             <motion.div 
@@ -193,51 +233,72 @@ export default function HabitsContainer({
                         <Plus size={24} className="text-zinc-900 dark:text-zinc-50 group-hover:text-inherit" strokeWidth={3} />
                     </motion.button>
 
-                    {/* Middle Reorder Button (From NoteBox) */}
-                    <motion.button
-                        onClick={async () => {
-                            if (isReorderMode) {
-                                await onSaveOrder(localHabitsOrder)
-                            }
-                            setIsReorderMode(!isReorderMode)
-                        }}
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        className={cn(
-                            "border-2 rounded-full w-[54px] h-[54px] flex items-center justify-center transition-all duration-300 cursor-pointer flex-shrink-0 shadow-lg",
-                            isReorderMode 
-                                ? "bg-zinc-900 border-zinc-900 text-white dark:bg-white dark:border-white dark:text-zinc-950 scale-110" 
-                                : "bg-zinc-100 dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-50 hover:bg-zinc-200"
-                        )}
-                        title={isReorderMode ? "Guardar orden" : "Reordenar hábitos"}
-                        style={{ pointerEvents: 'auto' }} // Ensure this is always clickable
-                    >
-                        <AnimatePresence mode="wait">
-                            <motion.div
-                                key={isReorderMode ? 'x' : 'menu'}
-                                initial={{ opacity: 0, scale: 0.3 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.3 }}
-                                transition={{ type: "spring", stiffness: 700, damping: 35, mass: 0.5 }}
-                            >
-                                {isReorderMode ? <X size={24} strokeWidth={3} /> : <Menu size={24} strokeWidth={3} />}
-                            </motion.div>
-                        </AnimatePresence>
-                    </motion.button>
+                    {/* Middle Reorder Button (Matching NoteBox) */}
+                    <div className="relative">
+                        <motion.button
+                            onClick={async () => {
+                                if (isReorderMode) {
+                                    await onSaveOrder(localHabitsOrder)
+                                    setIsReorderMode(false)
+                                } else {
+                                    setShowMainMoreMenu(!showMainMoreMenu)
+                                }
+                            }}
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            className={cn(
+                                "border-2 rounded-full w-[54px] h-[54px] flex items-center justify-center transition-all duration-300 cursor-pointer flex-shrink-0 shadow-lg",
+                                isReorderMode 
+                                    ? "bg-zinc-900 border-zinc-900 text-white dark:bg-white dark:border-white dark:text-zinc-950 scale-110" 
+                                    : "bg-zinc-100 dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-50 hover:bg-zinc-200"
+                            )}
+                            title={isReorderMode ? "Guardar orden" : "Menú"}
+                            style={{ pointerEvents: 'auto' }}
+                        >
+                            <AnimatePresence mode="wait">
+                                <motion.div
+                                    key={isReorderMode ? 'x' : 'menu'}
+                                    initial={{ opacity: 0, scale: 0.3 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.3 }}
+                                    transition={{ type: "spring", stiffness: 700, damping: 35, mass: 0.5 }}
+                                >
+                                    {isReorderMode ? <X size={24} strokeWidth={3} /> : <Menu size={24} strokeWidth={3} />}
+                                </motion.div>
+                            </AnimatePresence>
+                        </motion.button>
 
-                    {/* Right Settings Button (Gear) */}
-                    <motion.button
-                        onClick={() => {}} // Dummy for now
-                        whileHover={{ scale: 1.1, rotate: 45 }}
-                        whileTap={{ scale: 0.9 }}
-                        className={cn(
-                            "bg-zinc-100 dark:bg-zinc-900 border-2 border-zinc-200 dark:border-zinc-800 rounded-full w-[54px] h-[54px] flex items-center justify-center hover:bg-zinc-900 hover:text-white dark:hover:bg-white dark:hover:text-zinc-950 transition-all duration-300 cursor-pointer flex-shrink-0",
-                            isReorderMode && "opacity-30 scale-[0.95] pointer-events-none grayscale"
-                        )}
-                        title="Ajustes (Próximamente)"
-                    >
-                        <Settings size={24} className="text-zinc-900 dark:text-zinc-50 group-hover:text-inherit" strokeWidth={2} />
-                    </motion.button>
+                        <AnimatePresence>
+                            {showMainMoreMenu && (
+                                <>
+                                    <div 
+                                        className="fixed inset-0 z-40" 
+                                        onClick={() => setShowMainMoreMenu(false)}
+                                    />
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.9, y: -10, x: 10 }}
+                                        animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
+                                        exit={{ opacity: 0, scale: 0.9, y: -10, x: 10 }}
+                                        className="absolute right-0 top-16 w-48 bg-zinc-900 dark:bg-[#1c1c1e] rounded-[24px] shadow-2xl z-50 overflow-hidden py-2"
+                                    >
+                                        <button 
+                                            type="button"
+                                            onClick={(e) => {
+                                                e.stopPropagation()
+                                                setIsReorderMode(true)
+                                                setShowMainMoreMenu(false)
+                                            }}
+                                            className="w-full px-6 py-4 text-left text-zinc-300 hover:bg-white/5 transition-colors text-[17px] font-medium"
+                                        >
+                                            Mover
+                                        </button>
+                                    </motion.div>
+                                </>
+                            )}
+                        </AnimatePresence>
+                    </div>
+
+
                 </div>
             </motion.div>
 
@@ -252,20 +313,15 @@ export default function HabitsContainer({
                             className="flex flex-col gap-2.5"
                         >
                             {localHabitsOrder.map((habit) => (
-                                <Reorder.Item 
-                                    key={habit.id} 
-                                    value={habit}
-                                    dragListener={isReorderMode}
-                                >
-                                    <HabitItem
-                                        habit={habit}
-                                        dateStr={dateStr}
-                                        onStatusChange={handleStatusChange}
-                                        onDelete={handleHabitDelete}
-                                        onEdit={() => { setEditingHabit(habit); setIsModalOpen(true) }}
-                                        isReorderMode={isReorderMode}
-                                    />
-                                </Reorder.Item>
+                                <ReorderableHabitItem
+                                    key={habit.id}
+                                    habit={habit}
+                                    dateStr={dateStr}
+                                    isReorderMode={isReorderMode}
+                                    onToggle={handleStatusChange}
+                                    onDelete={handleHabitDelete}
+                                    onEdit={() => { setEditingHabit(habit); setIsModalOpen(true) }}
+                                />
                             ))}
                         </Reorder.Group>
                     ) : (
