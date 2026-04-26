@@ -530,7 +530,7 @@ export default function BrainDumpPage() {
                                 opacity: { duration: 0.4 }
                             }}
                             style={{ height: viewportHeight }}
-                             className="absolute top-0 left-0 right-0 flex flex-col pt-4"
+                             className="absolute top-0 left-0 right-0 flex flex-col pt-1"
                         >
                             <header className={cn(
                                 "flex flex-col gap-1 px-3 flex-shrink-0 transition-all duration-300",
@@ -832,7 +832,7 @@ export default function BrainDumpPage() {
                                 opacity: { duration: 0.4 }
                             }}
                             style={{ height: viewportHeight }}
-                            className="absolute top-0 left-0 right-0 flex flex-col px-6 pt-4 bg-zinc-50 dark:bg-zinc-950"
+                            className="absolute top-0 left-0 right-0 flex flex-col px-6 pt-1 bg-zinc-50 dark:bg-zinc-950"
                         >
                             <header className="relative flex items-center justify-center pt-0 pb-4 min-h-[48px]">
                                 <motion.button 
