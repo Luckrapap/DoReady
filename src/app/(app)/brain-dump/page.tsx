@@ -143,6 +143,7 @@ export default function BrainDumpPage() {
     const [filterType, setFilterType] = useState<'all' | 'notes' | 'folders'>('all')
     const [currentFolder, setCurrentFolder] = useState<{id: string | null, name: string}>({ id: null, name: 'Repositorio' })
     const [navigationStack, setNavigationStack] = useState<{id: string | null, name: string}[]>([{ id: null, name: 'Repositorio' }])
+    const [selectedItems, setSelectedItems] = useState<string[]>([])
     const [isSelectionMode, setIsSelectionMode] = useState(false)
     const [draggingItemId, setDraggingItemId] = useState<string | null>(null)
     const [isDeleting, setIsDeleting] = useState(false)
