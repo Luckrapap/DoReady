@@ -535,7 +535,7 @@ export default function BrainDumpPage() {
                         >
                             <header className={cn(
                                 "flex flex-col gap-1 px-3 flex-shrink-0 transition-all duration-300",
-                                isSelectionMode && "pt-10",
+                                isSelectionMode ? "pt-20" : "pt-0",
                                 (isReorderMode || isSelectionMode) && "opacity-30 scale-[0.98] pointer-events-none grayscale"
                             )}>
                                 <div className="flex items-end justify-between">
