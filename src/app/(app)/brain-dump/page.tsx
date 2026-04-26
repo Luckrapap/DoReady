@@ -340,7 +340,7 @@ export default function BrainDumpPage() {
         }
     }
 
-    const deleteNote = () => {
+    const handleCloseNoteEditor = () => {
         if (!editingNoteId) {
             // If creating a new note, just go back
             setDirection(-1)
@@ -356,9 +356,8 @@ export default function BrainDumpPage() {
         setView('list')
         setShowMoreMenu(false)
 
-        // Remove note after transition
+        // Remove note state after transition
         setTimeout(() => {
-            setNotes(prev => prev.filter(n => n.id !== editingNoteId))
             setNewNoteTitle('')
             setNewNoteContent('')
             setEditingNoteId(null)
