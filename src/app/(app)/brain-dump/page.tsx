@@ -531,12 +531,11 @@ export default function BrainDumpPage() {
                                 opacity: { duration: 0.4 }
                             }}
                             style={{ height: viewportHeight }}
-                             className="absolute top-0 left-0 right-0 flex flex-col pt-8"
+                             className="absolute top-0 left-0 right-0 flex flex-col pt-[60px]"
                         >
                             <header className={cn(
                                 "flex flex-col gap-1 px-3 flex-shrink-0 transition-all duration-300",
-                                isSelectionMode ? "pt-20" : "pt-0",
-                                (isReorderMode || isSelectionMode) && "opacity-30 scale-[0.98] pointer-events-none grayscale"
+                                 (isReorderMode || isSelectionMode) && "opacity-30 scale-[0.98] pointer-events-none grayscale"
                             )}>
                                 <div className="flex items-end justify-between">
                                     <h1 className="font-bold text-6xl md:text-8xl tracking-tighter text-zinc-900 dark:text-zinc-50 relative bottom-1.5 whitespace-nowrap">
