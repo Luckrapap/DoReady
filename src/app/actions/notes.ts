@@ -11,10 +11,12 @@ export async function getNotes() {
         throw new Error('No autenticado')
     }
 
+    // Buscamos notas que NO estén en la papelera (false o null)
     const { data, error } = await supabase
         .from('brain_dump')
         .select('*')
         .eq('user_id', user.id)
+        .or('is_trash.eq.false,is_trash.is.null')
         .order('created_at', { ascending: false })
 
     if (error) {
@@ -143,6 +145,90 @@ export async function saveNotesOrder(orderedNotes: any[]) {
 
     await Promise.all(updates)
     
+    revalidatePath('/brain-dump')
+    return true
+}
+export async function moveToTrash(ids: string[]) {
+    try {
+        const supabase = await createClient()
+
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return { success: false, error: 'No autenticado' }
+
+        const { error } = await supabase
+            .from('brain_dump')
+            .update({ is_trash: true })
+            .in('id', ids)
+            .eq('user_id', user.id)
+
+        if (error) throw error
+
+        revalidatePath('/brain-dump')
+        return { success: true }
+    } catch (error) {
+        console.error('Error moving notes to trash:', error)
+        return { success: false, error: 'Error en el servidor' }
+    }
+}
+
+export async function getTrashNotes() {
+    const supabase = await createClient()
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return []
+
+    const { data, error } = await supabase
+        .from('brain_dump')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('is_trash', true)
+        .order('created_at', { ascending: false })
+
+    if (error || !data) {
+        console.error('Error fetching trash notes:', error)
+        return []
+    }
+    return data
+}
+
+export async function restoreNotes(ids: string[]) {
+    try {
+        const supabase = await createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return { success: false, error: 'No autenticado' }
+
+        const { error } = await supabase
+            .from('brain_dump')
+            .update({ is_trash: false })
+            .in('id', ids)
+            .eq('user_id', user.id)
+
+        if (error) throw error
+        revalidatePath('/brain-dump')
+        return { success: true }
+    } catch (error) {
+        console.error('Error restoring notes:', error)
+        return { success: false, error: 'Error en el servidor' }
+    }
+}
+
+export async function saveCombinedOrder(items: {id: string, type: 'note'|'folder'}[]) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return false
+
+    const now = new Date()
+    const updates = items.map((item, index) => {
+        const timestamp = new Date(now.getTime() - index * 1000).toISOString()
+        const table = item.type === 'note' ? 'brain_dump' : 'folders'
+        return supabase
+            .from(table)
+            .update({ created_at: timestamp })
+            .eq('id', item.id)
+            .eq('user_id', user.id)
+    })
+
+    await Promise.all(updates)
     revalidatePath('/brain-dump')
     return true
 }

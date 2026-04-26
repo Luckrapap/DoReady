@@ -15,6 +15,7 @@ export async function getFolders() {
         .from('folders')
         .select('*')
         .eq('user_id', user.id)
+        .or('is_trash.eq.false,is_trash.is.null')
         .order('created_at', { ascending: false })
 
     if (error) {
@@ -40,13 +41,12 @@ export async function createFolder(name: string, emoji: string | null = null, pa
         ])
         .select()
 
-    if (error) {
-        console.error('Error creating folder:', error)
+    if (error || !data || data.length === 0) {
+        console.error('Error creating folder:', error || 'No data returned')
         return null
     }
 
-    revalidatePath('/brain-dump')
-    return data[0]
+    return data[0] as Folder
 }
 
 export async function updateFolder(id: string, name: string, emoji: string | null = null) {
@@ -91,6 +91,88 @@ export async function deleteFolder(id: string) {
         return false
     }
 
+    revalidatePath('/brain-dump')
+    return true
+}
+export async function moveFoldersToTrash(ids: string[]) {
+    try {
+        const supabase = await createClient()
+
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return { success: false, error: 'No autenticado' }
+
+        const { error } = await supabase
+            .from('folders')
+            .update({ is_trash: true })
+            .in('id', ids)
+            .eq('user_id', user.id)
+
+        if (error) throw error
+
+        revalidatePath('/brain-dump')
+        return { success: true }
+    } catch (error) {
+        console.error('Error moving folders to trash:', error)
+        return { success: false, error: 'Error en el servidor' }
+    }
+}
+
+export async function getTrashFolders() {
+    const supabase = await createClient()
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return []
+
+    const { data, error } = await supabase
+        .from('folders')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('is_trash', true)
+        .order('created_at', { ascending: false })
+
+    if (error) return []
+    return data
+}
+export async function restoreFolders(ids: string[]) {
+    try {
+        const supabase = await createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return { success: false, error: 'No autenticado' }
+
+        const { error } = await supabase
+            .from('folders')
+            .update({ is_trash: false })
+            .in('id', ids)
+            .eq('user_id', user.id)
+
+        if (error) throw error
+        revalidatePath('/brain-dump')
+        return { success: true }
+    } catch (error) {
+        console.error('Error restoring folders:', error)
+        return { success: false, error: 'Error en el servidor' }
+    }
+}
+
+export async function saveFoldersOrder(orderedFolders: any[]) {
+    const supabase = await createClient()
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return false
+
+    const now = new Date()
+    
+    const updates = orderedFolders.map((folder, index) => {
+        const timestamp = new Date(now.getTime() - index * 1000).toISOString()
+        return supabase
+            .from('folders')
+            .update({ created_at: timestamp })
+            .eq('id', folder.id)
+            .eq('user_id', user.id)
+    })
+
+    await Promise.all(updates)
+    
     revalidatePath('/brain-dump')
     return true
 }

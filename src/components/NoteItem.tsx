@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { FileText, SquarePen } from 'lucide-react'
+import { FileText, SquarePen, ListChecks, GripVertical } from 'lucide-react'
 import { cn } from '@/utils/utils'
 
 interface Note {
@@ -16,6 +16,11 @@ interface NoteItemProps {
     note: Note
     onClick?: () => void
     isReorderMode?: boolean
+    isSelected?: boolean
+    isSelectionMode?: boolean
+    onLongPress?: () => void
+    onSelect?: () => void
+    onDragHandlePointerDown?: (e: React.PointerEvent) => void
 }
 
 const wiggleVariants: any = {
@@ -48,20 +53,34 @@ function getRelativeDate(dateStr?: string | null): string {
     return `Editada hace ${Math.floor(diffDays / 30)} meses`
 }
 
-export default function NoteItem({ note, onClick, isReorderMode }: NoteItemProps) {
+export default function NoteItem({ note, onClick, isReorderMode, isSelected, isSelectionMode, onLongPress, onSelect, onDragHandlePointerDown }: NoteItemProps) {
     return (
         <motion.div
-            layout
-            variants={wiggleVariants}
-            animate={isReorderMode ? "reorder" : "idle"}
             initial="idle"
-            whileTap={{ scale: isReorderMode ? 1.02 : 0.98 }}
-            onClick={() => !isReorderMode && onClick && onClick()}
+            animate="idle"
+            whileTap={{ scale: (isReorderMode || isSelectionMode) ? 1.02 : 0.98 }}
+            onClick={() => {
+                if (isSelectionMode && onSelect) {
+                    onSelect();
+                } else if (!isReorderMode && onClick) {
+                    onClick();
+                }
+            }}
+            onContextMenu={(e) => {
+                if (!isSelectionMode && onLongPress) {
+                    e.preventDefault();
+                    onLongPress();
+                }
+            }}
             className={cn(
-                "group relative flex items-center gap-4 px-4 py-4 rounded-2xl transition-colors duration-200 tap-highlight-transparent",
-                isReorderMode 
-                    ? "cursor-grab active:cursor-grabbing bg-zinc-200/80 dark:bg-zinc-700/60 shadow-sm z-10" 
-                    : "cursor-pointer bg-zinc-100 dark:bg-zinc-800/60 hover:bg-zinc-200/80 dark:hover:bg-zinc-700/60"
+                "group relative flex items-center gap-4 px-4 py-4 rounded-2xl transition-all duration-200 tap-highlight-transparent",
+                isSelectionMode 
+                    ? isSelected 
+                        ? "bg-zinc-200 dark:bg-zinc-700 shadow-sm z-10" 
+                        : "bg-white dark:bg-zinc-800/60"
+                    : isReorderMode 
+                        ? "cursor-grab active:cursor-grabbing bg-white dark:bg-zinc-800 shadow-md z-10" 
+                        : "cursor-pointer bg-white dark:bg-zinc-800/60 hover:bg-zinc-50 dark:hover:bg-zinc-700/60"
             )}
         >
             {/* Index Icon */}
@@ -71,7 +90,7 @@ export default function NoteItem({ note, onClick, isReorderMode }: NoteItemProps
             <div className="flex-1 min-w-0">
                 <span className={cn(
                     "text-[16px] transition-all duration-300 truncate block font-medium",
-                    isReorderMode ? "text-zinc-900 dark:text-zinc-100" : "text-zinc-800 dark:text-zinc-200"
+                    (isReorderMode || isSelected) ? "text-zinc-900 dark:text-zinc-100" : "text-zinc-800 dark:text-zinc-200"
                 )}>
                     {note.title || note.content}
                 </span>
@@ -80,8 +99,28 @@ export default function NoteItem({ note, onClick, isReorderMode }: NoteItemProps
                 </span>
             </div>
 
-            {/* Edit Icon */}
-            {!isReorderMode && (
+            {/* Selection Circle / Edit Icon / Drag Handle */}
+            {isSelectionMode ? (
+                <div className={cn(
+                    "w-6 h-6 rounded-full border-2 transition-all flex items-center justify-center flex-shrink-0",
+                    isSelected 
+                        ? "bg-zinc-900 dark:bg-zinc-100 border-zinc-900 dark:border-zinc-100 text-white dark:text-zinc-900" 
+                        : "bg-zinc-200/50 dark:bg-zinc-700/50 border-transparent"
+                )}>
+                    {isSelected && (
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                    )}
+                </div>
+            ) : isReorderMode ? (
+                <div
+                    className="shrink-0 text-zinc-400 dark:text-zinc-500 cursor-grab active:cursor-grabbing touch-none px-1 py-2"
+                    onPointerDown={onDragHandlePointerDown}
+                >
+                    <GripVertical size={20} strokeWidth={2} />
+                </div>
+            ) : (
                 <div className="shrink-0 text-zinc-400 transition-opacity">
                     <SquarePen size={18} strokeWidth={2.5} />
                 </div>
