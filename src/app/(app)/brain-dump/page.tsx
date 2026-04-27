@@ -293,6 +293,7 @@ export default function BrainDumpPage() {
     }
 
     const handleEditNote = (note: any) => {
+        console.log('✏️ Abriendo editor para nota:', note.id);
         setEditingNoteId(note.id)
         setNewNoteTitle(note.title)
         setNewNoteContent(note.content)
@@ -304,7 +305,10 @@ export default function BrainDumpPage() {
         const title = newNoteTitle.trim()
         const content = newNoteContent.trim()
         
+        console.log('💾 Iniciando guardado...', { editingNoteId, title });
+
         if (!title && !content) {
+            console.log('⚠️ Nota vacía, volviendo sin guardar');
             setDirection(-1)
             setView('list')
             return
@@ -313,6 +317,7 @@ export default function BrainDumpPage() {
         setIsLoading(true)
         try {
             if (editingNoteId) {
+                console.log('🔄 Actualizando nota existente...');
                 // Encontrar la nota original para preservar su carpeta y emoji
                 const originalNote = notes.find(n => n.id === editingNoteId)
                 const folderId = originalNote?.folder_id || null
@@ -321,10 +326,13 @@ export default function BrainDumpPage() {
                 // Update existing note
                 const success = await updateNote(editingNoteId, title, content, emoji, folderId)
                 if (success) {
+                    console.log('✨ Nota actualizada en estado local');
                     setNotes(prev => prev.map(n => n.id === editingNoteId 
-                        ? { ...n, title, content, folder_id: folderId, emoji, updated_at: new Date().toISOString() } 
+                        ? { ...n, title, content, folder_id: folderId, emoji } 
                         : n
                     ))
+                } else {
+                    console.error('❌ Falló la acción updateNote');
                 }
             } else {
                 // Create new note

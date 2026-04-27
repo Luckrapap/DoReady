@@ -52,22 +52,27 @@ export async function createNote(title: string, content: string, emoji: string |
 }
 
 export async function updateNote(id: string, title: string, content: string, emoji: string | null = null, folderId: string | null = null) {
+    console.log('📝 Intentando actualizar nota:', { id, title, content, folderId });
     const supabase = await createClient()
 
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return false
+    if (!user) {
+        console.error('❌ Error: Usuario no autenticado');
+        return false
+    }
 
     const { error } = await supabase
         .from('brain_dump')
-        .update({ title, content, emoji, folder_id: folderId, updated_at: new Date().toISOString() })
+        .update({ title, content, emoji, folder_id: folderId })
         .eq('id', id)
         .eq('user_id', user.id)
 
     if (error) {
-        console.error('Error updating note:', error)
+        console.error('❌ Error de Supabase al actualizar:', error)
         return false
     }
 
+    console.log('✅ Nota actualizada correctamente en DB');
     revalidatePath('/brain-dump')
     return true
 }
