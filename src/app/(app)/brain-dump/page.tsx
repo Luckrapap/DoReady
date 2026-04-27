@@ -328,7 +328,7 @@ export default function BrainDumpPage() {
                 if (success) {
                     console.log('✨ Nota actualizada en estado local');
                     setNotes(prev => prev.map(n => n.id === editingNoteId 
-                        ? { ...n, title, content, folder_id: folderId, emoji } 
+                        ? { ...n, title, content, folder_id: folderId, emoji, updated_at: new Date().toISOString() } 
                         : n
                     ))
                 } else {

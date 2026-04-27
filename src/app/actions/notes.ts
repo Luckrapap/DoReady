@@ -63,7 +63,7 @@ export async function updateNote(id: string, title: string, content: string, emo
 
     const { error } = await supabase
         .from('brain_dump')
-        .update({ title, content, emoji, folder_id: folderId })
+        .update({ title, content, emoji, folder_id: folderId, updated_at: new Date().toISOString() })
         .eq('id', id)
         .eq('user_id', user.id)
 
