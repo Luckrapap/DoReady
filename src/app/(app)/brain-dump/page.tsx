@@ -305,44 +305,47 @@ export default function BrainDumpPage() {
         const title = newNoteTitle.trim()
         const content = newNoteContent.trim()
         
-        console.log('💾 Iniciando guardado...', { editingNoteId, title });
-
         if (!title && !content) {
-            console.log('⚠️ Nota vacía, volviendo sin guardar');
             setDirection(-1)
             setView('list')
             return
         }
 
+        // Para ediciones, actualizamos optimistamente para que sea instantáneo
+        if (editingNoteId) {
+            const originalNote = notes.find(n => n.id === editingNoteId)
+            const folderId = originalNote?.folder_id || null
+            const emoji = originalNote?.emoji || null
+
+            // Actualizar estado local inmediatamente
+            setNotes(prev => prev.map(n => n.id === editingNoteId 
+                ? { ...n, title, content, folder_id: folderId, emoji } 
+                : n
+            ))
+            
+            // Cerrar editor ya
+            setDirection(-1)
+            setView('list')
+            setEditingNoteId(null)
+            setNewNoteTitle('')
+            setNewNoteContent('')
+
+            // Ejecutar en segundo plano sin bloquear la UI
+            updateNote(editingNoteId, title, content, emoji, folderId).catch(err => {
+                console.error("Error en segundo plano:", err)
+            })
+            return
+        }
+
+        // Para notas NUEVAS, sí necesitamos esperar un poco para obtener el ID del servidor
         setIsLoading(true)
         try {
-            if (editingNoteId) {
-                console.log('🔄 Actualizando nota existente...');
-                // Encontrar la nota original para preservar su carpeta y emoji
-                const originalNote = notes.find(n => n.id === editingNoteId)
-                const folderId = originalNote?.folder_id || null
-                const emoji = originalNote?.emoji || null
-
-                // Update existing note
-                const success = await updateNote(editingNoteId, title, content, emoji, folderId)
-                if (success) {
-                    console.log('✨ Nota actualizada en estado local');
-                    setNotes(prev => prev.map(n => n.id === editingNoteId 
-                        ? { ...n, title, content, folder_id: folderId, emoji, updated_at: new Date().toISOString() } 
-                        : n
-                    ))
-                } else {
-                    console.error('❌ Falló la acción updateNote');
-                }
-            } else {
-                // Create new note
-                const savedNote = await createNote(title, content, null, currentFolder.id)
-                if (savedNote) {
-                    setNotes(prev => [savedNote, ...prev])
-                }
+            const savedNote = await createNote(title, content, null, currentFolder.id)
+            if (savedNote) {
+                setNotes(prev => [savedNote, ...prev])
             }
         } catch (error) {
-            console.error("Error al guardar la nota:", error)
+            console.error("Error al crear nota:", error)
         } finally {
             setIsLoading(false)
             setDirection(-1)
