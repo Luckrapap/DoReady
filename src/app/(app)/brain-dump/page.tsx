@@ -313,11 +313,16 @@ export default function BrainDumpPage() {
         setIsLoading(true)
         try {
             if (editingNoteId) {
+                // Encontrar la nota original para preservar su carpeta y emoji
+                const originalNote = notes.find(n => n.id === editingNoteId)
+                const folderId = originalNote?.folder_id || null
+                const emoji = originalNote?.emoji || null
+
                 // Update existing note
-                const success = await updateNote(editingNoteId, title, content, null, currentFolder.id)
+                const success = await updateNote(editingNoteId, title, content, emoji, folderId)
                 if (success) {
                     setNotes(prev => prev.map(n => n.id === editingNoteId 
-                        ? { ...n, title, content, folder_id: currentFolder.id, updated_at: new Date().toISOString() } 
+                        ? { ...n, title, content, folder_id: folderId, emoji, updated_at: new Date().toISOString() } 
                         : n
                     ))
                 }
