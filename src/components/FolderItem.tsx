@@ -1,6 +1,6 @@
 'use client'
 
-import { Folder, ChevronRight, ListChecks, GripVertical } from 'lucide-react'
+import { Folder, ChevronRight, ListChecks, GripVertical, Pencil } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { cn } from '@/utils/utils'
 
@@ -19,6 +19,8 @@ interface FolderItemProps {
     folderCount?: number
     isSelected?: boolean
     isSelectionMode?: boolean
+    isRenameMode?: boolean
+    isMovingMode?: boolean
     onLongPress?: () => void
     onSelect?: () => void
     onDragHandlePointerDown?: (e: React.PointerEvent) => void
@@ -38,21 +40,21 @@ const wiggleVariants: any = {
     }
 }
 
-export default function FolderItem({ folder, onClick, isReorderMode, noteCount = 0, folderCount = 0, isSelected, isSelectionMode, onLongPress, onSelect, onDragHandlePointerDown }: FolderItemProps) {
+export default function FolderItem({ folder, onClick, isReorderMode, noteCount = 0, folderCount = 0, isSelected, isSelectionMode, isRenameMode, isMovingMode, onLongPress, onSelect, onDragHandlePointerDown }: FolderItemProps) {
     return (
         <motion.div
             initial="idle"
             animate="idle"
-            whileTap={{ scale: (isReorderMode || isSelectionMode) ? 1.02 : 0.98 }}
+            whileTap={{ scale: (isReorderMode || isSelectionMode || isRenameMode) ? 1.02 : 0.98 }}
             onClick={() => {
-                if (isSelectionMode && onSelect) {
+                if (isSelectionMode && !isMovingMode && onSelect) {
                     onSelect();
                 } else if (!isReorderMode && onClick) {
                     onClick();
                 }
             }}
             onContextMenu={(e) => {
-                if (!isSelectionMode && onLongPress) {
+                if (!isSelectionMode && !isRenameMode && !isMovingMode && onLongPress) {
                     e.preventDefault();
                     onLongPress();
                 }
@@ -63,7 +65,7 @@ export default function FolderItem({ folder, onClick, isReorderMode, noteCount =
                     ? isSelected 
                         ? "bg-zinc-200 dark:bg-zinc-700 shadow-sm z-10" 
                         : "bg-white dark:bg-zinc-800/60"
-                    : isReorderMode 
+                    : (isReorderMode || isRenameMode)
                         ? "cursor-grab active:cursor-grabbing bg-white dark:bg-zinc-800 shadow-md z-10" 
                         : "cursor-pointer bg-white dark:bg-zinc-800/60 hover:bg-zinc-50 dark:hover:bg-zinc-700/60"
             )}
@@ -75,7 +77,7 @@ export default function FolderItem({ folder, onClick, isReorderMode, noteCount =
             <div className="flex-1 min-w-0">
                 <span className={cn(
                     "text-[16px] transition-all duration-300 truncate block font-medium",
-                    (isReorderMode || isSelected)
+                    (isReorderMode || isSelected || isRenameMode)
                         ? "text-zinc-900 dark:text-zinc-100"
                         : "text-zinc-800 dark:text-zinc-200"
                 )}>
@@ -86,8 +88,8 @@ export default function FolderItem({ folder, onClick, isReorderMode, noteCount =
                 </span>
             </div>
 
-            {/* Selection Circle / Right Arrow / Drag Handle */}
-            {isSelectionMode ? (
+            {/* Selection Circle / Right Arrow / Drag Handle / Rename Icon */}
+            {(isSelectionMode && !isMovingMode) || isSelected ? (
                 <div className={cn(
                     "w-6 h-6 rounded-full border-2 transition-all flex items-center justify-center flex-shrink-0",
                     isSelected 
@@ -106,6 +108,10 @@ export default function FolderItem({ folder, onClick, isReorderMode, noteCount =
                     onPointerDown={onDragHandlePointerDown}
                 >
                     <GripVertical size={20} strokeWidth={2} />
+                </div>
+            ) : isRenameMode ? (
+                <div className="shrink-0 text-[var(--accent)] transition-all animate-pulse">
+                    <Pencil size={18} strokeWidth={2.5} />
                 </div>
             ) : (
                 <div className="shrink-0 text-zinc-400 transition-opacity">

@@ -72,6 +72,30 @@ export async function updateFolder(id: string, name: string, emoji: string | nul
     return true
 }
 
+export async function moveFolders(ids: string[], parentId: string | null) {
+    const supabase = await createClient()
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+        throw new Error('No autenticado')
+    }
+
+    const now = new Date().toISOString()
+    const { error } = await supabase
+        .from('folders')
+        .update({ parent_id: parentId, created_at: now })
+        .in('id', ids)
+        .eq('user_id', user.id)
+
+    if (error) {
+        console.error('Error moving folders:', error)
+        return false
+    }
+
+    revalidatePath('/brain-dump')
+    return true
+}
+
 export async function deleteFolder(id: string) {
     const supabase = await createClient()
 

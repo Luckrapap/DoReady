@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { FileText, SquarePen, ListChecks, GripVertical } from 'lucide-react'
+import { FileText, SquarePen, ListChecks, GripVertical, Minus } from 'lucide-react'
 import { cn } from '@/utils/utils'
 
 interface Note {
@@ -18,6 +18,7 @@ interface NoteItemProps {
     isReorderMode?: boolean
     isSelected?: boolean
     isSelectionMode?: boolean
+    isMovingMode?: boolean
     onLongPress?: () => void
     onSelect?: () => void
     onDragHandlePointerDown?: (e: React.PointerEvent) => void
@@ -53,21 +54,21 @@ function getRelativeDate(dateStr?: string | null): string {
     return `Editada hace ${Math.floor(diffDays / 30)} meses`
 }
 
-export default function NoteItem({ note, onClick, isReorderMode, isSelected, isSelectionMode, onLongPress, onSelect, onDragHandlePointerDown }: NoteItemProps) {
+export default function NoteItem({ note, onClick, isReorderMode, isSelected, isSelectionMode, isMovingMode, onLongPress, onSelect, onDragHandlePointerDown }: NoteItemProps) {
     return (
         <motion.div
             initial="idle"
             animate="idle"
-            whileTap={{ scale: (isReorderMode || isSelectionMode) ? 1.02 : 0.98 }}
+            whileTap={{ scale: (isReorderMode || isSelectionMode) && !isMovingMode ? 1.02 : 0.98 }}
             onClick={() => {
-                if (isSelectionMode && onSelect) {
+                if (isSelectionMode && !isMovingMode && onSelect) {
                     onSelect();
-                } else if (!isReorderMode && onClick) {
+                } else if (!isReorderMode && !isMovingMode && onClick) {
                     onClick();
                 }
             }}
             onContextMenu={(e) => {
-                if (!isSelectionMode && onLongPress) {
+                if (!isSelectionMode && !isMovingMode && onLongPress) {
                     e.preventDefault();
                     onLongPress();
                 }
@@ -80,7 +81,8 @@ export default function NoteItem({ note, onClick, isReorderMode, isSelected, isS
                         : "bg-white dark:bg-zinc-800/60"
                     : isReorderMode 
                         ? "cursor-grab active:cursor-grabbing bg-white dark:bg-zinc-800 shadow-md z-10" 
-                        : "cursor-pointer bg-white dark:bg-zinc-800/60 hover:bg-zinc-50 dark:hover:bg-zinc-700/60"
+                        : "cursor-pointer bg-white dark:bg-zinc-800/60 hover:bg-zinc-50 dark:hover:bg-zinc-700/60",
+                isMovingMode && "pointer-events-none"
             )}
         >
             {/* Index Icon */}
@@ -99,8 +101,8 @@ export default function NoteItem({ note, onClick, isReorderMode, isSelected, isS
                 </span>
             </div>
 
-            {/* Selection Circle / Edit Icon / Drag Handle */}
-            {isSelectionMode ? (
+            {/* Selection Circle / Edit Icon / Drag Handle / Moving Icon */}
+            {(isSelectionMode && !isMovingMode) || isSelected ? (
                 <div className={cn(
                     "w-6 h-6 rounded-full border-2 transition-all flex items-center justify-center flex-shrink-0",
                     isSelected 
@@ -119,6 +121,10 @@ export default function NoteItem({ note, onClick, isReorderMode, isSelected, isS
                     onPointerDown={onDragHandlePointerDown}
                 >
                     <GripVertical size={20} strokeWidth={2} />
+                </div>
+            ) : isMovingMode ? (
+                <div className="shrink-0 text-zinc-300 dark:text-zinc-700">
+                    <Minus size={20} strokeWidth={2.5} />
                 </div>
             ) : (
                 <div className="shrink-0 text-zinc-400 transition-opacity">

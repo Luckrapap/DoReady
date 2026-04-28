@@ -1,14 +1,35 @@
 'use client'
 
 import { useState, useEffect, useRef, useMemo } from 'react'
-import { FileText, Lightbulb, Menu, X, Settings, Search, LayoutGrid, List, Plus, ChevronLeft, MoreVertical, Folder, Trash2, RotateCcw, Check, ListChecks } from 'lucide-react'
+import { 
+    Search, 
+    Plus, 
+    Menu, 
+    X, 
+    ChevronLeft, 
+    MoreVertical, 
+    FileText, 
+    Folder, 
+    RotateCcw, 
+    Trash2, 
+    ListChecks,
+    FolderInput,
+    FolderSymlink,
+    Pin,
+    Lock,
+    Settings,
+    LayoutGrid,
+    List,
+    Check,
+    Lightbulb
+} from 'lucide-react'
 import { motion, AnimatePresence, Reorder, useDragControls, useMotionValue } from 'framer-motion'
 import { cn } from '@/utils/utils'
 import NoteItem from '@/components/NoteItem'
 import FolderItem from '@/components/FolderItem'
 import SectionLoader from '@/components/SectionLoader'
-import { getNotes, createNote, updateNote, deleteNote, swapNotePositions, saveNotesOrder, moveToTrash, getTrashNotes, restoreNotes, saveCombinedOrder } from '@/app/actions/notes'
-import { getFolders, createFolder, updateFolder, deleteFolder, moveFoldersToTrash, getTrashFolders, restoreFolders, saveFoldersOrder } from '@/app/actions/folders'
+import { getNotes, createNote, updateNote, deleteNote, swapNotePositions, saveNotesOrder, moveToTrash, getTrashNotes, restoreNotes, saveCombinedOrder, moveNotes } from '@/app/actions/notes'
+import { getFolders, createFolder, updateFolder, deleteFolder, moveFoldersToTrash, getTrashFolders, restoreFolders, saveFoldersOrder, moveFolders } from '@/app/actions/folders'
 
 // Estilos globales para forzar el orden de apilamiento durante el arrastre
 const dragStyles = `
@@ -26,25 +47,46 @@ const dragStyles = `
 const ReorderableItem = ({ 
     item, 
     isReorderMode, 
+    isSelectionMode, 
+    isRenameMode,
+    isMovingMode,
+    isSelected, 
+    isDraggingGlobal,
+    onDragStart, 
+    onDragEnd, 
     onEnterFolder, 
     onEditNote, 
-    isSelectionMode, 
-    isSelected, 
-    onSelect, 
+    onSelect,
     onLongPress,
+    onRenameFolder,
     noteCount,
-    folderCount,
-    isDraggingGlobal,
-    onDragStart,
-    onDragEnd
-}: any) => {
+    folderCount
+}: { 
+    item: any, 
+    isReorderMode: boolean, 
+    isSelectionMode: boolean, 
+    isRenameMode?: boolean,
+    isMovingMode?: boolean,
+    isSelected: boolean, 
+    isDraggingGlobal: boolean,
+    onDragStart: (id: string) => void, 
+    onDragEnd: () => void, 
+    onEnterFolder: () => void, 
+    onEditNote: () => void, 
+    onSelect: () => void,
+    onLongPress: () => void,
+    onRenameFolder?: (folder: any) => void,
+    noteCount?: number,
+    folderCount?: number
+}) => {
     const controls = useDragControls();
 
     const handlePointerDown = (e: React.PointerEvent) => {
-        if (!isReorderMode) return;
-        e.preventDefault();
-        onDragStart(item.id);
-        controls.start(e.nativeEvent);
+        if (isReorderMode) {
+            e.preventDefault();
+            onDragStart(item.id);
+            controls.start(e);
+        }
     };
 
     return (
@@ -65,9 +107,11 @@ const ReorderableItem = ({
             {item.type === 'folder' ? (
                 <FolderItem
                     folder={item}
-                    onClick={onEnterFolder}
+                    onClick={isRenameMode ? () => onRenameFolder?.(item) : onEnterFolder}
                     isReorderMode={isReorderMode}
                     isSelectionMode={isSelectionMode}
+                    isRenameMode={isRenameMode}
+                    isMovingMode={isMovingMode}
                     isSelected={isSelected}
                     onDragHandlePointerDown={handlePointerDown}
                     onSelect={onSelect}
@@ -76,16 +120,22 @@ const ReorderableItem = ({
                     folderCount={folderCount}
                 />
             ) : (
-                <NoteItem 
-                    note={item}
-                    onClick={onEditNote}
-                    isReorderMode={isReorderMode}
-                    isSelectionMode={isSelectionMode}
-                    isSelected={isSelected}
-                    onDragHandlePointerDown={handlePointerDown}
-                    onSelect={onSelect}
-                    onLongPress={onLongPress}
-                />
+                <div className={cn(
+                    "transition-all duration-300",
+                    isRenameMode && "opacity-50 scale-[0.98] grayscale pointer-events-none"
+                )}>
+                    <NoteItem 
+                        note={item}
+                        onClick={onEditNote}
+                        isReorderMode={isReorderMode}
+                        isSelectionMode={isSelectionMode}
+                        isMovingMode={isMovingMode}
+                        isSelected={isSelected}
+                        onDragHandlePointerDown={handlePointerDown}
+                        onSelect={onSelect}
+                        onLongPress={onLongPress}
+                    />
+                </div>
             )}
         </Reorder.Item>
     );
@@ -147,7 +197,19 @@ export default function BrainDumpPage() {
     const [isSelectionMode, setIsSelectionMode] = useState(false)
     const [draggingItemId, setDraggingItemId] = useState<string | null>(null)
     const [isDeleting, setIsDeleting] = useState(false)
+    const [isRenameMode, setIsRenameMode] = useState(false)
+    const [renamingFolder, setRenamingFolder] = useState<any>(null)
+    const [renameFolderName, setRenameFolderName] = useState('')
+    const [showRenameModal, setShowRenameModal] = useState(false)
+    const [isMovingMode, setIsMovingMode] = useState(false)
     const scrollContainerRef = useRef<HTMLDivElement>(null)
+    // Resetear modo mover si se sale del modo selección
+    useEffect(() => {
+        if (selectedItems.length === 0) {
+            setIsMovingMode(false);
+        }
+    }, [selectedItems.length]);
+
     useEffect(() => {
         if (window.visualViewport) {
             const handleResize = () => {
@@ -381,6 +443,42 @@ export default function BrainDumpPage() {
         }, 450)
     }
 
+    const handleMoveItems = async () => {
+        if (selectedItems.length === 0) return;
+
+        const firstId = selectedItems[0];
+        const firstFolder = folders.find(f => f.id === firstId);
+        const firstNote = notes.find(n => n.id === firstId);
+        
+        const sourceFolderId = firstFolder ? firstFolder.parent_id : (firstNote ? firstNote.folder_id : null);
+        const destinationFolderId = currentFolder.id || null;
+
+        if (sourceFolderId === destinationFolderId) {
+            setIsMovingMode(false);
+            setIsSelectionMode(false);
+            setSelectedItems([]);
+            return;
+        }
+
+        const selectedFolders = folders.filter(f => selectedItems.includes(f.id)).map(f => f.id);
+        const selectedNotes = notes.filter(n => selectedItems.includes(n.id)).map(n => n.id);
+        const now = new Date().toISOString();
+
+        if (selectedFolders.length > 0) {
+            setFolders(prev => prev.map(f => selectedFolders.includes(f.id) ? { ...f, parent_id: destinationFolderId, created_at: now } : f));
+            moveFolders(selectedFolders, destinationFolderId).catch(console.error);
+        }
+        
+        if (selectedNotes.length > 0) {
+            setNotes(prev => prev.map(n => selectedNotes.includes(n.id) ? { ...n, folder_id: destinationFolderId, updated_at: now, created_at: now } : n));
+            moveNotes(selectedNotes, destinationFolderId).catch(console.error);
+        }
+
+        setIsMovingMode(false);
+        setIsSelectionMode(false);
+        setSelectedItems([]);
+    }
+
     const handleMoveToTrash = async () => {
         if (selectedItems.length === 0 || isDeleting) return
         setIsDeleting(true)
@@ -526,6 +624,7 @@ export default function BrainDumpPage() {
                             initial={{ y: -100 }}
                             animate={{ y: 0 }}
                             exit={{ y: -100 }}
+                            transition={{ type: "tween", ease: "easeInOut", duration: 0.4 }}
                             className="fixed top-[34px] left-0 right-0 z-[110] bg-white dark:bg-black border-b border-zinc-200 dark:border-zinc-800 px-6 py-4 flex items-center justify-between shadow-xl"
                         >
                             <div className="flex items-center gap-6">
@@ -538,6 +637,7 @@ export default function BrainDumpPage() {
                             </div>
                             <button 
                                 onClick={() => {
+                                    if (isMovingMode) return;
                                     let allIds: string[] = [];
                                     if (view === 'trash') {
                                         allIds = [...trashFolders.map(f => f.id), ...trashNotes.map(n => n.id)];
@@ -551,7 +651,10 @@ export default function BrainDumpPage() {
                                         setSelectedItems(allIds);
                                     }
                                 }}
-                                className="text-zinc-900 dark:text-zinc-100"
+                                className={cn(
+                                    "transition-all duration-300",
+                                    isMovingMode ? "opacity-20 pointer-events-none grayscale" : "text-zinc-900 dark:text-zinc-100"
+                                )}
                             >
                                 <ListChecks size={24} strokeWidth={2.5} />
                             </button>
@@ -576,7 +679,7 @@ export default function BrainDumpPage() {
                         >
                             <header className={cn(
                                 "flex flex-col gap-1 px-3 flex-shrink-0 transition-all duration-300",
-                                 (isReorderMode || isSelectionMode) && "opacity-30 scale-[0.98] pointer-events-none grayscale"
+                                (isReorderMode || isSelectionMode || isRenameMode) && "opacity-30 scale-[0.98] pointer-events-none grayscale"
                             )}>
                                 <div className="flex items-end justify-between">
                                     <h1 className="font-bold text-6xl md:text-8xl tracking-tighter text-zinc-900 dark:text-zinc-50 relative bottom-1.5 whitespace-nowrap">
@@ -605,7 +708,7 @@ export default function BrainDumpPage() {
                             <div className="flex items-center justify-between gap-1.5 px-3 mt-3 mb-8 relative z-[60]">
                                 <div className={cn(
                                     "flex-1 flex items-center gap-1.5 transition-all duration-300",
-                                    (isReorderMode || isSelectionMode) && "opacity-30 scale-[0.98] pointer-events-none grayscale"
+                                    (isReorderMode || isSelectionMode || isRenameMode) && "opacity-30 scale-[0.98] pointer-events-none grayscale"
                                 )}>
                                     <div className="flex-1 h-[42px] rounded-2xl bg-zinc-100 dark:bg-[#1c1c1e] border-2 border-zinc-200 dark:border-zinc-800 flex items-center justify-around px-2 transition-all shadow-sm overflow-hidden">
                                         <button 
@@ -650,7 +753,7 @@ export default function BrainDumpPage() {
                                         whileTap={{ scale: 0.9 }}
                                         className={cn(
                                             "bg-zinc-100 dark:bg-zinc-900 border-2 border-zinc-200 dark:border-zinc-800 rounded-full w-[42px] h-[42px] flex items-center justify-center hover:bg-zinc-900 hover:text-white dark:hover:bg-white dark:hover:text-zinc-950 transition-all duration-300 cursor-pointer flex-shrink-0",
-                                            (isReorderMode || isSelectionMode) && "opacity-30 scale-[0.95] pointer-events-none grayscale"
+                                            (isReorderMode || isSelectionMode || isRenameMode) && "opacity-30 scale-[0.95] pointer-events-none grayscale"
                                         )}
                                         title="Añadir Nota"
                                     >
@@ -663,6 +766,8 @@ export default function BrainDumpPage() {
                                                 if (isReorderMode) {
                                                     await saveCombinedOrder(combinedItems)
                                                     setIsReorderMode(false)
+                                                } else if (isRenameMode) {
+                                                    setIsRenameMode(false)
                                                 } else {
                                                     setShowMainMoreMenu(!showMainMoreMenu)
                                                 }
@@ -671,7 +776,7 @@ export default function BrainDumpPage() {
                                             whileTap={{ scale: 0.9 }}
                                             className={cn(
                                                 "border-2 rounded-full w-[42px] h-[42px] flex items-center justify-center transition-all duration-300 cursor-pointer flex-shrink-0 shadow-lg",
-                                                isReorderMode 
+                                                (isReorderMode || isRenameMode)
                                                     ? "bg-zinc-900 border-zinc-900 text-white dark:bg-white dark:border-white dark:text-zinc-950 scale-110" 
                                                     : "bg-zinc-100 dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-50 hover:bg-zinc-200",
                                                 isSelectionMode && "opacity-30 scale-[0.95] pointer-events-none grayscale"
@@ -681,7 +786,7 @@ export default function BrainDumpPage() {
                                         >
                                             <AnimatePresence mode="wait">
                                                 <motion.div
-                                                    key={isReorderMode ? 'x' : 'menu'}
+                                                    key={isReorderMode || isRenameMode ? 'x' : 'menu'}
                                                     initial={{ opacity: 0, scale: 0.3 }}
                                                     animate={{ opacity: 1, scale: 1 }}
                                                     exit={{ opacity: 0, scale: 0.3 }}
@@ -692,7 +797,7 @@ export default function BrainDumpPage() {
                                                         mass: 0.5
                                                     }}
                                                 >
-                                                    {isReorderMode ? <X size={22} strokeWidth={3} /> : <Menu size={22} strokeWidth={3} />}
+                                                    {isReorderMode || isRenameMode ? <X size={22} strokeWidth={3} /> : <Menu size={22} strokeWidth={3} />}
                                                 </motion.div>
                                             </AnimatePresence>
                                         </motion.button>
@@ -704,12 +809,12 @@ export default function BrainDumpPage() {
                                                         className="fixed inset-0 z-40" 
                                                         onClick={() => setShowMainMoreMenu(false)}
                                                     />
-                                                    <motion.div
-                                                        initial={{ opacity: 0, scale: 0.9, y: -10, x: 10 }}
-                                                        animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
-                                                        exit={{ opacity: 0, scale: 0.9, y: -10, x: 10 }}
-                                                        className="absolute right-0 top-12 w-48 bg-zinc-900 dark:bg-[#1c1c1e] rounded-[24px] shadow-2xl z-50 overflow-hidden py-2"
-                                                    >
+                                                        <motion.div
+                                                            initial={{ opacity: 0, scale: 0.9, y: -10, x: 10 }}
+                                                            animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
+                                                            exit={{ opacity: 0, scale: 0.9, y: -10, x: 10 }}
+                                                            className="absolute right-0 top-12 w-64 bg-zinc-900 dark:bg-[#1c1c1e] rounded-[24px] shadow-2xl z-50 overflow-hidden py-2"
+                                                        >
                                                         <button 
                                                             type="button"
                                                             onClick={(e) => {
@@ -720,6 +825,39 @@ export default function BrainDumpPage() {
                                                             className="w-full px-6 py-4 text-left text-zinc-300 hover:bg-white/5 transition-colors text-[17px] font-medium"
                                                         >
                                                             Mover
+                                                        </button>
+                                                        <button 
+                                                            type="button"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation()
+                                                                // Sin función por ahora
+                                                                setShowMainMoreMenu(false)
+                                                            }}
+                                                            className="w-full px-6 py-4 text-left text-zinc-300 hover:bg-white/5 transition-colors text-[17px] font-medium"
+                                                        >
+                                                            Duplicar
+                                                        </button>
+                                                         <button 
+                                                             type="button"
+                                                             onClick={(e) => {
+                                                                 e.stopPropagation()
+                                                                 setIsRenameMode(true)
+                                                                 setShowMainMoreMenu(false)
+                                                             }}
+                                                             className="w-full px-6 py-4 text-left text-zinc-300 hover:bg-white/5 transition-colors text-[17px] font-medium"
+                                                         >
+                                                             Renombrar carpeta
+                                                         </button>
+                                                        <button 
+                                                            type="button"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation()
+                                                                setIsSelectionMode(true)
+                                                                setShowMainMoreMenu(false)
+                                                            }}
+                                                            className="w-full px-6 py-4 text-left text-zinc-300 hover:bg-white/5 transition-colors text-[17px] font-medium"
+                                                        >
+                                                            Seleccionar varios
                                                         </button>
                                                         <button 
                                                             type="button"
@@ -743,7 +881,7 @@ export default function BrainDumpPage() {
 
                             <div className={cn(
                                 "mx-3 mt-[4px] mb-[14px] flex items-center h-9 rounded-lg bg-zinc-100/50 dark:bg-[#1c1c1e] border-2 border-zinc-200/60 dark:border-zinc-800/80 shadow-sm overflow-hidden transition-all duration-300",
-                                (isReorderMode || isSelectionMode) && "opacity-30 pointer-events-none grayscale"
+                                (isReorderMode || (isSelectionMode && !isMovingMode) || isRenameMode) && "opacity-30 scale-[0.98] pointer-events-none grayscale"
                             )}>
                                 <button
                                     onClick={handleGoBack}
@@ -832,12 +970,19 @@ export default function BrainDumpPage() {
                                                                 item={item}
                                                                 isReorderMode={isReorderMode && !searchQuery}
                                                                 isSelectionMode={isSelectionMode}
+                                                                isRenameMode={isRenameMode}
+                                                                isMovingMode={isMovingMode}
                                                                 isSelected={selectedItems.includes(item.id)}
                                                                 isDraggingGlobal={draggingItemId === item.id}
                                                                 onDragStart={setDraggingItemId}
                                                                 onDragEnd={() => setDraggingItemId(null)}
                                                                 onEnterFolder={() => handleEnterFolder(item)}
                                                                 onEditNote={() => handleEditNote(item)}
+                                                                onRenameFolder={(folder) => {
+                                                                    setRenamingFolder(folder)
+                                                                    setRenameFolderName(folder.name)
+                                                                    setShowRenameModal(true)
+                                                                }}
                                                                 onSelect={() => {
                                                                     const id = item.id;
                                                                     setSelectedItems(prev => 
@@ -1123,9 +1268,10 @@ export default function BrainDumpPage() {
 
                             {/* Modal Container Inspired by Today View */}
                             <motion.div
-                                initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                                animate={{ opacity: 1, scale: 1, y: 0 }}
-                                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                                initial={{ opacity: 0, scale: 0.5 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.5 }}
+                                transition={{ type: "spring", stiffness: 400, damping: 30 }}
                                 onClick={(e) => e.stopPropagation()}
                                 className="relative w-full max-w-[320px] h-fit bg-white dark:bg-[#1c1c1e] rounded-[40px] shadow-2xl flex flex-col overflow-hidden border border-zinc-200 dark:border-zinc-800"
                                 style={{ backgroundColor: 'var(--surface)' }}
@@ -1134,9 +1280,9 @@ export default function BrainDumpPage() {
                                     {createModalStep === 'options' ? (
                                         <motion.div
                                             key="options"
-                                            initial={{ opacity: 0, x: -20 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            exit={{ opacity: 0, x: -50 }}
+                                            initial={{ opacity: 0, scale: 0.9 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            exit={{ opacity: 0, scale: 0.9 }}
                                             transition={{ duration: 0.2 }}
                                             className="flex flex-col gap-6 p-8 h-full"
                                         >
@@ -1181,9 +1327,9 @@ export default function BrainDumpPage() {
                                     ) : (
                                         <motion.div
                                             key="folder"
-                                            initial={{ opacity: 0, x: 50 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            exit={{ opacity: 0, x: 50 }}
+                                            initial={{ opacity: 0, scale: 0.9 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            exit={{ opacity: 0, scale: 0.9 }}
                                             transition={{ duration: 0.2 }}
                                             className="flex flex-col gap-5 p-7 relative"
                                         >
@@ -1269,67 +1415,187 @@ export default function BrainDumpPage() {
                             initial={{ y: 100 }}
                             animate={{ y: 0 }}
                             exit={{ y: 100 }}
-                            className="fixed bottom-0 left-0 right-0 z-[110] bg-white dark:bg-[#1c1c1e] border-t border-zinc-200 dark:border-zinc-800 pb-safe-bottom pt-3 px-8 flex justify-between items-center shadow-[0_-4px_20px_rgba(0,0,0,0.1)]"
+                            transition={{ type: "tween", ease: "easeInOut", duration: 0.4 }}
+                            className="fixed bottom-0 left-0 right-0 z-[110] bg-white dark:bg-[#1c1c1e] border-t border-zinc-200 dark:border-zinc-800 pb-safe-bottom pt-3 px-8 shadow-[0_-4px_20px_rgba(0,0,0,0.1)] overflow-hidden"
                         >
-                            {view === 'trash' ? (
-                                <>
-                                    <div className="flex-1 flex justify-around items-center">
-                                        <button 
-                                            onClick={handleRestore}
-                                            className="flex flex-col items-center gap-0.5 -translate-y-2 active:scale-90 transition-transform hover:opacity-80"
+                            <div className="relative h-[64px] w-full">
+                                <AnimatePresence initial={false}>
+                                    {!isMovingMode ? (
+                                        <motion.div
+                                            key="standard-actions"
+                                            initial={{ x: "-100%", opacity: 0 }}
+                                            animate={{ x: 0, opacity: 1 }}
+                                            exit={{ x: "-100%", opacity: 0 }}
+                                            transition={{ type: "spring", stiffness: 300, damping: 40, mass: 1 }}
+                                            className="absolute inset-0 flex justify-between items-center"
                                         >
-                                            <div className="w-9 h-9 flex items-center justify-center rounded-full">
-                                                <RotateCcw size={20} className="text-zinc-950 dark:text-white" />
-                                            </div>
-                                            <span className="text-[10px] font-bold text-zinc-950 dark:text-white">Restaurar</span>
-                                        </button>
-                                        <button 
-                                            onClick={handlePermanentDelete}
-                                            className="flex flex-col items-center gap-0.5 -translate-y-2 active:scale-90 transition-transform hover:opacity-80"
+                                            {view === 'trash' ? (
+                                                <div className="flex-1 flex justify-around items-center">
+                                                    <button 
+                                                        onClick={handleRestore}
+                                                        className="flex flex-col items-center gap-0.5 -translate-y-2 active:scale-90 transition-transform hover:opacity-80"
+                                                    >
+                                                        <div className="w-9 h-9 flex items-center justify-center rounded-full">
+                                                            <RotateCcw size={20} className="text-zinc-950 dark:text-white" />
+                                                        </div>
+                                                        <span className="text-[10px] font-bold text-zinc-950 dark:text-white">Restaurar</span>
+                                                    </button>
+                                                    <button 
+                                                        onClick={handlePermanentDelete}
+                                                        className="flex flex-col items-center gap-0.5 -translate-y-2 active:scale-90 transition-transform hover:opacity-80"
+                                                    >
+                                                        <div className="w-9 h-9 flex items-center justify-center rounded-full">
+                                                            <Trash2 size={20} className="text-zinc-950 dark:text-white" />
+                                                        </div>
+                                                        <span className="text-[10px] font-bold text-zinc-950 dark:text-white">Eliminar</span>
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    <button 
+                                                        onClick={() => {}}
+                                                        disabled={selectedItems.length === 0}
+                                                        className={cn(
+                                                            "flex flex-col items-center gap-0.5 -translate-y-2 active:scale-90 transition-all duration-300",
+                                                            selectedItems.length === 0 ? "opacity-20 pointer-events-none grayscale" : "hover:opacity-80"
+                                                        )}
+                                                    >
+                                                        <div className="w-9 h-9 flex items-center justify-center rounded-full">
+                                                            <Lock size={20} className="text-zinc-950 dark:text-white" />
+                                                        </div>
+                                                        <span className="text-[10px] font-bold text-zinc-950 dark:text-white">Ocultar</span>
+                                                    </button>
+                                                    <button 
+                                                        onClick={() => {}}
+                                                        disabled={selectedItems.length === 0}
+                                                        className={cn(
+                                                            "flex flex-col items-center gap-0.5 -translate-y-2 active:scale-90 transition-all duration-300",
+                                                            selectedItems.length === 0 ? "opacity-20 pointer-events-none grayscale" : "hover:opacity-80"
+                                                        )}
+                                                    >
+                                                        <div className="w-9 h-9 flex items-center justify-center rounded-full">
+                                                            <Pin size={20} className="text-zinc-950 dark:text-white" />
+                                                        </div>
+                                                        <span className="text-[10px] font-bold text-zinc-950 dark:text-white">Anclar</span>
+                                                    </button>
+                                                    <button 
+                                                        onClick={() => setIsMovingMode(true)}
+                                                        disabled={selectedItems.length === 0}
+                                                        className={cn(
+                                                            "flex flex-col items-center gap-0.5 -translate-y-2 active:scale-90 transition-all duration-300",
+                                                            selectedItems.length === 0 ? "opacity-20 pointer-events-none grayscale" : "hover:opacity-80"
+                                                        )}
+                                                    >
+                                                        <div className="w-9 h-9 flex items-center justify-center rounded-full">
+                                                            <FolderSymlink size={20} className="text-zinc-950 dark:text-white" />
+                                                        </div>
+                                                        <span className="text-[10px] font-bold text-zinc-950 dark:text-white">Mover a</span>
+                                                    </button>
+                                                    <button 
+                                                        onClick={handleMoveToTrash}
+                                                        disabled={isDeleting || selectedItems.length === 0}
+                                                        className={cn(
+                                                            "flex flex-col items-center gap-0.5 -translate-y-2 active:scale-90 transition-all duration-300",
+                                                            (isDeleting || selectedItems.length === 0) ? "opacity-20 pointer-events-none grayscale" : "hover:opacity-80"
+                                                        )}
+                                                    >
+                                                        <div className="w-9 h-9 flex items-center justify-center rounded-full">
+                                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                                                        </div>
+                                                        <span className="text-[10px] font-bold text-zinc-900 dark:text-zinc-100">A papelera</span>
+                                                    </button>
+                                                </>
+                                            )}
+                                        </motion.div>
+                                    ) : (
+                                        <motion.div
+                                            key="moving-actions"
+                                            initial={{ x: "100%", opacity: 0 }}
+                                            animate={{ x: 0, opacity: 1 }}
+                                            exit={{ x: "100%", opacity: 0 }}
+                                            transition={{ type: "spring", stiffness: 300, damping: 40, mass: 1 }}
+                                            className="absolute inset-0 flex justify-center gap-14 items-center"
                                         >
-                                            <div className="w-9 h-9 flex items-center justify-center rounded-full">
-                                                <Trash2 size={20} className="text-zinc-950 dark:text-white" />
-                                            </div>
-                                            <span className="text-[10px] font-bold text-zinc-950 dark:text-white">Eliminar</span>
-                                        </button>
-                                    </div>
-                                </>
-                            ) : (
-                                <>
-                                    <div className="flex flex-col items-center gap-0.5 opacity-50 -translate-y-2">
-                                        <div className="w-9 h-9 flex items-center justify-center rounded-full">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                                        </div>
-                                        <span className="text-[10px] font-bold">Ocultar</span>
-                                    </div>
-                                    <div className="flex flex-col items-center gap-0.5 opacity-50 -translate-y-2">
-                                        <div className="w-9 h-9 flex items-center justify-center rounded-full">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" x2="12" y1="2" y2="22"/><path d="M19 13H5l7-7 7 7Z"/></svg>
-                                        </div>
-                                        <span className="text-[10px] font-bold">Anclar</span>
-                                    </div>
-                                    <div className="flex flex-col items-center gap-0.5 opacity-50 -translate-y-2">
-                                        <div className="w-9 h-9 flex items-center justify-center rounded-full">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8"/><path d="M12 20h8"/><path d="m16 16 4 4-4 4"/></svg>
-                                        </div>
-                                        <span className="text-[10px] font-bold">Mover a</span>
-                                    </div>
-                                    <button 
-                                        onClick={handleMoveToTrash}
-                                        disabled={isDeleting}
-                                        className={cn(
-                                            "flex flex-col items-center gap-0.5 -translate-y-2 active:scale-90 transition-transform",
-                                            isDeleting && "opacity-50 cursor-not-allowed"
-                                        )}
-                                    >
-                                        <div className="w-9 h-9 flex items-center justify-center rounded-full">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
-                                        </div>
-                                        <span className="text-[10px] font-bold text-zinc-900 dark:text-zinc-100">A papelera</span>
-                                    </button>
-                                </>
-                            )}
+                                            <button 
+                                                onClick={() => setIsMovingMode(false)}
+                                                className="px-8 py-2 rounded-full font-bold text-base text-zinc-900 dark:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all active:scale-95 -translate-y-1"
+                                            >
+                                                Cancelar
+                                            </button>
+                                            <button 
+                                                onClick={handleMoveItems}
+                                                className="px-8 py-2 rounded-full font-bold text-base text-zinc-900 dark:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all active:scale-95 -translate-y-1"
+                                            >
+                                                Mover aquí
+                                            </button>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
                         </motion.div>
+                    )}
+                </AnimatePresence>
+ 
+                 <AnimatePresence>
+                    {showRenameModal && (
+                        <div className="fixed inset-0 z-[120] flex items-center justify-center px-4">
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                onClick={() => {
+                                    setShowRenameModal(false)
+                                    setRenamingFolder(null)
+                                }}
+                                className="absolute inset-0 bg-black/40 backdrop-blur-md"
+                            />
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                                onClick={(e) => e.stopPropagation()}
+                                className="relative w-full max-w-[320px] bg-zinc-50 dark:bg-[#1c1c1e] rounded-[32px] p-8 shadow-2xl border border-zinc-200 dark:border-zinc-800"
+                            >
+                                <h3 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 mb-6 tracking-tight text-center">
+                                    Renombrar carpeta
+                                </h3>
+                                <input
+                                    type="text"
+                                    value={renameFolderName}
+                                    onChange={(e) => setRenameFolderName(e.target.value)}
+                                    autoFocus
+                                    className="w-full px-5 py-4 rounded-[18px] bg-white dark:bg-zinc-800/50 border-2 border-zinc-200 dark:border-zinc-700 outline-none focus:border-[var(--accent)] text-zinc-900 dark:text-zinc-100 font-semibold transition-all mb-8"
+                                />
+                                <div className="flex gap-3">
+                                    <button
+                                        onClick={() => {
+                                            setShowRenameModal(false)
+                                            setRenamingFolder(null)
+                                            setRenameFolderName('')
+                                        }}
+                                        className="flex-1 py-4 rounded-[18px] bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-bold active:scale-95 transition-all"
+                                    >
+                                        Cancelar
+                                    </button>
+                                    <button
+                                        onClick={async () => {
+                                            if (!renamingFolder || !renameFolderName.trim()) return
+                                            const success = await updateFolder(renamingFolder.id, renameFolderName.trim())
+                                            if (success) {
+                                                setFolders(prev => prev.map(f => f.id === renamingFolder.id ? { ...f, name: renameFolderName.trim() } : f))
+                                                setShowRenameModal(false)
+                                                setRenamingFolder(null)
+                                                setRenameFolderName('')
+                                                setIsRenameMode(false) // Desactivar modo renombrar tras éxito
+                                            }
+                                        }}
+                                        className="flex-1 py-4 rounded-[18px] bg-[var(--accent)] text-white font-bold active:scale-95 transition-all shadow-lg"
+                                    >
+                                        Guardar
+                                    </button>
+                                </div>
+                            </motion.div>
+                        </div>
                     )}
                 </AnimatePresence>
             </div>

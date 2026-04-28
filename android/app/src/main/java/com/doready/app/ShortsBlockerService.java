@@ -38,7 +38,7 @@ public class ShortsBlockerService extends AccessibilityService {
             }
 
             long now = System.currentTimeMillis();
-            if (now - lastScanTime < SCAN_INTERVAL_MS) return;
+            if (no w - lastScanTime < SCAN_INTERVAL_MS) return;
             lastScanTime = now;
 
             AccessibilityNodeInfo root = null;

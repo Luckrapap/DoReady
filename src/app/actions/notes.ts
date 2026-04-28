@@ -77,6 +77,30 @@ export async function updateNote(id: string, title: string, content: string, emo
     return true
 }
 
+export async function moveNotes(ids: string[], folderId: string | null) {
+    const supabase = await createClient()
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+        throw new Error('No autenticado')
+    }
+
+    const now = new Date().toISOString()
+    const { error } = await supabase
+        .from('brain_dump')
+        .update({ folder_id: folderId, updated_at: now, created_at: now })
+        .in('id', ids)
+        .eq('user_id', user.id)
+
+    if (error) {
+        console.error('Error moving notes:', error)
+        return false
+    }
+
+    revalidatePath('/brain-dump')
+    return true
+}
+
 export async function deleteNote(id: string) {
     try {
         const supabase = await createClient()
